@@ -4,7 +4,7 @@
         <!-- ========================================================================= -->
         <!-- VIEW: SELECTION & GUEST PORTALS (Split 50/50 Layout) -->
         <!-- ========================================================================= -->
-        <div v-if="currentView === 'selection' || currentView === 'guest'" class="min-h-screen w-full flex flex-col lg:flex-row animate-fade-in">
+        <div v-if="currentView === 'selection'" class="min-h-screen w-full flex flex-col lg:flex-row animate-fade-in">
             <!-- Left Side: Visual / Hero Section -->
             <section class="relative lg:w-1/2 min-h-[40vh] lg:min-h-screen flex flex-col justify-between p-8 md:p-12 lg:p-16 overflow-hidden">
                 <!-- Background Image with Overlay -->
@@ -22,7 +22,7 @@
                 <!-- Main Tagline in Middle/Bottom -->
                 <div class="relative z-10 mt-auto mb-10 max-w-xl">
                     <h1 class="font-serif text-4xl md:text-5xl lg:text-6xl text-white font-bold leading-[1.1] tracking-tight">
-                        Aruga Staycation
+                        ARUGA Staycation
                     </h1>
                     <p class="mt-4 text-white/80 text-base md:text-lg lg:text-xl font-light leading-relaxed max-w-md">
                         Where architectural precision meets the raw, serene beauty of the Philippines.
@@ -51,23 +51,13 @@
             <section class="lg:w-1/2 min-h-[60vh] lg:min-h-screen bg-[#FAF9F6] flex flex-col justify-between p-8 md:p-12 lg:p-16">
                 <!-- Top Right spacer/navigation -->
                 <div class="flex justify-end items-center">
-                    <button 
-                        v-if="currentView !== 'selection'" 
-                        @click="setView('selection')"
-                        class="flex items-center gap-2 text-slate-500 hover:text-[#0B1E3F] text-sm font-medium transition cursor-pointer"
-                    >
-                        <!-- Back Arrow SVG -->
-                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                        </svg>
-                        Back to portal
-                    </button>
+                    <!-- Spacer -->
                 </div>
 
                 <!-- Central Content Area -->
                 <div class="my-auto max-w-md w-full mx-auto py-8">
                     <!-- VIEW: ROLE SELECTION -->
-                    <div v-if="currentView === 'selection'" class="space-y-8 animate-fade-in">
+                    <div class="space-y-8 animate-fade-in">
                         <div>
                             <h2 class="font-serif text-3xl md:text-4xl text-[#0B1E3F] font-bold tracking-tight">
                                 Portal Entry
@@ -108,55 +98,865 @@
                             <a href="#" class="text-[#0B1E3F] hover:underline font-semibold transition">Request access</a>
                         </p>
                     </div>
-
-                    <!-- VIEW: GUEST PORTAL -->
-                    <div v-else-if="currentView === 'guest'" class="space-y-6 animate-fade-in">
-                        <div>
-                            <h2 class="font-serif text-3xl text-[#0B1E3F] font-bold tracking-tight">
-                                Guest Portal
-                            </h2>
-                            <p class="mt-2 text-slate-500 text-sm">
-                                Enter your details to access your booking and stay preferences.
-                            </p>
-                        </div>
-
-                        <form @submit.prevent="handleGuestLogin" class="space-y-6">
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">Booking Reference</label>
-                                <input 
-                                    type="text" 
-                                    v-model="guestForm.reference"
-                                    placeholder="e.g. ARUGA-2024"
-                                    class="w-full px-4 py-3.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#0B1E3F] focus:ring-1 focus:ring-[#0B1E3F] bg-white text-sm transition"
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">Last Name</label>
-                                <input 
-                                    type="text" 
-                                    v-model="guestForm.lastName"
-                                    placeholder="Enter your last name"
-                                    class="w-full px-4 py-3.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#0B1E3F] focus:ring-1 focus:ring-[#0B1E3F] bg-white text-sm transition"
-                                    required
-                                />
-                            </div>
-                            <button 
-                                type="submit"
-                                class="w-full mt-2 py-4 px-6 rounded-xl bg-[#0B1E3F] hover:bg-[#152e59] active:scale-[0.99] text-white font-semibold text-sm transition-all cursor-pointer"
-                            >
-                                Verify Booking
-                            </button>
-                        </form>
-                    </div>
                 </div>
 
                 <!-- Bottom Copyright / Version Info -->
                 <div class="flex flex-col sm:flex-row justify-between items-center gap-2 pt-6 border-t border-slate-100">
                     <span class="text-slate-400 text-xs">v1.0.0</span>
-                    <span class="text-slate-400 text-xs">© 2024 Aruga Staycation. All rights reserved.</span>
+                    <span class="text-slate-400 text-xs">© 2026 ARUGA Staycation. All rights reserved.</span>
                 </div>
             </section>
+        </div>
+
+        <!-- ========================================================================= -->
+        <!-- VIEW: GUEST LANDING PAGE (1 to 1 to the Image) -->
+        <!-- ========================================================================= -->
+        <div v-else-if="currentView === 'guest'" class="min-h-screen w-full bg-[#FAF9F6] font-sans antialiased text-[#0B1E3F] animate-fade-in flex flex-col">
+            
+            <!-- Navbar Header -->
+            <header class="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md border-b border-slate-100/60 px-6 md:px-12 lg:px-20 py-4 flex items-center justify-between transition-all duration-300">
+                <!-- Left: Logo & Brand -->
+                <div class="flex items-center gap-3">
+                    <div class="h-9 w-9 rounded-lg overflow-hidden bg-[#1B321F] flex items-center justify-center border border-amber-500/20 shadow-sm">
+                        <img 
+                            v-if="!logoError" 
+                            :src="'/images/Aruga_logo.jpg'" 
+                            @error="logoError = true" 
+                            alt="Aruga Logo" 
+                            class="h-full w-full object-cover"
+                        />
+                        <span v-else class="text-amber-400 text-xs font-serif font-bold">A</span>
+                    </div>
+                    <div>
+                        <p class="font-serif text-[#0B1E3F] font-bold text-sm tracking-wide leading-none">ARUGA Staycation</p>
+                        <span class="text-[9px] text-[#A27B5C] font-semibold uppercase tracking-wider">Private Sanctuary</span>
+                    </div>
+                </div>
+
+                <!-- Center: Nav Links -->
+                <nav class="hidden md:flex items-center gap-8">
+                    <a href="#" class="text-xs font-bold text-[#0B1E3F] border-b border-[#0B1E3F] pb-1.5 tracking-wider uppercase">Explore Rooms</a>
+                    <a href="#" class="text-xs font-semibold text-slate-500 hover:text-[#0B1E3F] pb-1.5 tracking-wider transition uppercase">My Bookings</a>
+                    <a href="#" class="text-xs font-semibold text-slate-500 hover:text-[#0B1E3F] pb-1.5 tracking-wider transition uppercase">Contact</a>
+                </nav>
+
+                <!-- Right: Login Button -->
+                <div>
+                    <button 
+                        @click="setView('selection')" 
+                        class="bg-[#0B1E3F] hover:bg-[#152e59] text-white px-6 py-2.5 rounded-full text-xs font-bold transition shadow-md hover:shadow-lg active:scale-98 cursor-pointer"
+                    >
+                        Login
+                    </button>
+                </div>
+            </header>
+
+            <!-- Hero Section -->
+            <section class="relative w-full h-[70vh] min-h-[480px] flex items-center justify-center text-center px-6 overflow-hidden">
+                <!-- Background Image -->
+                <div 
+                    class="absolute inset-0 bg-cover bg-center bg-no-repeat scale-102 transition-transform duration-10000" 
+                    style="background-image: url('/images/staycation_hero.png');"
+                ></div>
+                <!-- Bottom fading gradient and dark tint overlay -->
+                <div class="absolute inset-0 bg-gradient-to-b from-[#FAF9F6]/10 via-black/20 to-[#FAF9F6]"></div>
+
+                <!-- Hero Content -->
+                <div class="relative z-10 max-w-3xl space-y-6 mt-6">
+                    <span class="text-[#0B1E3F] text-[10px] font-bold tracking-[0.25em] uppercase bg-white/70 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm">
+                        Exceptional Sanctuary Experience
+                    </span>
+                    <h1 class="font-serif text-5xl md:text-6xl lg:text-7xl text-[#0B1E3F] font-bold leading-[1.1] tracking-tight">
+                        Find Your Perfect <br />
+                        <span class="italic font-serif font-light text-[#A27B5C]">Island Getaway</span>
+                    </h1>
+                    <p class="text-slate-800 text-xs md:text-sm max-w-xl mx-auto font-light leading-relaxed">
+                        Experience the pinnacle of Tropical Modernism on the shores of Aruga. Where luxury meets the raw, serene beauty of the Davao Gulf. Your private villa awaits.
+                    </p>
+                    <div class="pt-4 flex justify-center">
+                        <button @click="scrollToSection('living-spaces')" class="bg-[#0B1E3F] hover:bg-[#152e59] text-white px-8 py-3.5 rounded-full text-xs font-bold tracking-wider uppercase flex items-center gap-2 shadow-lg shadow-blue-950/20 active:scale-[0.99] transition-all cursor-pointer">
+                            <span>Book Your Stay</span>
+                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Exceptional Living Spaces Section -->
+            <section id="living-spaces" class="max-w-7xl w-full mx-auto px-6 md:px-12 lg:px-20 py-16 space-y-12">
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-200/60 pb-8">
+                    <div class="space-y-3 max-w-2xl">
+                        <h2 class="font-serif text-3xl md:text-4xl text-[#0B1E3F] font-bold tracking-tight">
+                            Exceptional Living Spaces
+                        </h2>
+                        <p class="text-slate-500 text-xs md:text-sm font-light leading-relaxed">
+                            Each residence is meticulously designed to dissolve the boundaries between indoor comfort and the breathtaking natural surroundings of the island.
+                        </p>
+                    </div>
+                    <div class="shrink-0">
+                        <a href="#" class="text-xs font-bold text-[#0B1E3F] hover:text-[#152e59] uppercase tracking-wider flex items-center gap-1.5 border-b border-[#0B1E3F]/30 pb-1 transition cursor-pointer">
+                            <span>View All Accommodations</span>
+                            <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Accommodations Cards Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    
+                    <!-- Card 1: Beachfront Villa -->
+                    <div class="bg-white border border-slate-100 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition duration-300 flex flex-col justify-between group">
+                        <div class="relative h-64 overflow-hidden shrink-0">
+                            <!-- Bestseller Badge -->
+                            <div class="absolute top-4 right-4 z-10 bg-white/95 backdrop-blur-sm text-[#A27B5C] border border-amber-500/10 px-3.5 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-wider shadow-sm">
+                                Bestseller
+                            </div>
+                            <img 
+                                src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=800&q=80" 
+                                alt="Beachfront Villa" 
+                                class="w-full h-full object-cover group-hover:scale-103 transition duration-700"
+                            />
+                        </div>
+                        <div class="p-6 md:p-8 flex-grow flex flex-col justify-between">
+                            <div class="space-y-4">
+                                <div class="flex items-start justify-between gap-4">
+                                    <h3 class="font-serif text-[#0B1E3F] text-lg md:text-xl font-bold leading-snug">
+                                        Beachfront Villa
+                                    </h3>
+                                    <div class="text-right shrink-0">
+                                        <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">From</span>
+                                        <span class="font-bold text-[#0B1E3F] text-base">PHP 12,000</span>
+                                        <span class="text-[9px] text-slate-400 font-bold block mt-0.5">/night</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-500 font-light leading-relaxed">
+                                    Direct access to the white sands, with a private infinity pool and sun deck.
+                                </p>
+                                <!-- Tags / Amenities -->
+                                <div class="flex flex-wrap gap-2 pt-2">
+                                    <span class="bg-[#FAF6F0] border border-[#F6EBE0]/60 px-2.5 py-1.5 rounded-lg text-[9px] font-bold text-[#A27B5C] flex items-center gap-1.5 shadow-sm uppercase tracking-wider">
+                                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg>
+                                        Private Pool
+                                    </span>
+                                    <span class="bg-[#FAF6F0] border border-[#F6EBE0]/60 px-2.5 py-1.5 rounded-lg text-[9px] font-bold text-[#A27B5C] flex items-center gap-1.5 shadow-sm uppercase tracking-wider">
+                                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071a10.5 10.5 0 0114.14 0M1.414 8.414a15 15 0 0121.172 0" /></svg>
+                                        Wifi
+                                    </span>
+                                    <span class="bg-[#FAF6F0] border border-[#F6EBE0]/60 px-2.5 py-1.5 rounded-lg text-[9px] font-bold text-[#A27B5C] flex items-center gap-1.5 shadow-sm uppercase tracking-wider">
+                                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-11.314l.707.707m11.314 11.314l.707-.707M12 8a4 4 0 110 8 4 4 0 010-8z" /></svg>
+                                        Breakfast
+                                    </span>
+                                </div>
+                            </div>
+                            <button @click="startBooking('Beachfront Villa', 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=800&q=80')" class="w-full mt-6 py-3.5 px-6 rounded-xl bg-[#0B1E3F] hover:bg-[#152e59] active:scale-[0.99] text-white font-bold text-xs tracking-wider uppercase transition-all duration-200 cursor-pointer shadow-md shadow-blue-950/10">
+                                Book Now
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Garden Suite -->
+                    <div class="bg-white border border-slate-100 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition duration-300 flex flex-col justify-between group">
+                        <div class="relative h-64 overflow-hidden shrink-0">
+                            <img 
+                                src="https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?auto=format&fit=crop&w=800&q=80" 
+                                alt="Garden Suite" 
+                                class="w-full h-full object-cover group-hover:scale-103 transition duration-700"
+                            />
+                        </div>
+                        <div class="p-6 md:p-8 flex-grow flex flex-col justify-between">
+                            <div class="space-y-4">
+                                <div class="flex items-start justify-between gap-4">
+                                    <h3 class="font-serif text-[#0B1E3F] text-lg md:text-xl font-bold leading-snug">
+                                        Garden Suite
+                                    </h3>
+                                    <div class="text-right shrink-0">
+                                        <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">From</span>
+                                        <span class="font-bold text-[#0B1E3F] text-base">PHP 8,500</span>
+                                        <span class="text-[9px] text-slate-400 font-bold block mt-0.5">/night</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-500 font-light leading-relaxed">
+                                    Secluded sanctuary surrounded by lush tropical flora and stone paths.
+                                </p>
+                                <div class="flex flex-wrap gap-2 pt-2">
+                                    <span class="bg-[#FAF6F0] border border-[#F6EBE0]/60 px-2.5 py-1.5 rounded-lg text-[9px] font-bold text-[#A27B5C] flex items-center gap-1.5 shadow-sm uppercase tracking-wider">
+                                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
+                                        Private Garden
+                                    </span>
+                                    <span class="bg-[#FAF6F0] border border-[#F6EBE0]/60 px-2.5 py-1.5 rounded-lg text-[9px] font-bold text-[#A27B5C] flex items-center gap-1.5 shadow-sm uppercase tracking-wider">
+                                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071a10.5 10.5 0 0114.14 0M1.414 8.414a15 15 0 0121.172 0" /></svg>
+                                        Wifi
+                                    </span>
+                                    <span class="bg-[#FAF6F0] border border-[#F6EBE0]/60 px-2.5 py-1.5 rounded-lg text-[9px] font-bold text-[#A27B5C] flex items-center gap-1.5 shadow-sm uppercase tracking-wider">
+                                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-11.314l.707.707m11.314 11.314l.707-.707M12 8a4 4 0 110 8 4 4 0 010-8z" /></svg>
+                                        Breakfast
+                                    </span>
+                                </div>
+                            </div>
+                            <button @click="startBooking('Garden Suite', 'https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?auto=format&fit=crop&w=800&q=80')" class="w-full mt-6 py-3.5 px-6 rounded-xl bg-[#0B1E3F] hover:bg-[#152e59] active:scale-[0.99] text-white font-bold text-xs tracking-wider uppercase transition-all duration-200 cursor-pointer shadow-md shadow-blue-950/10">
+                                Book Now
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Overwater Bungalow -->
+                    <div class="bg-white border border-slate-100 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition duration-300 flex flex-col justify-between group">
+                        <div class="relative h-64 overflow-hidden shrink-0">
+                            <!-- Limited Badge -->
+                            <div class="absolute top-4 right-4 z-10 bg-[#0B1E3F]/90 backdrop-blur-sm text-white px-3.5 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-wider shadow-sm">
+                                Limited
+                            </div>
+                            <img 
+                                src="https://images.unsplash.com/photo-1506929562872-bb421503ef21?auto=format&fit=crop&w=800&q=80" 
+                                alt="Overwater Bungalow" 
+                                class="w-full h-full object-cover group-hover:scale-103 transition duration-700"
+                            />
+                        </div>
+                        <div class="p-6 md:p-8 flex-grow flex flex-col justify-between">
+                            <div class="space-y-4">
+                                <div class="flex items-start justify-between gap-4">
+                                    <h3 class="font-serif text-[#0B1E3F] text-lg md:text-xl font-bold leading-snug">
+                                        Overwater Bungalow
+                                    </h3>
+                                    <div class="text-right shrink-0">
+                                        <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">From</span>
+                                        <span class="font-bold text-[#0B1E3F] text-base">PHP 18,500</span>
+                                        <span class="text-[9px] text-slate-400 font-bold block mt-0.5">/night</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-500 font-light leading-relaxed">
+                                    Premium stilted bungalows with glass-floor panels and direct lagoon access.
+                                </p>
+                                <div class="flex flex-wrap gap-2 pt-2">
+                                    <span class="bg-[#FAF6F0] border border-[#F6EBE0]/60 px-2.5 py-1.5 rounded-lg text-[9px] font-bold text-[#A27B5C] flex items-center gap-1.5 shadow-sm uppercase tracking-wider">
+                                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                        Glass Floor
+                                    </span>
+                                    <span class="bg-[#FAF6F0] border border-[#F6EBE0]/60 px-2.5 py-1.5 rounded-lg text-[9px] font-bold text-[#A27B5C] flex items-center gap-1.5 shadow-sm uppercase tracking-wider">
+                                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071a10.5 10.5 0 0114.14 0M1.414 8.414a15 15 0 0121.172 0" /></svg>
+                                        Wifi
+                                    </span>
+                                    <span class="bg-[#FAF6F0] border border-[#F6EBE0]/60 px-2.5 py-1.5 rounded-lg text-[9px] font-bold text-[#A27B5C] flex items-center gap-1.5 shadow-sm uppercase tracking-wider">
+                                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-11.314l.707.707m11.314 11.314l.707-.707M12 8a4 4 0 110 8 4 4 0 010-8z" /></svg>
+                                        Breakfast
+                                    </span>
+                                </div>
+                            </div>
+                            <button @click="startBooking('Overwater Bungalow', 'https://images.unsplash.com/photo-1506929562872-bb421503ef21?auto=format&fit=crop&w=800&q=80')" class="w-full mt-6 py-3.5 px-6 rounded-xl bg-[#0B1E3F] hover:bg-[#152e59] active:scale-[0.99] text-white font-bold text-xs tracking-wider uppercase transition-all duration-200 cursor-pointer shadow-md shadow-blue-950/10">
+                                Book Now
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <footer class="mt-auto bg-[#FAF9F6] border-t border-slate-200/50 px-6 md:px-12 lg:px-20 py-16 w-full">
+                <div class="max-w-7xl w-full mx-auto flex flex-col lg:flex-row justify-between gap-12">
+                    <!-- Footer Brand Info -->
+                    <div class="space-y-4 max-w-sm">
+                        <h4 class="font-serif text-[#0B1E3F] text-lg font-bold">ARUGA Staycation</h4>
+                        <p class="text-xs text-slate-500 font-light leading-relaxed">
+                            Experience the pinnacle of Tropical Modernism on the shores of Aruga. Where luxury meets the raw beauty of nature.
+                        </p>
+                        <!-- Socials -->
+                        <div class="flex items-center gap-4 pt-2 text-slate-400">
+                            <!-- Instagram SVG icon -->
+                            <a href="#" class="hover:text-[#0B1E3F] transition cursor-pointer">
+                                <svg class="h-4.5 w-4.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                            </a>
+                            <!-- Location SVG icon -->
+                            <a href="#" class="hover:text-[#0B1E3F] transition cursor-pointer">
+                                <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Footer Link Columns -->
+                    <div class="grid grid-cols-2 md:grid-cols-2 gap-8 lg:gap-16">
+                        <!-- Col 1 -->
+                        <div class="space-y-4">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block font-semibold">Explore</span>
+                            <div class="space-y-2">
+                                <a href="#" class="text-xs text-slate-550 hover:text-[#0B1E3F] transition block font-medium">Villas</a>
+                                <a href="#" class="text-xs text-slate-555 hover:text-[#0B1E3F] transition block font-medium">Amenities</a>
+                                <a href="#" class="text-xs text-slate-555 hover:text-[#0B1E3F] transition block font-medium">Dining</a>
+                                <a href="#" class="text-xs text-slate-555 hover:text-[#0B1E3F] transition block font-medium">Spa</a>
+                            </div>
+                        </div>
+                        <!-- Col 2 -->
+                        <div class="space-y-4">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block font-semibold">Connect</span>
+                            <div class="space-y-2">
+                                <a href="#" class="text-xs text-slate-555 hover:text-[#0B1E3F] transition block font-medium">Instagram</a>
+                                <a href="#" class="text-xs text-slate-555 hover:text-[#0B1E3F] transition block font-medium">Newsletter</a>
+                                <a href="#" class="text-xs text-slate-555 hover:text-[#0B1E3F] transition block font-medium">Map Location</a>
+                                <a href="#" class="text-xs text-slate-555 hover:text-[#0B1E3F] transition block font-medium">Contact</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Bottom bar -->
+                <div class="max-w-7xl w-full mx-auto border-t border-slate-200/40 mt-12 pt-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-slate-400 text-xs">
+                    <span>v1.0.0</span>
+                    <span>© 2026 ARUGA Staycation. All rights reserved.</span>
+                </div>
+            </footer>
+
+        </div>
+
+        <!-- ========================================================================= -->
+        <!-- VIEW: MULTI-STEP BOOKING FORM (Samal Escape layout matching image 1-to-1) -->
+        <!-- ========================================================================= -->
+        <div v-else-if="currentView === 'booking' && selectedRoomToBook" class="min-h-screen w-full bg-[#FAF9F6] font-sans antialiased text-[#0B1E3F] animate-fade-in flex flex-col justify-between">
+            
+            <!-- Navbar Header -->
+            <header class="sticky top-0 z-40 w-full bg-white/85 backdrop-blur-md border-b border-slate-100 px-6 md:px-12 lg:px-20 py-4 flex items-center justify-between transition-all duration-300">
+                <!-- Left: Logo & Brand -->
+                <div class="flex items-center gap-3">
+                    <div class="h-9 w-9 rounded-lg overflow-hidden bg-[#1B321F] flex items-center justify-center border border-amber-500/20 shadow-sm">
+                        <img 
+                            v-if="!logoError" 
+                            :src="'/images/Aruga_logo.jpg'" 
+                            @error="logoError = true" 
+                            alt="Aruga Logo" 
+                            class="h-full w-full object-cover"
+                        />
+                        <span v-else class="text-amber-400 text-xs font-serif font-bold">A</span>
+                    </div>
+                    <div>
+                        <p class="font-serif text-[#0B1E3F] font-bold text-sm tracking-wide leading-none">ARUGA Staycation</p>
+                        <span class="text-[9px] text-[#A27B5C] font-semibold uppercase tracking-wider">Private Sanctuary</span>
+                    </div>
+                </div>
+
+                <!-- Center: Nav Links -->
+                <nav class="hidden md:flex items-center gap-8">
+                    <a href="#" class="text-xs font-bold text-[#0B1E3F] border-b border-[#0B1E3F] pb-1.5 tracking-wider uppercase">Explore Rooms</a>
+                    <a href="#" class="text-xs font-semibold text-slate-500 hover:text-[#0B1E3F] pb-1.5 tracking-wider transition uppercase">My Bookings</a>
+                    <a href="#" class="text-xs font-semibold text-slate-500 hover:text-[#0B1E3F] pb-1.5 tracking-wider transition uppercase">Contact</a>
+                </nav>
+
+                <!-- Right: Login & Close Button -->
+                <div class="flex items-center gap-4">
+                    <button 
+                        @click="setView('selection')" 
+                        class="bg-[#0B1E3F] hover:bg-[#152e59] text-white px-6 py-2.5 rounded-full text-xs font-bold transition shadow-md hover:shadow-lg active:scale-98 cursor-pointer"
+                    >
+                        Login
+                    </button>
+                    <!-- Close button -->
+                    <button 
+                        @click="setView('guest')" 
+                        class="p-2 rounded-full hover:bg-slate-200/50 text-slate-400 hover:text-[#0B1E3F] transition cursor-pointer"
+                        title="Cancel booking"
+                    >
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Main Content Container -->
+            <div class="w-full max-w-7xl mx-auto px-6 md:px-12 lg:px-20 py-12 flex-grow flex flex-col justify-center">
+                
+                <!-- STEP 1: GUEST DETAILS & INFO -->
+                <div v-if="currentBookingStep === 1" class="space-y-8 animate-fade-in">
+                    <!-- Progress Header -->
+                    <div class="flex items-center gap-4 max-w-3xl">
+                        <div class="h-8 w-8 rounded-full bg-[#0B1E3F] text-white flex items-center justify-center font-bold text-sm">1</div>
+                        <h2 class="font-serif text-2xl md:text-3xl text-[#0B1E3F] font-bold tracking-tight">Guest Information</h2>
+                    </div>
+
+                    <!-- Layout Grid -->
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+                        
+                        <!-- Left: Form -->
+                        <div class="lg:col-span-8 bg-white border border-slate-100 rounded-[32px] p-6 md:p-8 lg:p-10 shadow-xl shadow-slate-950/5 space-y-6">
+                            <div class="space-y-1">
+                                <h3 class="font-serif text-xl font-bold text-[#0B1E3F]">Tell Us About Yourself</h3>
+                                <p class="text-slate-400 text-xs font-light">Please provide your details to ensure a personalized resort experience.</p>
+                            </div>
+
+                            <form @submit.prevent="currentBookingStep = 2" class="space-y-5">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Full Name</label>
+                                    <input 
+                                        type="text" 
+                                        v-model="bookingForm.name"
+                                        placeholder="e.g. Julian Rivera"
+                                        class="w-full px-4 py-3.5 rounded-2xl border border-slate-200 focus:outline-none focus:border-[#0B1E3F] focus:ring-1 focus:ring-[#0B1E3F] bg-white text-xs font-semibold transition"
+                                        required
+                                    />
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Contact Number</label>
+                                        <input 
+                                            type="tel" 
+                                            v-model="bookingForm.phone"
+                                            placeholder="+63 912 345 6789"
+                                            class="w-full px-4 py-3.5 rounded-2xl border border-slate-200 focus:outline-none focus:border-[#0B1E3F] focus:ring-1 focus:ring-[#0B1E3F] bg-white text-xs font-semibold transition"
+                                            required
+                                        />
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Email Address</label>
+                                        <input 
+                                            type="email" 
+                                            v-model="bookingForm.email"
+                                            placeholder="julian.rivera@example.com"
+                                            class="w-full px-4 py-3.5 rounded-2xl border border-slate-200 focus:outline-none focus:border-[#0B1E3F] focus:ring-1 focus:ring-[#0B1E3F] bg-white text-xs font-semibold transition"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Number of Guests</label>
+                                        <input 
+                                            type="number" 
+                                            v-model="bookingForm.guests"
+                                            placeholder="e.g. 2"
+                                            min="1"
+                                            class="w-full px-4 py-3.5 rounded-2xl border border-slate-200 focus:outline-none focus:border-[#0B1E3F] focus:ring-1 focus:ring-[#0B1E3F] bg-white text-xs font-semibold transition"
+                                            required
+                                        />
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Special Requests(Optional)</label>
+                                        <textarea 
+                                            v-model="bookingForm.specialRequests"
+                                            placeholder="Dietary requirements, accessibility needs, room placement, etc."
+                                            rows="2"
+                                            class="w-full px-4 py-3 rounded-2xl border border-slate-200 focus:outline-none focus:border-[#0B1E3F] focus:ring-1 focus:ring-[#0B1E3F] bg-white text-xs font-semibold transition resize-none"
+                                        ></textarea>
+                                    </div>
+                                </div>
+
+                                <button 
+                                    type="submit"
+                                    class="w-full md:w-auto bg-[#0B1E3F] hover:bg-[#152e59] text-white px-8 py-4 rounded-2xl text-xs font-bold tracking-wider uppercase flex items-center justify-center gap-2 shadow-lg shadow-blue-950/20 active:scale-[0.99] transition-all cursor-pointer"
+                                >
+                                    <span>Proceed to Date & Time</span>
+                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                    </svg>
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Right Sidebar preview -->
+                        <div class="lg:col-span-4 space-y-6">
+                            <div class="bg-white border border-slate-100 rounded-[32px] overflow-hidden shadow-xl shadow-slate-950/5 flex flex-col">
+                                <div class="relative h-64 overflow-hidden shrink-0">
+                                    <img 
+                                        :src="selectedRoomToBook.image" 
+                                        :alt="selectedRoomToBook.name" 
+                                        class="w-full h-full object-cover"
+                                    />
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                                    <div class="absolute bottom-6 left-6 right-6 text-white space-y-1">
+                                        <span class="text-[9px] font-bold text-amber-400 uppercase tracking-wider">Premium Selection</span>
+                                        <h3 class="font-serif text-xl font-bold">{{ selectedRoomToBook.name }}</h3>
+                                    </div>
+                                </div>
+                                <div class="p-6 space-y-4">
+                                    <p class="text-xs text-slate-500 font-light leading-relaxed">
+                                        Your villa selection is locked. Enter your contact details to check exact pricing and choose your arrival schedules.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- STEP 2: STAY SCHEDULE & PAYMENT (New combined page matching image 1-to-1) -->
+                <div v-else-if="currentBookingStep === 2" class="space-y-10 animate-fade-in">
+                    
+                    <!-- Layout Grid -->
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+                        
+                        <!-- Left Column (Stay Schedule & Payment Method) -->
+                        <div class="lg:col-span-8 space-y-10">
+                            
+                            <!-- 1. Stay Schedule -->
+                            <div class="space-y-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="h-8 w-8 rounded-full bg-[#0B1E3F] text-white flex items-center justify-center font-bold text-sm">1</div>
+                                    <h3 class="font-serif text-xl font-bold text-[#0B1E3F]">Stay Schedule</h3>
+                                </div>
+
+                                <div class="bg-white border border-slate-100 rounded-3xl p-6 md:p-8 shadow-sm flex flex-col md:flex-row gap-8">
+                                    <!-- Calendar side -->
+                                    <div class="flex-1">
+                                        <!-- Month Header -->
+                                        <div class="flex items-center justify-between mb-4 px-1">
+                                            <span class="font-serif text-[#0B1E3F] font-bold text-sm">December 2026</span>
+                                            <div class="flex items-center gap-2">
+                                                <button type="button" class="p-1 text-slate-400 hover:text-[#0B1E3F] transition cursor-pointer">
+                                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                                                    </svg>
+                                                </button>
+                                                <button type="button" class="p-1 text-slate-400 hover:text-[#0B1E3F] transition cursor-pointer">
+                                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Days Header -->
+                                        <div class="grid grid-cols-7 gap-1 text-center text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-2">
+                                            <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+                                        </div>
+
+                                        <!-- Calendar Grid -->
+                                        <div class="grid grid-cols-7 gap-1 text-center">
+                                            <button 
+                                                v-for="(day, idx) in calendarDays" 
+                                                :key="idx"
+                                                type="button"
+                                                @click="handleCalendarDayClick(day)"
+                                                :class="[
+                                                    'h-9 w-9 text-xs flex items-center justify-center transition-all cursor-pointer relative',
+                                                    day.isCurrentMonth ? 'text-[#0B1E3F] font-bold' : 'text-slate-300 font-light',
+                                                    isCheckInDay(day) ? 'bg-[#0B1E3F] text-white rounded-full font-bold shadow-md' : '',
+                                                    isCheckOutDay(day) ? 'bg-[#0B1E3F] text-white rounded-full font-bold shadow-md' : '',
+                                                    isDayInRange(day) ? 'bg-slate-100/80 text-[#0B1E3F] font-bold' : ''
+                                                ]"
+                                            >
+                                                {{ day.day }}
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Arrival Time side -->
+                                    <div class="flex-1 flex flex-col justify-between">
+                                        <div>
+                                            <h4 class="text-[#0B1E3F] font-bold text-sm mb-2">Arrival Time</h4>
+                                            <p class="text-xs text-slate-500 font-light leading-relaxed mb-4">
+                                                Standard check-in is after 2:00 PM. Please let us know your expected arrival time for villa preparation.
+                                            </p>
+                                            
+                                            <label class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Select check-in window</label>
+                                            <div class="relative">
+                                                <select 
+                                                    v-model="checkInWindow" 
+                                                    class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#0B1E3F] focus:ring-1 focus:ring-[#0B1E3F] bg-white text-xs font-semibold appearance-none cursor-pointer pr-10"
+                                                >
+                                                    <option value="12:00 PM - 02:00 PM">12:00 PM - 02:00 PM</option>
+                                                    <option value="02:00 PM - 04:00 PM">02:00 PM - 04:00 PM</option>
+                                                    <option value="04:00 PM - 06:00 PM">04:00 PM - 06:00 PM</option>
+                                                    <option value="06:00 PM - 08:00 PM">06:00 PM - 08:00 PM</option>
+                                                </select>
+                                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-400">
+                                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Notice Block -->
+                                        <div class="mt-4 p-4 rounded-2xl bg-[#FAF6F0] border border-[#FAF6F0]/60 flex items-start gap-3 text-[#A27B5C]">
+                                            <svg class="h-4.5 w-4.5 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            <p class="text-[10px] font-semibold tracking-wider leading-relaxed">
+                                                Early check-in is subject to villa availability upon arrival.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 2. Payment Method -->
+                            <div class="space-y-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="h-8 w-8 rounded-full bg-[#0B1E3F] text-white flex items-center justify-center font-bold text-sm">2</div>
+                                    <h3 class="font-serif text-xl font-bold text-[#0B1E3F]">Payment Method</h3>
+                                </div>
+
+                                <div class="bg-white border border-slate-100 rounded-3xl p-6 md:p-8 shadow-sm space-y-6">
+                                    <div class="space-y-4">
+                                        <!-- Credit / Debit Card -->
+                                        <div 
+                                            @click="paymentMethod = 'credit_card'"
+                                            :class="[
+                                                'border rounded-2xl p-5 flex items-center justify-between cursor-pointer transition-all duration-200',
+                                                paymentMethod === 'credit_card' ? 'border-[#0B1E3F] bg-[#FAF9F6]/20' : 'border-slate-100 hover:border-slate-200'
+                                            ]"
+                                        >
+                                            <div class="flex items-center gap-4">
+                                                <div 
+                                                    :class="[
+                                                        'h-5 w-5 rounded-full border flex items-center justify-center shrink-0 transition-all',
+                                                        paymentMethod === 'credit_card' ? 'border-[#0B1E3F] bg-[#0B1E3F]' : 'border-slate-300'
+                                                    ]"
+                                                >
+                                                    <div v-if="paymentMethod === 'credit_card'" class="h-2 w-2 rounded-full bg-white"></div>
+                                                </div>
+                                                <div>
+                                                    <p class="text-xs font-bold text-[#0B1E3F]">Credit / Debit Card</p>
+                                                    <p class="text-[10px] text-slate-450 font-light mt-0.5">Secure payment via Stripe. All major cards accepted.</p>
+                                                </div>
+                                            </div>
+                                            <!-- Card Icon -->
+                                            <svg class="h-5 w-5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                            </svg>
+                                        </div>
+
+                                        <!-- GCash -->
+                                        <div 
+                                            @click="paymentMethod = 'gcash'"
+                                            :class="[
+                                                'border rounded-2xl p-5 flex items-center justify-between cursor-pointer transition-all duration-200',
+                                                paymentMethod === 'gcash' ? 'border-[#0B1E3F] bg-[#FAF9F6]/20' : 'border-slate-100 hover:border-slate-200'
+                                            ]"
+                                        >
+                                            <div class="flex items-center gap-4">
+                                                <div 
+                                                    :class="[
+                                                        'h-5 w-5 rounded-full border flex items-center justify-center shrink-0 transition-all',
+                                                        paymentMethod === 'gcash' ? 'border-[#0B1E3F] bg-[#0B1E3F]' : 'border-slate-300'
+                                                    ]"
+                                                >
+                                                    <div v-if="paymentMethod === 'gcash'" class="h-2 w-2 rounded-full bg-white"></div>
+                                                </div>
+                                                <div>
+                                                    <p class="text-xs font-bold text-[#0B1E3F]">GCash</p>
+                                                    <p class="text-[10px] text-slate-450 font-light mt-0.5">Instant confirmation via GCash mobile app.</p>
+                                                </div>
+                                            </div>
+                                            <span class="bg-blue-600 text-white text-[8px] font-bold uppercase px-2 py-0.5 rounded tracking-wider shrink-0">E-Wallet</span>
+                                        </div>
+
+                                        <!-- Cash at Property -->
+                                        <div 
+                                            @click="paymentMethod = 'cash_at_property'"
+                                            :class="[
+                                                'border rounded-2xl p-5 flex items-center justify-between cursor-pointer transition-all duration-200',
+                                                paymentMethod === 'cash_at_property' ? 'border-[#0B1E3F] bg-[#FAF9F6]/20' : 'border-slate-100 hover:border-slate-200'
+                                            ]"
+                                        >
+                                            <div class="flex items-center gap-4">
+                                                <div 
+                                                    :class="[
+                                                        'h-5 w-5 rounded-full border flex items-center justify-center shrink-0 transition-all',
+                                                        paymentMethod === 'cash_at_property' ? 'border-[#0B1E3F] bg-[#0B1E3F]' : 'border-slate-300'
+                                                    ]"
+                                                >
+                                                    <div v-if="paymentMethod === 'cash_at_property'" class="h-2 w-2 rounded-full bg-white"></div>
+                                                </div>
+                                                <div>
+                                                    <p class="text-xs font-bold text-[#0B1E3F]">Cash at Property</p>
+                                                    <p class="text-[10px] text-slate-450 font-light mt-0.5">Secure your booking with a 50% down payment via bank transfer or e-wallet. Pay the remaining balance upon check-in.</p>
+                                                </div>
+                                            </div>
+                                            <!-- Bill Icon -->
+                                            <svg class="h-5 w-5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                                            </svg>
+                                        </div>
+                                    </div>
+
+                                    <!-- Credit Card Details Form -->
+                                    <div v-if="paymentMethod === 'credit_card'" class="space-y-4 pt-5 border-t border-slate-100 animate-fade-in">
+                                        <div>
+                                            <label class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Card Number</label>
+                                            <input 
+                                                type="text" 
+                                                v-model="cardForm.number"
+                                                placeholder="0000 0000 0000 0000"
+                                                class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#0B1E3F] focus:ring-1 focus:ring-[#0B1E3F] bg-white text-xs font-semibold tracking-widest transition"
+                                            />
+                                        </div>
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Expiry Date</label>
+                                                <input 
+                                                    type="text" 
+                                                    v-model="cardForm.expiry"
+                                                    placeholder="MM / YY"
+                                                    class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#0B1E3F] focus:ring-1 focus:ring-[#0B1E3F] bg-white text-xs font-semibold tracking-wider transition"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">CVV</label>
+                                                <input 
+                                                    type="password" 
+                                                    v-model="cardForm.cvv"
+                                                    placeholder="***"
+                                                    maxlength="4"
+                                                    class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#0B1E3F] focus:ring-1 focus:ring-[#0B1E3F] bg-white text-xs font-semibold tracking-wider transition"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Back Navigation link -->
+                            <div class="flex items-center gap-2 pt-2">
+                                <button 
+                                    type="button" 
+                                    @click="currentBookingStep = 1"
+                                    class="text-xs font-bold text-slate-400 hover:text-[#0B1E3F] transition uppercase tracking-wider flex items-center gap-1.5 cursor-pointer"
+                                >
+                                    <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                                    </svg>
+                                    <span>Back to Guest Info</span>
+                                </button>
+                            </div>
+
+                        </div>
+
+                        <!-- Right Column (Checkout Summary Card matching mockup image 1-to-1) -->
+                        <div class="lg:col-span-4 sticky top-24">
+                            <div class="bg-white border border-slate-100 rounded-[32px] overflow-hidden shadow-xl shadow-slate-950/5 flex flex-col">
+                                <!-- Room header image -->
+                                <div class="relative h-48 overflow-hidden shrink-0">
+                                    <img 
+                                        :src="selectedRoomToBook.image" 
+                                        :alt="selectedRoomToBook.name" 
+                                        class="w-full h-full object-cover"
+                                    />
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+                                    <div class="absolute bottom-4 left-6 right-6 text-white">
+                                        <span class="bg-white/20 backdrop-blur-sm text-[8px] font-bold uppercase tracking-wider px-2 py-0.5 rounded">Premium Selection</span>
+                                        <h4 class="font-serif text-lg font-bold mt-1">{{ selectedRoomToBook.name }}</h4>
+                                    </div>
+                                </div>
+
+                                <!-- Stay summary stats (Dates & Guests) -->
+                                <div class="p-6 border-b border-slate-100 flex items-center justify-between text-xs">
+                                    <div>
+                                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Check-in</p>
+                                        <p class="font-bold text-[#0B1E3F] mt-0.5">{{ formattedCheckIn }}</p>
+                                    </div>
+                                    
+                                    <!-- Arrow divider -->
+                                    <svg class="h-4 w-4 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                    </svg>
+
+                                    <div>
+                                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Check-out</p>
+                                        <p class="font-bold text-[#0B1E3F] mt-0.5">{{ formattedCheckOut }}</p>
+                                    </div>
+
+                                    <div class="border-l border-slate-100 pl-4">
+                                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Guests</p>
+                                        <p class="font-bold text-[#0B1E3F] mt-0.5 flex items-center gap-1">
+                                            <svg class="h-3.5 w-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                            </svg>
+                                            <span>{{ bookingForm.guests }} Guests</span>
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- Price breakdown items -->
+                                <div class="p-6 space-y-4 text-xs">
+                                    <div class="flex justify-between items-center text-slate-550">
+                                        <span>{{ selectedRoomToBook.name }} x {{ bookingCalculations.nights }} nights</span>
+                                        <span class="font-bold text-[#0B1E3F]">PHP {{ formatPrice(bookingCalculations.baseTotal) }}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-slate-550">
+                                        <span>Taxes & Fees</span>
+                                        <span class="font-bold text-[#0B1E3F]">PHP {{ formatPrice(bookingCalculations.taxesAndFees) }}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-[#2D5A27] bg-[#E8F5E9]/50 px-3 py-1.5 rounded-xl border border-[#C8E6C9]/35 font-medium">
+                                        <span>Tropical Modernism Member Discount</span>
+                                        <span class="font-bold">-PHP {{ formatPrice(bookingCalculations.discount) }}</span>
+                                    </div>
+                                    
+                                    <div class="border-t border-slate-100 pt-4 space-y-3">
+                                        <div class="flex justify-between items-center text-slate-550">
+                                            <span>Down Payment (50%)</span>
+                                            <span class="font-bold text-[#0B1E3F]">PHP {{ formatPrice(bookingCalculations.downPayment) }}</span>
+                                        </div>
+                                        <div class="flex justify-between items-center text-slate-400">
+                                            <span>Remaining Balance</span>
+                                            <span>PHP {{ formatPrice(bookingCalculations.remainingBalance) }}</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Total Price large text -->
+                                    <div class="border-t border-slate-100 pt-4 flex justify-between items-end">
+                                        <div>
+                                            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Total Price</span>
+                                            <span class="text-[9px] text-slate-400 font-semibold line-through">PHP {{ formatPrice(bookingCalculations.baseTotal + bookingCalculations.taxesAndFees) }}</span>
+                                        </div>
+                                        <span class="text-lg font-serif font-bold text-[#0B1E3F]">PHP {{ formatPrice(bookingCalculations.totalPrice) }}</span>
+                                    </div>
+
+                                    <!-- Main CTA Submit Button -->
+                                    <button 
+                                        type="button"
+                                        @click="submitBookingSimulated"
+                                        class="w-full bg-[#0B1E3F] hover:bg-[#152e59] text-white py-4 rounded-2xl text-xs font-bold tracking-wider uppercase shadow-lg shadow-blue-950/20 active:scale-[0.99] transition-all cursor-pointer mt-4"
+                                    >
+                                        <span v-if="paymentMethod === 'credit_card' || paymentMethod === 'gcash'">Confirm Payment</span>
+                                        <span v-else>Confirm & Pay Down Payment</span>
+                                    </button>
+
+                                    <!-- Security disclaimer -->
+                                    <p class="text-[8px] text-slate-400 text-center uppercase tracking-widest leading-relaxed mt-2 font-medium">
+                                        By clicking confirm, you agree to our Terms of Service and Cancellation Policy. Secure 256-bit SSL encrypted transaction.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Footer -->
+            <footer class="bg-white border-t border-slate-150 px-6 md:px-12 lg:px-20 py-8 w-full shrink-0">
+                <div class="max-w-7xl w-full mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+                    <div class="space-y-1.5 text-center md:text-left">
+                        <h4 class="font-serif text-[#0B1E3F] text-sm font-bold">ARUGA Staycation</h4>
+                        <p class="text-[10px] text-slate-400 font-light max-w-sm leading-normal">
+                            Experience the raw beauty of Samal Island through our curated tropical sanctuary.
+                        </p>
+                    </div>
+
+                    <div class="flex flex-wrap items-center justify-center gap-8 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                        <div class="flex items-center gap-4">
+                            <span class="text-slate-400 text-[9px] block">Connect:</span>
+                            <a href="#" class="hover:text-[#0B1E3F] transition">Facebook</a>
+                            <a href="#" class="hover:text-[#0B1E3F] transition">Instagram</a>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span class="text-slate-400 text-[9px] block">Explore:</span>
+                            <a href="#" class="hover:text-[#0B1E3F] transition">Map Location</a>
+                            <a href="#" class="hover:text-[#0B1E3F] transition">Newsletter</a>
+                        </div>
+                    </div>
+
+                    <span class="text-[9px] text-slate-400 text-center md:text-right">
+                        © 2026 ARUGA Staycation. All rights reserved.
+                    </span>
+                </div>
+            </footer>
+
         </div>
 
         <!-- ========================================================================= -->
@@ -188,7 +988,7 @@
 
                     <!-- Titles -->
                     <h1 class="font-serif text-[#0b1c3d] text-2xl lg:text-3xl font-bold mt-4 tracking-tight text-center">
-                        Aruga Staycation
+                        ARUGA Staycation
                     </h1>
                     <p class="text-amber-800 text-xs font-bold uppercase tracking-[0.2em] mt-1.5 text-center">
                         Administrative Portal
@@ -354,7 +1154,7 @@
 
                     <!-- Titles -->
                     <h1 class="font-serif text-[#0b1c3d] text-2xl lg:text-3xl font-bold mt-4 tracking-tight text-center">
-                        Aruga Staycation
+                        ARUGA Staycation
                     </h1>
                     <p class="text-amber-800 text-xs font-bold uppercase tracking-[0.2em] mt-1.5 text-center">
                         Administrative Portal
@@ -3231,6 +4031,155 @@ const showPassword = ref(false)
 const loginError = ref('')
 const isSubmitting = ref(false)
 const currentUser = ref(null)
+
+const selectedRoomToBook = ref(null)
+const bookingForm = reactive({
+    name: '',
+    phone: '',
+    email: '',
+    guests: '2',
+    specialRequests: ''
+})
+const currentBookingStep = ref(1)
+
+const checkInDate = ref('2026-12-06')
+const checkOutDate = ref('2026-12-09')
+const checkInWindow = ref('02:00 PM - 04:00 PM')
+const paymentMethod = ref('credit_card')
+const cardForm = reactive({
+    number: '',
+    expiry: '',
+    cvv: ''
+})
+
+const bookingNights = computed(() => {
+    if (!checkInDate.value || !checkOutDate.value) return 3
+    const start = new Date(checkInDate.value)
+    const end = new Date(checkOutDate.value)
+    const diff = end - start
+    if (diff <= 0) return 1
+    return Math.ceil(diff / (1000 * 60 * 60 * 24))
+})
+
+const formattedCheckIn = computed(() => {
+    if (!checkInDate.value) return ''
+    const d = new Date(checkInDate.value)
+    return d.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
+})
+
+const formattedCheckOut = computed(() => {
+    if (!checkOutDate.value) return ''
+    const d = new Date(checkOutDate.value)
+    return d.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
+})
+
+const formatPrice = (value) => {
+    return Number(value).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
+}
+
+const bookingCalculations = computed(() => {
+    if (!selectedRoomToBook.value) return null
+    const rateMap = {
+        'Beachfront Villa': 12000,
+        'Garden Suite': 8500,
+        'Overwater Bungalow': 18500
+    }
+    const rate = rateMap[selectedRoomToBook.value.name] || 10000
+    const nights = bookingNights.value
+    const baseTotal = rate * nights
+    const taxesAndFees = baseTotal * 0.12
+    const discount = 2000
+    const totalPrice = baseTotal + taxesAndFees - discount
+    const downPayment = totalPrice * 0.50
+    const remainingBalance = totalPrice * 0.50
+    
+    return {
+        rate,
+        nights,
+        baseTotal,
+        taxesAndFees,
+        discount,
+        totalPrice,
+        downPayment,
+        remainingBalance
+    }
+})
+
+const calendarDays = computed(() => {
+    const days = []
+    // Dec 2026 calendar (Dec 1 is Tuesday, so we pad Nov 29 & Nov 30)
+    days.push({ day: 29, month: 11, year: 2026, isCurrentMonth: false })
+    days.push({ day: 30, month: 11, year: 2026, isCurrentMonth: false })
+    for (let i = 1; i <= 31; i++) {
+        days.push({ day: i, month: 12, year: 2026, isCurrentMonth: true })
+    }
+    for (let i = 1; i <= 9; i++) {
+        days.push({ day: i, month: 1, year: 2027, isCurrentMonth: false })
+    }
+    return days
+})
+
+const isCheckInDay = (dayObj) => {
+    const dateStr = `${dayObj.year}-${String(dayObj.month).padStart(2, '0')}-${String(dayObj.day).padStart(2, '0')}`
+    return dateStr === checkInDate.value
+}
+
+const isCheckOutDay = (dayObj) => {
+    const dateStr = `${dayObj.year}-${String(dayObj.month).padStart(2, '0')}-${String(dayObj.day).padStart(2, '0')}`
+    return dateStr === checkOutDate.value
+}
+
+const isDayInRange = (dayObj) => {
+    if (!checkInDate.value || !checkOutDate.value) return false
+    const dateStr = `${dayObj.year}-${String(dayObj.month).padStart(2, '0')}-${String(dayObj.day).padStart(2, '0')}`
+    return dateStr > checkInDate.value && dateStr < checkOutDate.value
+}
+
+const handleCalendarDayClick = (dayObj) => {
+    const dateStr = `${dayObj.year}-${String(dayObj.month).padStart(2, '0')}-${String(dayObj.day).padStart(2, '0')}`
+    if (!checkInDate.value || (checkInDate.value && checkOutDate.value)) {
+        checkInDate.value = dateStr
+        checkOutDate.value = ''
+    } else {
+        const checkInTime = new Date(checkInDate.value).getTime()
+        const clickTime = new Date(dateStr).getTime()
+        if (clickTime <= checkInTime) {
+            checkInDate.value = dateStr
+        } else {
+            checkOutDate.value = dateStr
+        }
+    }
+}
+
+const scrollToSection = (id) => {
+    const el = document.getElementById(id)
+    if (el) {
+        el.scrollIntoView({ behavior: 'smooth' })
+    }
+}
+
+const startBooking = (roomName, roomImage) => {
+    selectedRoomToBook.value = { name: roomName, image: roomImage }
+    bookingForm.name = ''
+    bookingForm.phone = ''
+    bookingForm.email = ''
+    bookingForm.guests = '2'
+    bookingForm.specialRequests = ''
+    checkInDate.value = '2026-12-06'
+    checkOutDate.value = '2026-12-09'
+    checkInWindow.value = '02:00 PM - 04:00 PM'
+    paymentMethod.value = 'credit_card'
+    cardForm.number = ''
+    cardForm.expiry = ''
+    cardForm.cvv = ''
+    currentBookingStep.value = 1
+    currentView.value = 'booking'
+}
+
+const submitBookingSimulated = () => {
+    alert(`Thank you, ${bookingForm.name}!\nYour booking for the ${selectedRoomToBook.value.name} is received and awaiting verification.`)
+    setView('guest')
+}
 
 const activeTab = ref('dashboard_overview')
 const theme = ref('light')
