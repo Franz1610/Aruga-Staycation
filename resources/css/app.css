@@ -1,5 +1,8 @@
 @import 'tailwindcss';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
@@ -9,4 +12,17 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
     --font-serif: 'Playfair Display', Georgia, Cambria, "Times New Roman", Times, serif;
+
+    /* Custom slate color definitions for consistent styling */
+    --color-slate-850: #141c2f;
+    --color-slate-855: #0d1527;
+    --color-slate-705: #2e3a4e;
+    --color-slate-655: #3f4e64;
+    --color-slate-505: #5e6e85;
+    --color-slate-205: #d3dbe6;
+    --color-slate-450: #8b9bb0;
+    --color-slate-455: #7e8d9f;
+    --color-slate-350: #bfccd9;
+    --color-rose-450: #fb627c;
 }
+

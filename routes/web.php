@@ -89,7 +89,7 @@ Route::post('/api/users', function (Request $request) {
         'name' => ['required', 'string', 'max:255'],
         'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
         'password' => ['required', 'string', 'min:6'],
-        'role' => ['required', 'string', 'in:admin,manager,staff'],
+        'role' => ['required', 'string', 'in:manager,staff'],
     ]);
 
     $user = App\Models\User::create([
@@ -120,7 +120,7 @@ Route::put('/api/users/{id}', function (Request $request, $id) {
     $data = $request->validate([
         'name' => ['required', 'string', 'max:255'],
         'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
-        'role' => ['required', 'string', 'in:admin,manager,staff'],
+        'role' => ['required', 'string', 'in:manager,staff'],
         'password' => ['nullable', 'string', 'min:6'],
     ]);
 
@@ -137,3 +137,32 @@ Route::put('/api/users/{id}', function (Request $request, $id) {
         'user' => $user
     ]);
 });
+
+Route::post('/api/user/change-password', function (Request $request) {
+    if (!Auth::check()) {
+        return response()->json(['message' => 'Unauthorized'], 401);
+    }
+
+    $user = Auth::user();
+
+    $data = $request->validate([
+        'current_password' => ['required', 'string'],
+        'new_password' => ['required', 'string', 'min:6'],
+    ]);
+
+    if (!Illuminate\Support\Facades\Hash::check($data['current_password'], $user->password)) {
+        return response()->json([
+            'success' => false,
+            'message' => 'The provided current password does not match our records.'
+        ], 422);
+    }
+
+    $user->password = $data['new_password'];
+    $user->save();
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Password changed successfully.'
+    ]);
+});
+
