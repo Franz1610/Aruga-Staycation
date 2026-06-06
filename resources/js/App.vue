@@ -960,38 +960,24 @@
         </div>
 
         <!-- ========================================================================= -->
-        <!-- VIEW: RETRIEVE BOOKINGS (Mockup 1-to-1 matching user requirements) -->
         <!-- ========================================================================= -->
         <div v-else-if="currentView === 'my_bookings'" class="min-h-screen w-full bg-[#FAF9F6] font-sans antialiased text-[#0B1E3F] animate-fade-in flex flex-col justify-between">
             
             <!-- Navbar Header -->
-            <header class="sticky top-0 z-40 w-full bg-white/85 backdrop-blur-md border-b border-slate-100 px-6 md:px-12 lg:px-20 py-4 flex items-center justify-between transition-all duration-300">
-                <!-- Left: Logo & Brand -->
-                <div class="flex items-center gap-3 cursor-pointer" @click="setView('guest')">
-                    <div class="h-9 w-9 rounded-lg overflow-hidden bg-[#1B321F] flex items-center justify-center border border-amber-500/20 shadow-sm">
-                        <img 
-                            v-if="!logoError" 
-                            :src="'/images/Aruga_logo.jpg'" 
-                            @error="logoError = true" 
-                            alt="Aruga Logo" 
-                            class="h-full w-full object-cover"
-                        />
-                        <span v-else class="text-amber-400 text-xs font-serif font-bold">A</span>
-                    </div>
-                    <div>
-                        <p class="font-serif text-[#0B1E3F] font-bold text-sm tracking-wide leading-none">ARUGA Staycation</p>
-                        <span class="text-[9px] text-[#A27B5C] font-semibold uppercase tracking-wider">Private Sanctuary</span>
-                    </div>
+            <header class="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md border-b border-slate-100/60 px-6 md:px-12 lg:px-20 py-4 flex items-center justify-between transition-all duration-300">
+                <!-- Left: Logo & Brand (Text only matching mockup) -->
+                <div class="cursor-pointer" @click="setView('guest')">
+                    <p class="font-serif text-[#0B1E3F] font-bold text-lg md:text-xl tracking-wide leading-none">Aruga Staycation</p>
                 </div>
 
-                <!-- Center: Nav Links -->
+                <!-- Center: Nav Links (Title Case matching mockup) -->
                 <nav class="hidden md:flex items-center gap-8">
-                    <button @click="setView('guest'); scrollToSection('living-spaces')" class="text-xs font-semibold text-slate-500 hover:text-[#0B1E3F] pb-1.5 tracking-wider transition uppercase cursor-pointer">Explore Rooms</button>
-                    <button @click="setView('my_bookings')" class="text-xs font-bold text-[#0B1E3F] border-b border-[#0B1E3F] pb-1.5 tracking-wider uppercase cursor-pointer">My Bookings</button>
-                    <button @click="setView('guest'); scrollToSection('living-spaces')" class="text-xs font-semibold text-slate-500 hover:text-[#0B1E3F] pb-1.5 tracking-wider transition uppercase cursor-pointer">Contact</button>
+                    <button @click="setView('guest'); scrollToSection('living-spaces')" class="text-xs font-semibold text-slate-500 hover:text-[#0B1E3F] pb-1.5 tracking-wider transition cursor-pointer">Explore Rooms</button>
+                    <button @click="setView('my_bookings')" class="text-xs font-bold text-[#0B1E3F] border-b-2 border-[#0B1E3F] pb-1.5 tracking-wider cursor-pointer">My Bookings</button>
+                    <button @click="setView('guest'); scrollToSection('living-spaces')" class="text-xs font-semibold text-slate-500 hover:text-[#0B1E3F] pb-1.5 tracking-wider transition cursor-pointer">Contact</button>
                 </nav>
 
-                <!-- Right: Book Now CTA Button -->
+                <!-- Right: Book Now CTA Button (Dark pill matching mockup) -->
                 <div>
                     <button 
                         @click="setView('guest'); scrollToSection('living-spaces')" 
@@ -1002,161 +988,394 @@
                 </div>
             </header>
 
-            <!-- Main Content Area -->
-            <div class="w-full max-w-7xl mx-auto px-6 md:px-12 lg:px-20 py-16 flex-grow flex items-center justify-center">
+            <!-- Main Content Area: Retrieve Booking (Split 50/50 Layout matching mockup 1-to-1) -->
+            <div v-if="!retrievedBooking" class="w-full max-w-7xl mx-auto px-6 md:px-12 lg:px-20 py-16 flex-grow flex items-center justify-center">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center w-full max-w-5xl">
-                    <!-- Left Side: Circular Logo on Wood Background (Matches mockup image) -->
+                    <!-- Left Side: Golden Circular Logo in Dark Square Box -->
                     <div class="flex justify-center">
-                        <div class="h-80 w-80 md:h-96 md:w-96 rounded-[32px] overflow-hidden shadow-2xl border border-slate-100 flex items-center justify-center bg-[#1B321F] relative group hover:scale-[1.01] transition-all duration-300">
+                        <div class="h-80 w-80 md:h-[400px] md:w-[400px] rounded-[32px] overflow-hidden shadow-2xl border border-slate-200/50 flex items-center justify-center bg-[#0B1320] relative hover:scale-[1.01] transition-all duration-300">
                             <img 
                                 :src="'/images/Aruga_logo.jpg'" 
                                 alt="Aruga Staycation Logo" 
-                                class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-103"
+                                class="h-full w-full object-cover"
                             />
-                            <!-- Inner shadow ring -->
-                            <div class="absolute inset-0 border border-white/10 rounded-[32px] pointer-events-none"></div>
                         </div>
                     </div>
 
-                    <!-- Right Side: Retrieve Form -->
+                    <!-- Right Side: Retrieve Form White Card -->
                     <div class="bg-white border border-slate-100 rounded-[32px] p-8 md:p-12 shadow-xl shadow-slate-950/5 space-y-6">
-                        
-                        <div v-if="!retrievedBooking" class="space-y-6 animate-fade-in">
-                            <div class="space-y-2">
-                                <h2 class="font-serif text-[#0B1E3F] text-3xl font-bold tracking-tight">Retrieve Your Booking</h2>
-                                <p class="text-slate-500 text-xs font-light leading-relaxed">
-                                    Enter the reference number provided in your confirmation email to see your booking status and details.
-                                </p>
-                            </div>
+                        <div class="space-y-3">
+                            <h2 class="font-serif text-[#0B1E3F] text-3xl font-bold tracking-tight">Retrieve Your Booking</h2>
+                            <p class="text-slate-500 text-xs font-light leading-relaxed">
+                                Enter the reference number provided in your confirmation email to see your booking status and details.
+                            </p>
+                        </div>
 
-                            <form @submit.prevent="handleRetrieveBooking" class="space-y-5">
-                                <div>
-                                    <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Booking Reference Number</label>
-                                    <div class="relative">
-                                        <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400">
-                                            <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
-                                            </svg>
-                                        </span>
-                                        <input 
-                                            type="text" 
-                                            v-model="bookingRefInput"
-                                            placeholder="e.g. ARUGA-123456"
-                                            class="w-full pl-11 pr-4 py-3.5 rounded-2xl border border-slate-200 focus:outline-none focus:border-[#0B1E3F] focus:ring-1 focus:ring-[#0B1E3F] bg-white text-xs font-semibold uppercase tracking-wider transition"
-                                            required
-                                        />
-                                    </div>
-                                </div>
-
-                                <button 
-                                    type="submit"
-                                    class="w-full bg-[#0B1E3F] hover:bg-[#152e59] text-white py-4 rounded-xl text-xs font-bold tracking-wider uppercase shadow-md flex items-center justify-center gap-2 transition cursor-pointer"
-                                >
-                                    <span>View Reservation</span>
-                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                                    </svg>
-                                </button>
-                            </form>
-
-                            <!-- Assistance Links -->
-                            <div class="pt-6 border-t border-slate-100 text-center space-y-4">
-                                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Need assistance?</p>
-                                <div class="flex items-center justify-center gap-8 text-[11px] font-bold text-slate-655">
-                                    <a href="#" class="hover:text-[#0B1E3F] transition flex items-center gap-2">
-                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                        </svg>
-                                        <span>Contact Support</span>
-                                    </a>
-                                    <a href="#" class="hover:text-[#0B1E3F] transition flex items-center gap-2">
+                        <form @submit.prevent="handleRetrieveBooking" class="space-y-6">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Booking Reference Number</label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400">
+                                        <!-- Ticket Icon SVG -->
                                         <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
                                         </svg>
-                                        <span>FAQs</span>
-                                    </a>
+                                    </span>
+                                    <input 
+                                        type="text" 
+                                        v-model="bookingRefInput"
+                                        placeholder="e.g. ARUGA-123456"
+                                        class="w-full pl-11 pr-4 py-3.5 rounded-2xl border border-slate-200 focus:outline-none focus:border-[#0B1E3F] focus:ring-1 focus:ring-[#0B1E3F] bg-white text-xs font-semibold uppercase tracking-wider transition"
+                                        required
+                                    />
                                 </div>
+                            </div>
+
+                            <button 
+                                type="submit"
+                                class="w-full bg-[#0B1E3F] hover:bg-[#152e59] text-white py-4 rounded-xl text-xs font-bold tracking-wider uppercase shadow-md flex items-center justify-center gap-2 transition cursor-pointer"
+                            >
+                                <span>View Reservation</span>
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                </svg>
+                            </button>
+                        </form>
+
+                        <!-- Assistance Links -->
+                        <div class="pt-6 border-t border-slate-100 text-center space-y-4">
+                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Need assistance?</p>
+                            <div class="flex items-center justify-center gap-8 text-[11px] font-bold text-slate-500">
+                                <a href="mailto:support@arugastaycation.com" class="hover:text-[#0B1E3F] transition flex items-center gap-2">
+                                    <!-- Mail Icon SVG -->
+                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                    </svg>
+                                    <span>Contact Support</span>
+                                </a>
+                                <a href="#" class="hover:text-[#0B1E3F] transition flex items-center gap-2">
+                                    <!-- Question Circle Icon SVG -->
+                                    <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <span>FAQs</span>
+                                </a>
                             </div>
                         </div>
-
-                        <!-- Retrieved Details State -->
-                        <div v-if="retrievedBooking" class="space-y-6 animate-fade-in">
-                            <div class="flex items-center justify-between border-b border-slate-100 pb-4">
-                                <div>
-                                    <span class="text-[8px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded uppercase tracking-wider">Booking Found</span>
-                                    <h3 class="font-serif text-[#0B1E3F] text-xl font-bold mt-1">Reservation Details</h3>
-                                </div>
-                                <button @click="retrievedBooking = null" class="text-xs text-slate-450 hover:text-[#0B1E3F] font-bold uppercase tracking-wider transition">Search Another</button>
-                            </div>
-
-                            <div class="space-y-4 text-xs">
-                                <div class="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                                    <div>
-                                        <span class="text-[9px] text-slate-400 uppercase tracking-wider block">Reference Number</span>
-                                        <span class="font-bold text-[#0B1E3F]">{{ retrievedBooking.reference }}</span>
-                                    </div>
-                                    <div>
-                                        <span class="text-[9px] text-slate-400 uppercase tracking-wider block">Status</span>
-                                        <span class="font-bold text-emerald-700">Confirmed / Paid</span>
-                                    </div>
-                                    <div class="col-span-2 border-t border-slate-200/50 pt-2.5">
-                                        <span class="text-[9px] text-slate-400 uppercase tracking-wider block">Guest Name</span>
-                                        <span class="font-semibold text-slate-800">{{ retrievedBooking.name }}</span>
-                                    </div>
-                                </div>
-
-                                <div class="border-t border-slate-100 pt-4 space-y-3">
-                                    <div class="flex justify-between items-center text-slate-500">
-                                        <span>Villa Category</span>
-                                        <span class="font-bold text-[#0B1E3F]">{{ retrievedBooking.room }}</span>
-                                    </div>
-                                    <div class="flex justify-between items-center text-slate-500">
-                                        <span>Nights Reserved</span>
-                                        <span class="font-bold text-[#0B1E3F]">{{ retrievedBooking.nights }} Nights</span>
-                                    </div>
-                                    <div class="flex justify-between items-center text-slate-500">
-                                        <span>Check-In / Out</span>
-                                        <span class="font-semibold text-slate-700">{{ retrievedBooking.dates }}</span>
-                                    </div>
-                                </div>
-
-                                <div class="border-t border-slate-100 pt-4 flex justify-between items-center">
-                                    <span class="font-bold text-[#0B1E3F]">Total Price (PHP)</span>
-                                    <span class="text-base font-serif font-bold text-[#0B1E3F]">PHP {{ retrievedBooking.amount }}</span>
-                                </div>
-                            </div>
-                        </div>
-
                     </div>
                 </div>
             </div>
 
-            <!-- Footer -->
-            <footer class="bg-white border-t border-slate-150 px-6 md:px-12 lg:px-20 py-8 w-full shrink-0">
-                <div class="max-w-7xl w-full mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-                    <div class="space-y-1.5 text-center md:text-left">
-                        <h4 class="font-serif text-[#0B1E3F] text-sm font-bold">ARUGA Staycation</h4>
-                        <p class="text-[10px] text-slate-400 font-light max-w-sm leading-normal">
+            <!-- Main Content Area: Detailed Confirmation Page (Matching Mockup 2 1-to-1) -->
+            <div v-else class="w-full max-w-7xl mx-auto px-6 md:px-12 lg:px-20 py-12 flex-grow">
+                <!-- Success Header Banner -->
+                <div class="flex flex-col items-start gap-4 mb-8">
+                    <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#E2FBE9] text-[#1E7D3F] text-[10px] font-bold uppercase tracking-wider">
+                        <!-- Checkmark SVG -->
+                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                        Successful Reservation
+                    </span>
+                    <div class="flex flex-col md:flex-row md:items-center justify-between w-full gap-4">
+                        <div>
+                            <h1 class="font-serif text-3xl md:text-4.5xl text-[#0B1E3F] font-bold leading-none tracking-tight">
+                                Your island escape is confirmed.
+                            </h1>
+                            <p class="text-slate-500 text-xs md:text-sm font-light mt-2 max-w-2xl leading-relaxed">
+                                We've reserved your suite at Aruga. Please find your booking details and itinerary below for your upcoming stay at Samal Island.
+                            </p>
+                        </div>
+                        <!-- Search Another reservation CTA -->
+                        <button 
+                            @click="retrievedBooking = null" 
+                            class="shrink-0 bg-white border border-slate-200 hover:border-slate-400 text-[#0B1E3F] px-5 py-2.5 rounded-xl text-xs font-bold transition shadow-sm hover:shadow active:scale-98 cursor-pointer flex items-center gap-2"
+                        >
+                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                            <span>Search Another</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2-Column Grid Layout -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                    
+                    <!-- Left Side Details (Spans 2 columns) -->
+                    <div class="lg:col-span-2 space-y-6">
+                        
+                        <!-- Details Card -->
+                        <div class="bg-white border border-slate-100 rounded-[24px] p-6 md:p-8 shadow-sm space-y-6">
+                            <!-- Reference Header -->
+                            <div class="flex items-center justify-between">
+                                <div class="space-y-1">
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Booking Reference</p>
+                                    <h3 class="font-serif text-[#0B1E3F] text-xl md:text-2xl font-bold">{{ retrievedBooking.reference }}</h3>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <!-- Print Button -->
+                                    <button onclick="window.print()" class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition cursor-pointer">
+                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h6z" />
+                                        </svg>
+                                        <span>Print</span>
+                                    </button>
+                                    <!-- Share Button -->
+                                    <button @click="shareReservation(retrievedBooking.reference)" class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition cursor-pointer">
+                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.684 10.742l4.63-2.22m0 6.916l-4.63-2.22m7.893-2.68h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        <span>Share</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- 2x2 Grid details -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 pt-6 border-t border-slate-100">
+                                <!-- Check In -->
+                                <div class="flex gap-4">
+                                    <div class="h-10 w-10 shrink-0 rounded-xl bg-[#FAF9F6] border border-slate-100 flex items-center justify-center text-[#A27B5C]">
+                                        <!-- Calendar Icon -->
+                                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                    </div>
+                                    <div class="space-y-1">
+                                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Check-in</p>
+                                        <p class="text-xs font-bold text-slate-800 leading-none">{{ retrievedBooking.checkIn }}</p>
+                                        <p class="text-[10px] text-slate-500 font-light">{{ retrievedBooking.checkInTime }}</p>
+                                    </div>
+                                </div>
+
+                                <!-- Guests -->
+                                <div class="flex gap-4">
+                                    <div class="h-10 w-10 shrink-0 rounded-xl bg-[#FAF9F6] border border-slate-100 flex items-center justify-center text-[#A27B5C]">
+                                        <!-- Person Icon -->
+                                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                        </svg>
+                                    </div>
+                                    <div class="space-y-1">
+                                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Guests</p>
+                                        <p class="text-xs font-bold text-slate-800 leading-none">{{ retrievedBooking.guests }}</p>
+                                    </div>
+                                </div>
+
+                                <!-- Check Out -->
+                                <div class="flex gap-4">
+                                    <div class="h-10 w-10 shrink-0 rounded-xl bg-[#FAF9F6] border border-slate-100 flex items-center justify-center text-[#A27B5C]">
+                                        <!-- Calendar Icon -->
+                                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                    </div>
+                                    <div class="space-y-1">
+                                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Check-out</p>
+                                        <p class="text-xs font-bold text-slate-800 leading-none">{{ retrievedBooking.checkOut }}</p>
+                                        <p class="text-[10px] text-slate-500 font-light">{{ retrievedBooking.checkOutTime }}</p>
+                                    </div>
+                                </div>
+
+                                <!-- Room Type -->
+                                <div class="flex gap-4">
+                                    <div class="h-10 w-10 shrink-0 rounded-xl bg-[#FAF9F6] border border-slate-100 flex items-center justify-center text-[#A27B5C]">
+                                        <!-- Bed Icon -->
+                                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                                        </svg>
+                                    </div>
+                                    <div class="space-y-1">
+                                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Room Type</p>
+                                        <p class="text-xs font-bold text-slate-800 leading-none">{{ retrievedBooking.roomType }}</p>
+                                        <p class="text-[10px] text-slate-500 font-light">{{ retrievedBooking.roomDetails }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Special Requests Card -->
+                        <div class="bg-white border border-slate-100 rounded-[24px] p-6 md:p-8 shadow-sm space-y-4">
+                            <h4 class="text-xs font-bold text-slate-850 uppercase tracking-wider flex items-center gap-2">
+                                <!-- Message Icon -->
+                                <svg class="h-4.5 w-4.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                </svg>
+                                <span>Special Requests</span>
+                            </h4>
+                            <div class="bg-slate-50 border border-slate-200/60 p-5 rounded-2xl text-slate-600 text-xs italic font-light leading-relaxed">
+                                "{{ retrievedBooking.specialRequests }}"
+                            </div>
+                        </div>
+
+                        <!-- Included Amenities Section -->
+                        <div class="space-y-3 pt-2">
+                            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Included Amenities</p>
+                            <div class="flex flex-wrap gap-2.5">
+                                <span v-for="amenity in retrievedBooking.amenities" :key="amenity" class="bg-slate-100 text-slate-700 px-4 py-2.5 rounded-xl text-[11px] font-bold flex items-center gap-2 border border-slate-200/30">
+                                    <!-- Dynamic Amenity Icon -->
+                                    <svg v-if="amenity.includes('WiFi')" class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071a10.5 10.5 0 0114.14 0M1.808 8.899a16.5 16.5 0 0120.38 0" />
+                                    </svg>
+                                    <svg v-else-if="amenity.includes('Pool')" class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                                    </svg>
+                                    <svg v-else-if="amenity.includes('Breakfast')" class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m12.728 12.728l.707-.707M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <svg v-else-if="amenity.includes('Drinks')" class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                    </svg>
+                                    <span>{{ amenity }}</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Side Billing & Instructions -->
+                    <div class="space-y-6">
+                        <!-- Billing Summary Card -->
+                        <div class="bg-white border border-slate-100 rounded-[24px] overflow-hidden shadow-sm">
+                            <!-- Room Image header -->
+                            <div class="relative h-48 w-full bg-slate-900 overflow-hidden">
+                                <img 
+                                    :src="retrievedBooking.roomImage" 
+                                    alt="Reserved Suite" 
+                                    class="h-full w-full object-cover opacity-90"
+                                />
+                                <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/30 to-transparent"></div>
+                                <div class="absolute bottom-5 left-6 right-6">
+                                    <p class="text-[9px] font-bold text-white/75 uppercase tracking-wider leading-none">Reserved Suite</p>
+                                    <p class="text-base font-bold text-white mt-1.5 leading-tight">{{ retrievedBooking.roomType }}</p>
+                                </div>
+                            </div>
+
+                            <!-- Billing Body -->
+                            <div class="p-6 space-y-5">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs font-bold text-slate-800">Billing</span>
+                                    <span :class="[
+                                        'text-[9px] font-bold px-2 py-0.5 rounded tracking-wider uppercase',
+                                        retrievedBooking.status === 'PAID' ? 'bg-[#0B1E3F] text-white' : 'bg-amber-500 text-white'
+                                    ]">{{ retrievedBooking.status }}</span>
+                                </div>
+
+                                <div class="space-y-3.5 text-xs text-slate-500">
+                                    <div class="flex justify-between items-center">
+                                        <span>{{ retrievedBooking.nights }} Nights × {{ retrievedBooking.currencySymbol }}{{ formatPrice(retrievedBooking.nightlyRate) }}</span>
+                                        <span class="font-semibold text-slate-800">{{ retrievedBooking.currencySymbol }}{{ formatPrice(retrievedBooking.subtotal) }}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span>Service Fee (10%)</span>
+                                        <span class="font-semibold text-slate-800">{{ retrievedBooking.currencySymbol }}{{ formatPrice(retrievedBooking.serviceFee) }}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span>Local Taxes</span>
+                                        <span class="font-semibold text-slate-800">{{ retrievedBooking.currencySymbol }}{{ formatPrice(retrievedBooking.localTaxes) }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="border-t border-slate-100 pt-4 flex justify-between items-center">
+                                    <span class="text-xs font-bold text-slate-900">Total Price</span>
+                                    <span class="text-lg font-serif font-bold text-[#0B1E3F]">{{ retrievedBooking.currencySymbol }}{{ formatPrice(retrievedBooking.totalPrice) }}</span>
+                                </div>
+
+                                <!-- Payment/Transaction info -->
+                                <div class="border-t border-slate-100 pt-4 space-y-2.5 text-[11px] text-slate-500 font-light">
+                                    <div class="flex items-center gap-2">
+                                        <svg class="h-4 w-4 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                        </svg>
+                                        <span>{{ retrievedBooking.paymentCard }}</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <svg class="h-4 w-4 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.952 11.952 0 01-9.618 3.07M3 10c0 4.296 3.125 7.994 7 9.074M3 10c0-1.12.083-2.203.242-3.262M12 19c3.875-1.08 7-4.778 7-9.074M12 19c-1.12 0-2.203-.083-3.262-.242M19 10c0-1.12-.083-2.203-.242-3.262" />
+                                        </svg>
+                                        <span>Transaction ID: {{ retrievedBooking.transactionId }}</span>
+                                    </div>
+                                </div>
+
+                                <button @click="downloadInvoice(retrievedBooking.reference)" class="w-full bg-[#0B1E3F] hover:bg-[#152e59] text-white py-3.5 rounded-xl text-[10px] font-bold tracking-wider uppercase shadow-sm transition active:scale-98 cursor-pointer flex items-center justify-center gap-2">
+                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                    </svg>
+                                    <span>Download Invoice (PDF)</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Guest Information Alert Box -->
+                        <div class="bg-[#FDF6E2] border border-[#F5E6C4] p-5 rounded-2xl flex gap-3 text-[#78350F]">
+                            <svg class="h-5 w-5 text-amber-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364.364l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                            </svg>
+                            <div class="space-y-1">
+                                <p class="text-xs font-bold uppercase tracking-wider leading-none">Guest Information</p>
+                                <p class="text-xs font-light leading-normal text-amber-800">Don't forget to bring your valid ID upon checking in</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer (Aligned with mockup 4-Column layout) -->
+            <footer class="bg-[#F2F1F3] border-t border-slate-200/60 px-6 md:px-12 lg:px-20 py-12 w-full shrink-0 mt-auto">
+                <div class="max-w-7xl w-full mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <!-- Column 1: Info -->
+                    <div class="space-y-3">
+                        <h4 class="font-serif text-[#0B1E3F] text-sm font-bold">Aruga Staycation</h4>
+                        <p class="text-[11px] text-slate-500 font-light leading-relaxed max-w-xs">
                             Refining the Samal Island experience through tropical modernism and elite hospitality.
                         </p>
                     </div>
 
-                    <div class="flex flex-wrap items-center justify-center gap-8 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                        <div class="flex items-center gap-4">
-                            <span class="text-slate-400 text-[9px] block">Legal:</span>
-                            <a href="#" class="hover:text-[#0B1E3F] transition">Privacy Policy</a>
-                            <a href="#" class="hover:text-[#0B1E3F] transition">Terms of Service</a>
-                        </div>
-                        <div class="flex items-center gap-4">
-                            <span class="text-slate-400 text-[9px] block">Explore:</span>
-                            <a href="#" class="hover:text-[#0B1E3F] transition">Sustainability</a>
-                            <a href="#" class="hover:text-[#0B1E3F] transition">Careers</a>
-                        </div>
+                    <!-- Column 2: Legal -->
+                    <div class="space-y-3">
+                        <h5 class="text-[10px] font-bold text-slate-700 uppercase tracking-wider">Legal</h5>
+                        <ul class="space-y-2 text-[11px] text-slate-500">
+                            <li><a href="#" class="hover:text-[#0B1E3F] transition">Privacy Policy</a></li>
+                            <li><a href="#" class="hover:text-[#0B1E3F] transition">Terms of Service</a></li>
+                        </ul>
                     </div>
 
-                    <span class="text-[9px] text-slate-400 text-center md:text-right">
-                        © 2024 ARUGA Staycation. All rights reserved.
-                    </span>
+                    <!-- Column 3: Explore -->
+                    <div class="space-y-3">
+                        <h5 class="text-[10px] font-bold text-slate-700 uppercase tracking-wider">Explore</h5>
+                        <ul class="space-y-2 text-[11px] text-slate-500">
+                            <li><a href="#" class="hover:text-[#0B1E3F] transition">Sustainability</a></li>
+                            <li><a href="#" class="hover:text-[#0B1E3F] transition">Careers</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Column 4: Connect -->
+                    <div class="space-y-4">
+                        <h5 class="text-[10px] font-bold text-slate-700 uppercase tracking-wider">Connect</h5>
+                        <div class="flex items-center gap-3.5 text-slate-600">
+                            <!-- Instagram SVG -->
+                            <a href="#" class="hover:text-[#0B1E3F] transition">
+                                <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                            </a>
+                            <!-- Facebook SVG -->
+                            <a href="#" class="hover:text-[#0B1E3F] transition">
+                                <svg class="h-4.5 w-4.5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.8c4.56-.93 8-4.96 8-9.8z"/>
+                                </svg>
+                            </a>
+                            <!-- Web SVG or envelope/at -->
+                            <a href="#" class="hover:text-[#0B1E3F] transition">
+                                <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                                </svg>
+                            </a>
+                        </div>
+                        <p class="text-[10px] text-slate-400 font-light leading-none">
+                            © 2024 Aruga Staycation. All rights reserved.
+                        </p>
+                    </div>
                 </div>
             </footer>
 
@@ -4248,29 +4467,68 @@ const currentBookingStep = ref(1)
 const bookingRefInput = ref('')
 const retrievedBooking = ref(null)
 
+const bookingsList = ref([
+    {
+        reference: 'AS-88209',
+        currencySymbol: '$',
+        name: 'Julian Rivera',
+        email: 'julian.rivera@example.com',
+        phone: '+63 917 123 4567',
+        checkIn: 'Nov 14, 2024',
+        checkInTime: 'From 2:00 PM',
+        checkOut: 'Nov 18, 2024',
+        checkOutTime: 'Until 12:00 PM',
+        guests: '2 Adults, 1 Child',
+        roomType: 'Ocean Breeze Suite',
+        roomDetails: 'Building B, Floor 4',
+        roomImage: '/images/staycation_hero.png',
+        nights: 4,
+        nightlyRate: 450.00,
+        subtotal: 1800.00,
+        serviceFee: 180.00,
+        localTaxes: 216.00,
+        totalPrice: 2196.00,
+        paymentCard: 'Card ending in **** 4429',
+        transactionId: 'TR-991204',
+        specialRequests: 'We are celebrating our 5th wedding anniversary during this stay. If possible, we would love a room with a direct sunset view and perhaps some swan towel art on arrival. Also, please ensure the airport shuttle is aware of our late arrival at 11:30 PM.',
+        amenities: ['High-Speed WiFi', 'Private Infinity Pool', 'Daily Breakfast', 'Welcome Drinks'],
+        status: 'PAID'
+    }
+])
+
 const handleRetrieveBooking = () => {
     const refUpper = bookingRefInput.value.trim().toUpperCase()
-    const mockBookings = [
-        { reference: 'ARUGA-123456', name: 'Julian Rivera', room: 'Beachfront Villa', nights: 3, dates: 'Dec 06, 2026 - Dec 09, 2026', amount: '38,320' },
-        { reference: 'ARUGA-JS8899', name: 'Julianne Smith', room: 'Ocean Villa', nights: 3, dates: 'Oct 12, 2026 - Oct 15, 2026', amount: '24,500' },
-        { reference: 'ARUGA-MR4422', name: 'Marcus Rivera', room: 'Garden Suite', nights: 4, dates: 'Oct 14, 2026 - Oct 18, 2026', amount: '18,200' }
-    ]
-    const found = mockBookings.find(b => b.reference === refUpper)
+    const found = bookingsList.value.find(b => b.reference.toUpperCase() === refUpper)
     if (found) {
         retrievedBooking.value = found
     } else {
-        if (refUpper.length < 4) {
-            alert('Please enter a valid reference number (at least 4 characters).')
-            return
-        }
-        retrievedBooking.value = {
-            reference: refUpper,
-            name: bookingForm.name || 'Valued Guest',
-            room: selectedRoomToBook.value ? selectedRoomToBook.value.name : 'Beachfront Villa',
-            nights: bookingNights.value || 3,
-            dates: `${formattedCheckIn.value || 'Dec 06, 2026'} - ${formattedCheckOut.value || 'Dec 09, 2026'}`,
-            amount: bookingCalculations.value ? formatPrice(bookingCalculations.value.totalPrice) : '38,320'
-        }
+        alert('Booking reference not found. (Tip: Try entering AS-88209)')
+    }
+}
+
+const shareReservation = (ref) => {
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(window.location.origin + '/bookings/' + ref)
+            .then(() => alert(`Booking details link copied to clipboard for reference: ${ref}`))
+            .catch(() => alert(`Booking reference: ${ref}`))
+    } else {
+        alert(`Booking reference: ${ref}`)
+    }
+}
+
+const downloadInvoice = (ref) => {
+    alert(`Generating invoice for reservation ${ref}...\nYour download will begin shortly in PDF format.`)
+}
+
+const formatDateString = (dateStr) => {
+    try {
+        if (!dateStr) return ''
+        const d = new Date(dateStr)
+        if (isNaN(d.getTime())) return dateStr
+        const options = { month: 'short', day: 'numeric', year: 'numeric' }
+        return d.toLocaleDateString('en-US', options)
+    } catch (e) {
+        return dateStr
     }
 }
 
@@ -4409,8 +4667,83 @@ const startBooking = (roomName, roomImage) => {
 }
 
 const submitBookingSimulated = () => {
-    alert(`Thank you, ${bookingForm.name}!\nYour booking for the ${selectedRoomToBook.value.name} is received and awaiting verification.`)
-    setView('guest')
+    const randomNum = Math.floor(10000 + Math.random() * 90000)
+    const newRef = `AS-${randomNum}`
+    
+    const nights = bookingCalculations.value ? bookingCalculations.value.nights : 3
+    const rate = bookingCalculations.value ? bookingCalculations.value.rate : 12000
+    const subtotal = bookingCalculations.value ? bookingCalculations.value.baseTotal : (rate * nights)
+    const serviceCharge = subtotal * 0.10
+    const localTaxes = subtotal * 0.04
+    const total = subtotal + serviceCharge + localTaxes
+    
+    const checkInFormatted = formatDateString(checkInDate.value)
+    const checkOutFormatted = formatDateString(checkOutDate.value)
+    
+    let pmText = 'Credit Card'
+    let cardEnd = 'Card ending in **** 4429'
+    if (paymentMethod.value === 'credit_card') {
+        const num = cardForm.number.trim()
+        const last4 = num ? num.slice(-4) : '4429'
+        cardEnd = `Card ending in **** ${last4}`
+    } else if (paymentMethod.value === 'gcash') {
+        pmText = 'GCash'
+        cardEnd = 'GCash Mobile Wallet (Paid)'
+    } else {
+        pmText = 'Cash'
+        cardEnd = 'Cash Down Payment (Pending Verification)'
+    }
+
+    const newBooking = {
+        reference: newRef,
+        currencySymbol: 'PHP ',
+        name: bookingForm.name || 'Valued Guest',
+        email: bookingForm.email || 'guest@example.com',
+        phone: bookingForm.phone || '+63 917 123 4567',
+        checkIn: checkInFormatted,
+        checkInTime: checkInWindow.value || 'From 2:00 PM',
+        checkOut: checkOutFormatted,
+        checkOutTime: 'Until 12:00 PM',
+        guests: `${bookingForm.guests} Guests`,
+        roomType: selectedRoomToBook.value ? selectedRoomToBook.value.name : 'Beachfront Villa',
+        roomDetails: selectedRoomToBook.value && selectedRoomToBook.value.name === 'Garden Suite' ? 'Building B, Floor 4' : 'Villa Area, Beachfront',
+        roomImage: selectedRoomToBook.value ? selectedRoomToBook.value.image : '/images/staycation_hero.png',
+        nights: nights,
+        nightlyRate: rate,
+        subtotal: subtotal,
+        serviceFee: serviceCharge,
+        localTaxes: localTaxes,
+        totalPrice: total,
+        paymentCard: cardEnd,
+        transactionId: `TR-${Math.floor(100000 + Math.random() * 900000)}`,
+        specialRequests: bookingForm.specialRequests || 'None',
+        amenities: ['High-Speed WiFi', 'Private Infinity Pool', 'Daily Breakfast', 'Welcome Drinks'],
+        status: paymentMethod.value === 'cash' ? 'PENDING' : 'PAID'
+    }
+    
+    bookingsList.value.push(newBooking)
+    
+    alert(`Thank you, ${newBooking.name}!\nYour reservation has been created with Reference: ${newRef}.\nDirecting you to your confirmation details.`)
+    
+    // Set active view to retrieve
+    bookingRefInput.value = newRef
+    retrievedBooking.value = newBooking
+    currentView.value = 'my_bookings'
+    
+    // Reset form fields
+    bookingForm.name = ''
+    bookingForm.phone = ''
+    bookingForm.email = ''
+    bookingForm.guests = '2'
+    bookingForm.specialRequests = ''
+    checkInDate.value = '2026-12-06'
+    checkOutDate.value = '2026-12-09'
+    checkInWindow.value = '02:00 PM - 04:00 PM'
+    paymentMethod.value = 'credit_card'
+    cardForm.number = ''
+    cardForm.expiry = ''
+    cardForm.cvv = ''
+    currentBookingStep.value = 1
 }
 
 const activeTab = ref('dashboard_overview')
