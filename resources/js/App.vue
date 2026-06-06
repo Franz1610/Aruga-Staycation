@@ -4473,7 +4473,7 @@ const bookingsList = ref([
         guests: '2 Adults, 1 Child',
         roomType: 'Beachfront Villa',
         roomDetails: 'Villa Area, Beachfront',
-        roomImage: '/images/staycation_hero.png',
+        roomImage: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=800&q=80',
         nights: 4,
         nightlyRate: 12000.00,
         subtotal: 48000.00,
@@ -4483,7 +4483,7 @@ const bookingsList = ref([
         paymentCard: 'Card ending in **** 4429',
         transactionId: 'TR-991204',
         specialRequests: 'We are celebrating our 5th wedding anniversary during this stay. If possible, we would love a room with a direct sunset view and perhaps some swan towel art on arrival. Also, please ensure the airport shuttle is aware of our late arrival at 11:30 PM.',
-        amenities: ['High-Speed WiFi', 'Private Infinity Pool', 'Daily Breakfast', 'Welcome Drinks'],
+        amenities: ['High-Speed WiFi', 'Private Infinity Pool', 'Daily Breakfast'],
         status: 'PAID'
     }
 ])
