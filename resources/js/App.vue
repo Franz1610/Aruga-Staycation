@@ -195,14 +195,6 @@
                             Each residence is meticulously designed to dissolve the boundaries between indoor comfort and the breathtaking natural surroundings of the island.
                         </p>
                     </div>
-                    <div class="shrink-0">
-                        <a href="#" class="text-xs font-bold text-[#0B1E3F] hover:text-[#152e59] uppercase tracking-wider flex items-center gap-1.5 border-b border-[#0B1E3F]/30 pb-1 transition cursor-pointer">
-                            <span>View All Accommodations</span>
-                            <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                            </svg>
-                        </a>
-                    </div>
                 </div>
 
                 <!-- Accommodations Cards Grid -->
@@ -4479,15 +4471,15 @@ const bookingsList = ref([
         checkOut: 'Nov 18, 2024',
         checkOutTime: 'Until 12:00 PM',
         guests: '2 Adults, 1 Child',
-        roomType: 'Ocean Breeze Suite',
-        roomDetails: 'Building B, Floor 4',
+        roomType: 'Beachfront Villa',
+        roomDetails: 'Villa Area, Beachfront',
         roomImage: '/images/staycation_hero.png',
         nights: 4,
-        nightlyRate: 25000.00,
-        subtotal: 100000.00,
-        serviceFee: 10000.00,
-        localTaxes: 12000.00,
-        totalPrice: 122000.00,
+        nightlyRate: 12000.00,
+        subtotal: 48000.00,
+        serviceFee: 4800.00,
+        localTaxes: 5760.00,
+        totalPrice: 58560.00,
         paymentCard: 'Card ending in **** 4429',
         transactionId: 'TR-991204',
         specialRequests: 'We are celebrating our 5th wedding anniversary during this stay. If possible, we would love a room with a direct sunset view and perhaps some swan towel art on arrival. Also, please ensure the airport shuttle is aware of our late arrival at 11:30 PM.',
