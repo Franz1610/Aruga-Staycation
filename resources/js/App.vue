@@ -135,9 +135,9 @@
 
                 <!-- Center: Nav Links -->
                 <nav class="hidden md:flex items-center gap-8">
-                    <a href="#" class="text-xs font-bold text-[#0B1E3F] border-b border-[#0B1E3F] pb-1.5 tracking-wider uppercase">Explore Rooms</a>
-                    <a href="#" class="text-xs font-semibold text-slate-500 hover:text-[#0B1E3F] pb-1.5 tracking-wider transition uppercase">My Bookings</a>
-                    <a href="#" class="text-xs font-semibold text-slate-500 hover:text-[#0B1E3F] pb-1.5 tracking-wider transition uppercase">Contact</a>
+                    <button @click="scrollToSection('living-spaces')" class="text-xs font-bold text-[#0B1E3F] border-b border-[#0B1E3F] pb-1.5 tracking-wider uppercase cursor-pointer">Explore Rooms</button>
+                    <button @click="setView('my_bookings')" class="text-xs font-semibold text-slate-500 hover:text-[#0B1E3F] pb-1.5 tracking-wider transition uppercase cursor-pointer">My Bookings</button>
+                    <button @click="scrollToSection('living-spaces')" class="text-xs font-semibold text-slate-500 hover:text-[#0B1E3F] pb-1.5 tracking-wider transition uppercase cursor-pointer">Contact</button>
                 </nav>
 
                 <!-- Right: Login Button -->
@@ -438,9 +438,9 @@
 
                 <!-- Center: Nav Links -->
                 <nav class="hidden md:flex items-center gap-8">
-                    <a href="#" class="text-xs font-bold text-[#0B1E3F] border-b border-[#0B1E3F] pb-1.5 tracking-wider uppercase">Explore Rooms</a>
-                    <a href="#" class="text-xs font-semibold text-slate-500 hover:text-[#0B1E3F] pb-1.5 tracking-wider transition uppercase">My Bookings</a>
-                    <a href="#" class="text-xs font-semibold text-slate-500 hover:text-[#0B1E3F] pb-1.5 tracking-wider transition uppercase">Contact</a>
+                    <button @click="setView('guest'); scrollToSection('living-spaces')" class="text-xs font-semibold text-slate-500 hover:text-[#0B1E3F] pb-1.5 tracking-wider transition uppercase cursor-pointer">Explore Rooms</button>
+                    <button @click="setView('my_bookings')" class="text-xs font-semibold text-slate-500 hover:text-[#0B1E3F] pb-1.5 tracking-wider transition uppercase cursor-pointer">My Bookings</button>
+                    <button @click="setView('guest'); scrollToSection('living-spaces')" class="text-xs font-semibold text-slate-500 hover:text-[#0B1E3F] pb-1.5 tracking-wider transition uppercase cursor-pointer">Contact</button>
                 </nav>
 
                 <!-- Right: Login & Close Button -->
@@ -953,6 +953,209 @@
 
                     <span class="text-[9px] text-slate-400 text-center md:text-right">
                         © 2026 ARUGA Staycation. All rights reserved.
+                    </span>
+                </div>
+            </footer>
+
+        </div>
+
+        <!-- ========================================================================= -->
+        <!-- VIEW: RETRIEVE BOOKINGS (Mockup 1-to-1 matching user requirements) -->
+        <!-- ========================================================================= -->
+        <div v-else-if="currentView === 'my_bookings'" class="min-h-screen w-full bg-[#FAF9F6] font-sans antialiased text-[#0B1E3F] animate-fade-in flex flex-col justify-between">
+            
+            <!-- Navbar Header -->
+            <header class="sticky top-0 z-40 w-full bg-white/85 backdrop-blur-md border-b border-slate-100 px-6 md:px-12 lg:px-20 py-4 flex items-center justify-between transition-all duration-300">
+                <!-- Left: Logo & Brand -->
+                <div class="flex items-center gap-3 cursor-pointer" @click="setView('guest')">
+                    <div class="h-9 w-9 rounded-lg overflow-hidden bg-[#1B321F] flex items-center justify-center border border-amber-500/20 shadow-sm">
+                        <img 
+                            v-if="!logoError" 
+                            :src="'/images/Aruga_logo.jpg'" 
+                            @error="logoError = true" 
+                            alt="Aruga Logo" 
+                            class="h-full w-full object-cover"
+                        />
+                        <span v-else class="text-amber-400 text-xs font-serif font-bold">A</span>
+                    </div>
+                    <div>
+                        <p class="font-serif text-[#0B1E3F] font-bold text-sm tracking-wide leading-none">ARUGA Staycation</p>
+                        <span class="text-[9px] text-[#A27B5C] font-semibold uppercase tracking-wider">Private Sanctuary</span>
+                    </div>
+                </div>
+
+                <!-- Center: Nav Links -->
+                <nav class="hidden md:flex items-center gap-8">
+                    <button @click="setView('guest'); scrollToSection('living-spaces')" class="text-xs font-semibold text-slate-500 hover:text-[#0B1E3F] pb-1.5 tracking-wider transition uppercase cursor-pointer">Explore Rooms</button>
+                    <button @click="setView('my_bookings')" class="text-xs font-bold text-[#0B1E3F] border-b border-[#0B1E3F] pb-1.5 tracking-wider uppercase cursor-pointer">My Bookings</button>
+                    <button @click="setView('guest'); scrollToSection('living-spaces')" class="text-xs font-semibold text-slate-500 hover:text-[#0B1E3F] pb-1.5 tracking-wider transition uppercase cursor-pointer">Contact</button>
+                </nav>
+
+                <!-- Right: Book Now CTA Button -->
+                <div>
+                    <button 
+                        @click="setView('guest'); scrollToSection('living-spaces')" 
+                        class="bg-[#0B1E3F] hover:bg-[#152e59] text-white px-6 py-2.5 rounded-full text-xs font-bold transition shadow-md hover:shadow-lg active:scale-98 cursor-pointer"
+                    >
+                        Book Now
+                    </button>
+                </div>
+            </header>
+
+            <!-- Main Content Area -->
+            <div class="w-full max-w-7xl mx-auto px-6 md:px-12 lg:px-20 py-16 flex-grow flex items-center justify-center">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center w-full max-w-5xl">
+                    <!-- Left Side: Circular Logo on Wood Background (Matches mockup image) -->
+                    <div class="flex justify-center">
+                        <div class="h-80 w-80 md:h-96 md:w-96 rounded-[32px] overflow-hidden shadow-2xl border border-slate-100 flex items-center justify-center bg-[#1B321F] relative group hover:scale-[1.01] transition-all duration-300">
+                            <img 
+                                :src="'/images/Aruga_logo.jpg'" 
+                                alt="Aruga Staycation Logo" 
+                                class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-103"
+                            />
+                            <!-- Inner shadow ring -->
+                            <div class="absolute inset-0 border border-white/10 rounded-[32px] pointer-events-none"></div>
+                        </div>
+                    </div>
+
+                    <!-- Right Side: Retrieve Form -->
+                    <div class="bg-white border border-slate-100 rounded-[32px] p-8 md:p-12 shadow-xl shadow-slate-950/5 space-y-6">
+                        
+                        <div v-if="!retrievedBooking" class="space-y-6 animate-fade-in">
+                            <div class="space-y-2">
+                                <h2 class="font-serif text-[#0B1E3F] text-3xl font-bold tracking-tight">Retrieve Your Booking</h2>
+                                <p class="text-slate-500 text-xs font-light leading-relaxed">
+                                    Enter the reference number provided in your confirmation email to see your booking status and details.
+                                </p>
+                            </div>
+
+                            <form @submit.prevent="handleRetrieveBooking" class="space-y-5">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Booking Reference Number</label>
+                                    <div class="relative">
+                                        <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400">
+                                            <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
+                                            </svg>
+                                        </span>
+                                        <input 
+                                            type="text" 
+                                            v-model="bookingRefInput"
+                                            placeholder="e.g. ARUGA-123456"
+                                            class="w-full pl-11 pr-4 py-3.5 rounded-2xl border border-slate-200 focus:outline-none focus:border-[#0B1E3F] focus:ring-1 focus:ring-[#0B1E3F] bg-white text-xs font-semibold uppercase tracking-wider transition"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
+                                <button 
+                                    type="submit"
+                                    class="w-full bg-[#0B1E3F] hover:bg-[#152e59] text-white py-4 rounded-xl text-xs font-bold tracking-wider uppercase shadow-md flex items-center justify-center gap-2 transition cursor-pointer"
+                                >
+                                    <span>View Reservation</span>
+                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                    </svg>
+                                </button>
+                            </form>
+
+                            <!-- Assistance Links -->
+                            <div class="pt-6 border-t border-slate-100 text-center space-y-4">
+                                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Need assistance?</p>
+                                <div class="flex items-center justify-center gap-8 text-[11px] font-bold text-slate-655">
+                                    <a href="#" class="hover:text-[#0B1E3F] transition flex items-center gap-2">
+                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                        </svg>
+                                        <span>Contact Support</span>
+                                    </a>
+                                    <a href="#" class="hover:text-[#0B1E3F] transition flex items-center gap-2">
+                                        <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        <span>FAQs</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Retrieved Details State -->
+                        <div v-if="retrievedBooking" class="space-y-6 animate-fade-in">
+                            <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                                <div>
+                                    <span class="text-[8px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded uppercase tracking-wider">Booking Found</span>
+                                    <h3 class="font-serif text-[#0B1E3F] text-xl font-bold mt-1">Reservation Details</h3>
+                                </div>
+                                <button @click="retrievedBooking = null" class="text-xs text-slate-450 hover:text-[#0B1E3F] font-bold uppercase tracking-wider transition">Search Another</button>
+                            </div>
+
+                            <div class="space-y-4 text-xs">
+                                <div class="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                                    <div>
+                                        <span class="text-[9px] text-slate-400 uppercase tracking-wider block">Reference Number</span>
+                                        <span class="font-bold text-[#0B1E3F]">{{ retrievedBooking.reference }}</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-[9px] text-slate-400 uppercase tracking-wider block">Status</span>
+                                        <span class="font-bold text-emerald-700">Confirmed / Paid</span>
+                                    </div>
+                                    <div class="col-span-2 border-t border-slate-200/50 pt-2.5">
+                                        <span class="text-[9px] text-slate-400 uppercase tracking-wider block">Guest Name</span>
+                                        <span class="font-semibold text-slate-800">{{ retrievedBooking.name }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="border-t border-slate-100 pt-4 space-y-3">
+                                    <div class="flex justify-between items-center text-slate-500">
+                                        <span>Villa Category</span>
+                                        <span class="font-bold text-[#0B1E3F]">{{ retrievedBooking.room }}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-slate-500">
+                                        <span>Nights Reserved</span>
+                                        <span class="font-bold text-[#0B1E3F]">{{ retrievedBooking.nights }} Nights</span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-slate-500">
+                                        <span>Check-In / Out</span>
+                                        <span class="font-semibold text-slate-700">{{ retrievedBooking.dates }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="border-t border-slate-100 pt-4 flex justify-between items-center">
+                                    <span class="font-bold text-[#0B1E3F]">Total Price (PHP)</span>
+                                    <span class="text-base font-serif font-bold text-[#0B1E3F]">PHP {{ retrievedBooking.amount }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <footer class="bg-white border-t border-slate-150 px-6 md:px-12 lg:px-20 py-8 w-full shrink-0">
+                <div class="max-w-7xl w-full mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+                    <div class="space-y-1.5 text-center md:text-left">
+                        <h4 class="font-serif text-[#0B1E3F] text-sm font-bold">ARUGA Staycation</h4>
+                        <p class="text-[10px] text-slate-400 font-light max-w-sm leading-normal">
+                            Refining the Samal Island experience through tropical modernism and elite hospitality.
+                        </p>
+                    </div>
+
+                    <div class="flex flex-wrap items-center justify-center gap-8 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                        <div class="flex items-center gap-4">
+                            <span class="text-slate-400 text-[9px] block">Legal:</span>
+                            <a href="#" class="hover:text-[#0B1E3F] transition">Privacy Policy</a>
+                            <a href="#" class="hover:text-[#0B1E3F] transition">Terms of Service</a>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span class="text-slate-400 text-[9px] block">Explore:</span>
+                            <a href="#" class="hover:text-[#0B1E3F] transition">Sustainability</a>
+                            <a href="#" class="hover:text-[#0B1E3F] transition">Careers</a>
+                        </div>
+                    </div>
+
+                    <span class="text-[9px] text-slate-400 text-center md:text-right">
+                        © 2024 ARUGA Staycation. All rights reserved.
                     </span>
                 </div>
             </footer>
@@ -4041,6 +4244,35 @@ const bookingForm = reactive({
     specialRequests: ''
 })
 const currentBookingStep = ref(1)
+
+const bookingRefInput = ref('')
+const retrievedBooking = ref(null)
+
+const handleRetrieveBooking = () => {
+    const refUpper = bookingRefInput.value.trim().toUpperCase()
+    const mockBookings = [
+        { reference: 'ARUGA-123456', name: 'Julian Rivera', room: 'Beachfront Villa', nights: 3, dates: 'Dec 06, 2026 - Dec 09, 2026', amount: '38,320' },
+        { reference: 'ARUGA-JS8899', name: 'Julianne Smith', room: 'Ocean Villa', nights: 3, dates: 'Oct 12, 2026 - Oct 15, 2026', amount: '24,500' },
+        { reference: 'ARUGA-MR4422', name: 'Marcus Rivera', room: 'Garden Suite', nights: 4, dates: 'Oct 14, 2026 - Oct 18, 2026', amount: '18,200' }
+    ]
+    const found = mockBookings.find(b => b.reference === refUpper)
+    if (found) {
+        retrievedBooking.value = found
+    } else {
+        if (refUpper.length < 4) {
+            alert('Please enter a valid reference number (at least 4 characters).')
+            return
+        }
+        retrievedBooking.value = {
+            reference: refUpper,
+            name: bookingForm.name || 'Valued Guest',
+            room: selectedRoomToBook.value ? selectedRoomToBook.value.name : 'Beachfront Villa',
+            nights: bookingNights.value || 3,
+            dates: `${formattedCheckIn.value || 'Dec 06, 2026'} - ${formattedCheckOut.value || 'Dec 09, 2026'}`,
+            amount: bookingCalculations.value ? formatPrice(bookingCalculations.value.totalPrice) : '38,320'
+        }
+    }
+}
 
 const checkInDate = ref('2026-12-06')
 const checkOutDate = ref('2026-12-09')
