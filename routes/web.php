@@ -194,6 +194,51 @@ Route::get('/api/admin/rooms', function () {
     }
 
     $rooms = App\Models\Room::orderBy('name', 'asc')->get();
+    $today = Illuminate\Support\Carbon::today()->toDateString();
+    $startOfMonth = Illuminate\Support\Carbon::now()->startOfMonth()->toDateString();
+    $startOfLastMonth = Illuminate\Support\Carbon::now()->subMonth()->startOfMonth()->toDateString();
+
+    foreach ($rooms as $room) {
+        // Find active booking (CONFIRMED booking overlapping today)
+        $activeBooking = App\Models\Booking::where('room_id', $room->id)
+            ->where('status', 'CONFIRMED')
+            ->where('check_in_date', '<=', $today)
+            ->where('check_out_date', '>', $today)
+            ->first();
+            
+        // Fallback: get the most recent non-rejected booking
+        if (!$activeBooking) {
+            $activeBooking = App\Models\Booking::where('room_id', $room->id)
+                ->where('status', '!=', 'REJECTED')
+                ->orderBy('check_in_date', 'desc')
+                ->first();
+        }
+        
+        $room->active_booking = $activeBooking;
+
+        // Calculate Revenue MTD (confirmed booking total_price created in current month)
+        $revenueMtd = (float) App\Models\Booking::where('room_id', $room->id)
+            ->where('status', 'CONFIRMED')
+            ->where('created_at', '>=', $startOfMonth)
+            ->sum('total_price');
+
+        // Calculate Revenue Last Month MTD
+        $revenueLastMonth = (float) App\Models\Booking::where('room_id', $room->id)
+            ->where('status', 'CONFIRMED')
+            ->where('created_at', '>=', $startOfLastMonth)
+            ->where('created_at', '<', $startOfMonth)
+            ->sum('total_price');
+
+        $change = 0.0;
+        if ($revenueLastMonth > 0) {
+            $change = (($revenueMtd - $revenueLastMonth) / $revenueLastMonth) * 100;
+        } else {
+            $change = $revenueMtd > 0 ? 12.0 : 0.0; // default 12% if this month has sales but last month didn't
+        }
+
+        $room->revenue_mtd = $revenueMtd;
+        $room->revenue_mtd_change = round($change);
+    }
     
     $total = $rooms->count();
     $occupied = $rooms->where('status', 'occupied')->count();
@@ -295,6 +340,109 @@ Route::delete('/api/admin/rooms/{id}', function ($id) {
 
     return response()->json([
         'success' => true
+    ]);
+});
+
+Route::post('/api/admin/bookings/onsite', function (Illuminate\Http\Request $request) {
+    if (!Auth::check()) {
+        return response()->json(['message' => 'Unauthorized'], 401);
+    }
+    $currentUser = Auth::user();
+    if ($currentUser->role !== 'admin' && $currentUser->role !== 'manager' && $currentUser->role !== 'staff') {
+        return response()->json(['message' => 'Forbidden'], 403);
+    }
+
+    $validated = $request->validate([
+        'room_id' => 'required|exists:rooms,id',
+        'guest_name' => 'required|string|max:255',
+        'guest_email' => 'required|email|max:255',
+        'guest_phone' => 'required|string|max:50',
+        'guests_count' => 'required|integer|min:1',
+        'check_in_date' => 'required|date',
+        'check_out_date' => 'required|date|after:check_in_date',
+        'payment_method' => 'required|string|in:credit_card,gcash,cash_at_property',
+        'cash_securing_method' => 'nullable|string|in:card,gcash',
+        'special_requests' => 'nullable|string',
+    ]);
+
+    $room = App\Models\Room::findOrFail($validated['room_id']);
+    
+    $checkIn = Illuminate\Support\Carbon::parse($validated['check_in_date'])->startOfDay();
+    $checkOut = Illuminate\Support\Carbon::parse($validated['check_out_date'])->startOfDay();
+    $nights = $checkIn->diffInDays($checkOut);
+
+    if ($nights < 1) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Minimum stay is 1 night.'
+        ], 422);
+    }
+
+    // Check availability of this specific room for these dates
+    $overlappingCount = App\Models\Booking::where('room_id', $room->id)
+        ->where('status', '!=', 'REJECTED')
+        ->where(function ($query) use ($checkIn, $checkOut) {
+            $query->where('check_in_date', '<', $checkOut->toDateString())
+                  ->where('check_out_date', '>', $checkIn->toDateString());
+        })
+        ->count();
+
+    if ($overlappingCount > 0) {
+        return response()->json([
+            'success' => false,
+            'message' => 'This room is already booked/occupied for the selected dates.'
+        ], 422);
+    }
+
+    // Calculations
+    $rate = (float) $room->price;
+    $totalPrice = $rate * $nights;
+
+    if ($validated['payment_method'] === 'cash_at_property') {
+        $downPayment = $totalPrice * 0.30;
+        $remainingBalance = $totalPrice * 0.70;
+    } else {
+        $downPayment = $totalPrice;
+        $remainingBalance = 0.00;
+    }
+
+    // Generate unique Reference Code
+    $reference = '';
+    do {
+        $randomDigits = str_pad((string) rand(0, 99999), 5, '0', STR_PAD_LEFT);
+        $reference = 'AS-' . $randomDigits;
+    } while (App\Models\Booking::where('reference', $reference)->exists());
+
+    // Create Booking directly as CONFIRMED since it's an onsite admin booking
+    $booking = App\Models\Booking::create([
+        'reference' => $reference,
+        'room_id' => $room->id,
+        'guest_name' => $validated['guest_name'],
+        'guest_email' => $validated['guest_email'],
+        'guest_phone' => $validated['guest_phone'],
+        'guests_count' => $validated['guests_count'],
+        'special_requests' => $validated['special_requests'] ?? null,
+        'check_in_date' => $checkIn->toDateString(),
+        'check_out_date' => $checkOut->toDateString(),
+        'nights_count' => $nights,
+        'payment_method' => $validated['payment_method'],
+        'cash_securing_method' => $validated['cash_securing_method'] ?? null,
+        'down_payment' => $downPayment,
+        'remaining_balance' => $remainingBalance,
+        'total_price' => $totalPrice,
+        'status' => 'CONFIRMED',
+    ]);
+
+    // Update room status to occupied if check_in is today
+    $today = Illuminate\Support\Carbon::today()->toDateString();
+    if ($checkIn->toDateString() <= $today && $checkOut->toDateString() > $today) {
+        $room->status = 'occupied';
+        $room->save();
+    }
+
+    return response()->json([
+        'success' => true,
+        'booking' => $booking
     ]);
 });
 

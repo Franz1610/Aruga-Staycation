@@ -4231,221 +4231,474 @@
 
                     <!-- TAB: ROOM MANAGEMENT -->
                     <div v-else-if="activeTab === 'room_management'" class="space-y-8 animate-fade-in">
-                        <!-- Room Management Header -->
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                            <div>
-                                <h1 class="font-serif text-[#0b1c3d] dark:text-slate-100 text-3xl font-bold tracking-tight">Room Management</h1>
-                                <p class="text-slate-500 dark:text-slate-400 text-xs mt-1 leading-relaxed">
-                                    Create, update, and monitor the current occupancy and maintenance statuses of all staycation rooms.
-                                </p>
-                            </div>
-                            <!-- Add New Room Button -->
-                            <button 
-                                v-if="currentUser?.role === 'admin' || currentUser?.role === 'manager'"
-                                @click="showAddRoomModal = true"
-                                class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0B1E3F] hover:bg-[#152e59] dark:bg-amber-500 dark:hover:bg-amber-600 text-white dark:text-slate-950 font-bold text-xs shadow-md transition cursor-pointer"
-                            >
-                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-                                </svg>
-                                Add New Room
-                            </button>
-                        </div>
-
-                        <!-- Stats Cards Grid -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                            <!-- Total Rooms -->
-                            <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm hover:shadow-md transition duration-200 flex items-center gap-4.5">
-                                <div class="h-12 w-12 bg-blue-50 dark:bg-blue-950/20 rounded-2xl flex items-center justify-center text-blue-600 dark:text-blue-400 shrink-0 border border-blue-100 dark:border-blue-900/10">
-                                    <svg class="h-5.5 w-5.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 10V19a2 2 0 002 2h14a2 2 0 002-2v-9M3 10V6a2 2 0 012-2h2a2 2 0 012 2v4M13 6a2 2 0 012-2h2a2 2 0 012 2v4M3 10h18" />
-                                    </svg>
-                                </div>
+                        
+                        <!-- DETAIL VIEW: If selectedRoomDetails is set -->
+                        <div v-if="selectedRoomDetails" class="space-y-8 animate-fade-in">
+                            <!-- Breadcrumb & Actions Bar -->
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
                                 <div>
-                                    <p class="text-slate-455 dark:text-slate-500 text-[10px] font-semibold uppercase tracking-wider leading-none">Total Rooms</p>
-                                    <p class="text-2xl font-bold text-slate-850 dark:text-slate-100 mt-2 leading-none">
-                                        {{ roomStats.total }} <span class="font-serif font-normal text-lg text-slate-500 dark:text-slate-400">Rooms</span>
-                                    </p>
+                                    <nav class="text-xs text-slate-400 dark:text-slate-550 font-semibold tracking-wider flex items-center gap-1.5 uppercase mb-1">
+                                        <a href="#" @click.prevent="selectedRoomDetails = null" class="hover:text-[#0B1E3F] dark:hover:text-amber-500 transition">Room Management</a>
+                                        <span class="text-slate-300 dark:text-slate-605">&rsaquo;</span>
+                                        <span class="text-slate-600 dark:text-slate-400 font-bold">{{ selectedRoomDetails.name }}</span>
+                                    </nav>
+                                    <h1 class="font-serif text-[#0b1c3d] dark:text-slate-100 text-3xl font-bold tracking-tight">{{ selectedRoomDetails.name }}</h1>
                                 </div>
-                            </div>
-
-                            <!-- Occupied Rooms -->
-                            <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm hover:shadow-md transition duration-200 flex items-center gap-4.5">
-                                <div class="h-12 w-12 bg-rose-50 dark:bg-rose-950/20 rounded-2xl flex items-center justify-center text-rose-500 dark:text-rose-455 shrink-0 border border-rose-100 dark:border-rose-900/10">
-                                    <svg class="h-5.5 w-5.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <p class="text-slate-455 dark:text-slate-500 text-[10px] font-semibold uppercase tracking-wider leading-none">Occupied</p>
-                                    <p class="text-2xl font-bold text-slate-850 dark:text-slate-100 mt-2 leading-none">
-                                        {{ roomStats.occupied }} <span class="font-serif font-normal text-lg text-slate-500 dark:text-slate-400">/ {{ roomStats.occupied_percentage }}%</span>
-                                    </p>
-                                </div>
-                            </div>
-
-                            <!-- Available Rooms -->
-                            <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm hover:shadow-md transition duration-200 flex items-center gap-4.5">
-                                <div class="h-12 w-12 bg-emerald-50 dark:bg-emerald-950/20 rounded-2xl flex items-center justify-center text-emerald-600 dark:text-emerald-400 shrink-0 border border-emerald-100 dark:border-emerald-900/10">
-                                    <svg class="h-5.5 w-5.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <p class="text-slate-455 dark:text-slate-500 text-[10px] font-semibold uppercase tracking-wider leading-none">Available</p>
-                                    <p class="text-2xl font-bold text-slate-850 dark:text-slate-100 mt-2 leading-none">
-                                        {{ roomStats.available }} <span class="font-serif font-normal text-lg text-slate-500 dark:text-slate-400">Ready</span>
-                                    </p>
-                                </div>
-                            </div>
-
-                            <!-- Maintenance / Service -->
-                            <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm hover:shadow-md transition duration-200 flex items-center gap-4.5">
-                                <div class="h-12 w-12 bg-amber-50 dark:bg-amber-955/20 rounded-2xl flex items-center justify-center text-amber-700 dark:text-amber-500 shrink-0 border border-amber-100 dark:border-amber-900/10">
-                                    <svg class="h-5.5 w-5.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <p class="text-slate-455 dark:text-slate-500 text-[10px] font-semibold uppercase tracking-wider leading-none">Under Service</p>
-                                    <p class="text-2xl font-bold text-slate-850 dark:text-slate-100 mt-2 leading-none">
-                                        {{ roomStats.maintenance + roomStats.cleaning }} <span class="font-serif font-normal text-lg text-slate-500 dark:text-slate-400">Rooms</span>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Search & Filter Controls -->
-                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-slate-900 border border-slate-50 dark:border-slate-800 rounded-3xl p-4 shadow-sm">
-                            <!-- Filter Chips -->
-                            <div class="flex flex-wrap items-center gap-2">
-                                <button 
-                                    @click="roomFilter = 'all'"
-                                    :class="['px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer',
-                                             roomFilter === 'all' ? 'bg-[#0B1E3F] text-white dark:bg-amber-500 dark:text-slate-955' : 'bg-slate-50 dark:bg-slate-800 text-slate-500 hover:text-[#0B1E3F] dark:hover:text-white']"
-                                >
-                                    All Rooms ({{ roomStats.total }})
-                                </button>
-                                <button 
-                                    @click="roomFilter = 'available'"
-                                    :class="['px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1.5',
-                                             roomFilter === 'available' ? 'bg-[#0B1E3F] text-white dark:bg-amber-500 dark:text-slate-955' : 'bg-slate-50 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white']"
-                                >
-                                    <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
-                                    Available ({{ roomStats.available }})
-                                </button>
-                                <button 
-                                    @click="roomFilter = 'occupied'"
-                                    :class="['px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1.5',
-                                             roomFilter === 'occupied' ? 'bg-[#0B1E3F] text-white dark:bg-amber-500 dark:text-slate-955' : 'bg-slate-50 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white']"
-                                >
-                                    <span class="h-2 w-2 rounded-full bg-rose-500"></span>
-                                    Occupied ({{ roomStats.occupied }})
-                                </button>
-                                <button 
-                                    @click="roomFilter = 'cleaning'"
-                                    :class="['px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1.5',
-                                             roomFilter === 'cleaning' ? 'bg-[#0B1E3F] text-white dark:bg-amber-500 dark:text-slate-955' : 'bg-slate-50 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white']"
-                                >
-                                    <span class="h-2 w-2 rounded-full bg-blue-500"></span>
-                                    Cleaning ({{ roomStats.cleaning }})
-                                </button>
-                                <button 
-                                    @click="roomFilter = 'maintenance'"
-                                    :class="['px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1.5',
-                                             roomFilter === 'maintenance' ? 'bg-[#0B1E3F] text-white dark:bg-amber-500 dark:text-slate-955' : 'bg-slate-50 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white']"
-                                >
-                                    <span class="h-2 w-2 rounded-full bg-amber-700"></span>
-                                    Maintenance ({{ roomStats.maintenance }})
-                                </button>
-                            </div>
-
-                            <!-- Search Bar -->
-                            <div class="relative w-full md:w-72">
-                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
-                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                    </svg>
-                                </span>
-                                <input 
-                                    type="text" 
-                                    v-model="roomSearchQuery"
-                                    placeholder="Search by code, type..." 
-                                    class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-100 dark:bg-slate-800 dark:border-slate-700 focus:outline-none focus:bg-white dark:focus:bg-slate-900 rounded-xl text-xs transition dark:text-slate-100 font-medium"
-                                />
-                            </div>
-                        </div>
-
-                        <!-- Room Card Grid -->
-                        <div v-if="filteredRoomsList.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                            <div 
-                                v-for="room in filteredRoomsList" 
-                                :key="room.id"
-                                class="group bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition duration-300 flex flex-col"
-                            >
-                                <div class="relative h-48 overflow-hidden bg-slate-100 dark:bg-slate-800">
-                                    <img 
-                                        :src="room.image_url || 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=800&q=80'" 
-                                        class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                        alt="Room Image"
-                                    />
-                                    <span 
-                                        :class="[
-                                            'absolute top-4 right-4 px-3 py-1 rounded-full text-[10px] font-extrabold tracking-wider uppercase shadow-sm border',
-                                            room.status === 'available' ? 'bg-emerald-500/90 text-white border-emerald-450' :
-                                            room.status === 'occupied' ? 'bg-rose-500/90 text-white border-rose-450' :
-                                            room.status === 'cleaning' ? 'bg-blue-500/90 text-white border-blue-450' :
-                                            'bg-amber-700/90 text-white border-amber-600'
-                                        ]"
+                                <div class="flex items-center gap-6">
+                                    <button 
+                                        @click="selectedRoomDetails = null" 
+                                        class="flex items-center gap-1.5 text-slate-700 hover:text-[#0B1E3F] dark:text-slate-350 dark:hover:text-amber-500 text-xs font-semibold transition cursor-pointer"
                                     >
-                                        {{ room.status }}
-                                    </span>
+                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                                        </svg>
+                                        Return to List
+                                    </button>
+                                    <button 
+                                        v-if="selectedRoomDetails.status === 'available'" 
+                                        @click="openOnsiteBookingModal" 
+                                        class="flex items-center gap-2 text-slate-700 hover:text-[#0B1E3F] dark:text-slate-350 dark:hover:text-amber-500 text-xs font-semibold transition cursor-pointer"
+                                    >
+                                        <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2v-7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                        Onsite Booking
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Two Column Layout Grid -->
+                            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                                
+                                <!-- Left Main Area (Image and Amenities) - 2/3 Columns -->
+                                <div class="lg:col-span-2 space-y-8">
+                                    <!-- Image Card -->
+                                    <div class="relative h-[450px] rounded-[32px] overflow-hidden border border-slate-100 dark:border-slate-800 shadow-sm bg-slate-100 dark:bg-slate-900 group">
+                                        <img 
+                                            :src="selectedRoomDetails.image_url || 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=800&q=80'" 
+                                            class="h-full w-full object-cover transition-transform duration-10000 group-hover:scale-105"
+                                            alt="Room Image"
+                                        />
+                                        <!-- Overlay Badges at Top Left -->
+                                        <div class="absolute top-6 left-6 flex items-center gap-3">
+                                            <span 
+                                                class="px-4 py-1.5 bg-[#0B1E3F]/80 dark:bg-slate-950/80 backdrop-blur-md text-white rounded-full text-xs font-bold shadow-md flex items-center gap-2"
+                                            >
+                                                <span :class="[
+                                                    'h-1.5 w-1.5 rounded-full',
+                                                    selectedRoomDetails.status === 'available' ? 'bg-emerald-400' : 'bg-rose-500'
+                                                ]"></span>
+                                                <span class="capitalize">{{ selectedRoomDetails.status }}</span>
+                                            </span>
+                                            <span class="px-4 py-1.5 bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-slate-200 border border-slate-200/50 dark:border-slate-800 rounded-full text-xs font-bold shadow-md">
+                                                {{ selectedRoomDetails.type }} Category
+                                            </span>
+                                        </div>
+
+                                        <!-- Description Text Overlay at Bottom -->
+                                        <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent p-8 pt-16 flex flex-col justify-end">
+                                            <p class="text-white/90 text-sm italic leading-relaxed max-w-2xl font-light">
+                                                "{{ selectedRoomDetails.description || 'Experience the ultimate coastal serenity in our flagship ocean-front staycation suite, loaded with premium features.' }}"
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Exclusive Amenities Section -->
+                                    <div class="space-y-4">
+                                        <h3 class="font-serif text-[#0b1c3d] dark:text-slate-100 text-xl font-bold tracking-tight">Exclusive Amenities</h3>
+                                        <div class="flex flex-wrap gap-4">
+                                            <!-- Dynamic Amenity Box -->
+                                            <div 
+                                                v-for="(amenity, idx) in selectedRoomDetails.amenities" 
+                                                :key="idx"
+                                                class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-5 w-24 h-32 flex flex-col items-center justify-center text-center gap-2.5 shadow-sm hover:shadow-md transition duration-300"
+                                            >
+                                                <!-- Icon Circle Container -->
+                                                <div class="h-11 w-11 bg-[#F0F2F5] dark:bg-slate-800 rounded-full flex items-center justify-center text-slate-700 dark:text-slate-300 border border-slate-200/40 dark:border-slate-700/50 shrink-0">
+                                                    <!-- Wifi Icon -->
+                                                    <svg v-if="amenity.toLowerCase().includes('wifi') || amenity.toLowerCase().includes('internet')" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071a10.5 10.5 0 0114.14 0M1.34 8.59a16.5 16.5 0 0121.32 0" />
+                                                    </svg>
+                                                    <!-- Pool Icon -->
+                                                    <svg v-else-if="amenity.toLowerCase().includes('pool') || amenity.toLowerCase().includes('swim')" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M3 14h18m-9-8v2m0 8v2" />
+                                                    </svg>
+                                                    <!-- Snowflake (Aircon) -->
+                                                    <svg v-else-if="amenity.toLowerCase().includes('air conditioning') || amenity.toLowerCase().includes('aircon') || amenity.toLowerCase().includes('climate')" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v18M3 12h18m-3-3l-3 3 3 3M6 9l3 3-3 3M9 6l3 3-3 3m6-6l-3 3 3 3" />
+                                                    </svg>
+                                                    <!-- Cocktail / Fridge (Bar) -->
+                                                    <svg v-else-if="amenity.toLowerCase().includes('bar') || amenity.toLowerCase().includes('fridge') || amenity.toLowerCase().includes('refrigerator')" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 22a7 7 0 007-7V4H5v11a7 7 0 007 7z M12 2v2 M9 8h6" />
+                                                    </svg>
+                                                    <!-- Balcony / Door -->
+                                                    <svg v-else-if="amenity.toLowerCase().includes('balcony') || amenity.toLowerCase().includes('terrace') || amenity.toLowerCase().includes('deck')" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1" />
+                                                    </svg>
+                                                    <!-- Bed -->
+                                                    <svg v-else-if="amenity.toLowerCase().includes('bed') || amenity.toLowerCase().includes('king') || amenity.toLowerCase().includes('queen')" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 10V19a2 2 0 002 2h14a2 2 0 002-2v-9M3 10V6a2 2 0 012-2h2a2 2 0 012 2v4M13 6a2 2 0 012-2h2a2 2 0 012 2v4M3 10h18" />
+                                                    </svg>
+                                                    <!-- TV / Screen -->
+                                                    <svg v-else-if="amenity.toLowerCase().includes('tv') || amenity.toLowerCase().includes('television') || amenity.toLowerCase().includes('screen')" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M7 4h10M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z M12 20v-4" />
+                                                    </svg>
+                                                    <!-- Hot Shower / Bath -->
+                                                    <svg v-else-if="amenity.toLowerCase().includes('shower') || amenity.toLowerCase().includes('bath') || amenity.toLowerCase().includes('hot')" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 4h16v2H4z M12 6v10 M12 16a2 2 0 100 4 2 2 0 000-4z" />
+                                                    </svg>
+                                                    <!-- Default Check -->
+                                                    <svg v-else class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                    </svg>
+                                                </div>
+                                                <span class="text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider leading-tight">
+                                                    {{ formatAmenityName(amenity) }}
+                                                </span>
+                                            </div>
+                                            <div 
+                                                v-if="!selectedRoomDetails.amenities || selectedRoomDetails.amenities.length === 0"
+                                                class="text-xs text-slate-400 italic py-2"
+                                            >
+                                                No exclusive amenities configured for this room.
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div class="p-5 flex-grow flex flex-col justify-between space-y-4">
+                                <!-- Right Column (Specifications & Check-in Details) - 1/3 Column -->
+                                <div class="space-y-6">
+                                    <!-- Specifications Card -->
+                                    <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm space-y-6">
+                                        <h3 class="font-serif text-[#0b1c3d] dark:text-slate-100 text-lg font-bold tracking-tight">Specifications</h3>
+                                        
+                                        <div class="space-y-4">
+                                            <!-- Capacity -->
+                                            <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800/50">
+                                                <div class="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider">
+                                                    <svg class="h-4.5 w-4.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                                    </svg>
+                                                    Capacity
+                                                </div>
+                                                <span class="text-xs font-bold text-slate-800 dark:text-slate-200">
+                                                    {{ selectedRoomDetails.type === 'Couple Room' ? '2-4 Guests' : selectedRoomDetails.type === 'Family Room' ? '4-6 Guests' : '50-100 Guests' }}
+                                                </span>
+                                            </div>
+                                            
+                                            <!-- Bed Type -->
+                                            <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800/50">
+                                                <div class="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider">
+                                                    <svg class="h-4.5 w-4.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 10V19a2 2 0 002 2h14a2 2 0 002-2v-9M3 10V6a2 2 0 012-2h2a2 2 0 012 2v4M13 6a2 2 0 012-2h2a2 2 0 012 2v4M3 10h18" />
+                                                    </svg>
+                                                    Bed Type
+                                                </div>
+                                                <span class="text-xs font-bold text-slate-800 dark:text-slate-200">
+                                                    {{ selectedRoomDetails.type === 'Couple Room' ? 'King Size' : selectedRoomDetails.type === 'Family Room' ? '2 Queen Beds' : 'N/A' }}
+                                                </span>
+                                            </div>
+                                            
+                                            <!-- Price / Night -->
+                                            <div class="flex items-center justify-between">
+                                                <div class="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider">
+                                                    <svg class="h-4.5 w-4.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M12 16V5" />
+                                                    </svg>
+                                                    Price / Night
+                                                </div>
+                                                <span class="text-xs font-bold text-slate-800 dark:text-slate-200 font-serif">
+                                                    ₱{{ Number(selectedRoomDetails.price).toLocaleString() }}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Revenue Month-To-Date (MTD) Panel -->
+                                        <div class="bg-[#ECEFF3] dark:bg-slate-800/50 rounded-2xl p-5 space-y-2">
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest leading-none">Revenue (MTD)</span>
+                                                <span 
+                                                    v-if="selectedRoomDetails.revenue_mtd_change >= 0"
+                                                    class="text-[10px] font-bold text-emerald-600"
+                                                >
+                                                    +{{ selectedRoomDetails.revenue_mtd_change }}%
+                                                </span>
+                                                <span 
+                                                    v-else
+                                                    class="text-[10px] font-bold text-rose-600"
+                                                >
+                                                    {{ selectedRoomDetails.revenue_mtd_change }}%
+                                                </span>
+                                            </div>
+                                            <p class="text-2xl font-bold text-[#0B1E3F] dark:text-slate-100 font-serif leading-none">
+                                                ₱{{ Number(selectedRoomDetails.revenue_mtd || 0).toLocaleString() }}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Check-in Information Card (Only if room is Occupied) -->
+                                    <div 
+                                        v-if="selectedRoomDetails.status === 'occupied' && selectedRoomDetails.active_booking"
+                                        class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm space-y-5"
+                                    >
+                                        <h3 class="font-serif text-[#0b1c3d] dark:text-slate-100 text-lg font-bold tracking-tight">Check-in Information</h3>
+                                        
+                                        <div class="space-y-1">
+                                            <p class="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest leading-none mb-0.5">Booking Reference</p>
+                                            <p class="text-sm font-extrabold text-slate-800 dark:text-slate-100 tracking-wider">
+                                                {{ selectedRoomDetails.active_booking.reference }}
+                                            </p>
+                                        </div>
+
+                                        <div class="space-y-1">
+                                            <p class="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest leading-none mb-1">Guest Details</p>
+                                            <p class="text-xs font-bold text-slate-850 dark:text-slate-200">{{ selectedRoomDetails.active_booking.guest_name }}</p>
+                                            <p class="text-[11px] text-slate-500 font-medium leading-none">{{ selectedRoomDetails.active_booking.guest_phone }}</p>
+                                            <p class="text-[11px] text-slate-500 font-medium leading-none">{{ selectedRoomDetails.active_booking.guest_email }}</p>
+                                        </div>
+
+                                        <div class="border-t border-slate-100 dark:border-slate-800/80 pt-4 grid grid-cols-2 gap-4">
+                                            <div>
+                                                <p class="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest leading-none mb-1">Check-In</p>
+                                                <p class="text-[11px] font-bold text-slate-800 dark:text-slate-200 uppercase">{{ formatDate(selectedRoomDetails.active_booking.check_in_date) }}</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest leading-none mb-1">Check-Out</p>
+                                                <p class="text-[11px] font-bold text-slate-800 dark:text-slate-200 uppercase">{{ formatDate(selectedRoomDetails.active_booking.check_out_date) }}</p>
+                                            </div>
+                                        </div>
+
+                                        <div v-if="selectedRoomDetails.active_booking.special_requests" class="border-t border-slate-100 dark:border-slate-800/80 pt-4 space-y-2">
+                                            <p class="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest leading-none">Special Requests</p>
+                                            <div class="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-100 dark:border-slate-850">
+                                                <p class="text-[11px] text-slate-600 dark:text-slate-400 italic leading-relaxed font-light">
+                                                    "{{ selectedRoomDetails.active_booking.special_requests }}"
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- GRID VIEW: If selectedRoomDetails is null -->
+                        <div v-else class="space-y-8 animate-fade-in">
+                            <!-- Room Management Header -->
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                <div>
+                                    <h1 class="font-serif text-[#0b1c3d] dark:text-slate-100 text-3xl font-bold tracking-tight">Room Management</h1>
+                                    <p class="text-slate-500 dark:text-slate-400 text-xs mt-1 leading-relaxed">
+                                        Create, update, and monitor the current occupancy and maintenance statuses of all staycation rooms.
+                                    </p>
+                                </div>
+                                <!-- Add New Room Button -->
+                                <button 
+                                    v-if="currentUser?.role === 'admin' || currentUser?.role === 'manager'"
+                                    @click="showAddRoomModal = true"
+                                    class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0B1E3F] hover:bg-[#152e59] dark:bg-amber-500 dark:hover:bg-amber-600 text-white dark:text-slate-950 font-bold text-xs shadow-md transition cursor-pointer"
+                                >
+                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                                    </svg>
+                                    Add New Room
+                                </button>
+                            </div>
+
+                            <!-- Stats Cards Grid -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                                <!-- Total Rooms -->
+                                <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm hover:shadow-md transition duration-200 flex items-center gap-4.5">
+                                    <div class="h-12 w-12 bg-blue-50 dark:bg-blue-950/20 rounded-2xl flex items-center justify-center text-blue-600 dark:text-blue-400 shrink-0 border border-blue-100 dark:border-blue-900/10">
+                                        <svg class="h-5.5 w-5.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 10V19a2 2 0 002 2h14a2 2 0 002-2v-9M3 10V6a2 2 0 012-2h2a2 2 0 012 2v4M13 6a2 2 0 012-2h2a2 2 0 012 2v4M3 10h18" />
+                                        </svg>
+                                    </div>
                                     <div>
-                                        <h4 class="font-serif text-slate-900 dark:text-slate-100 text-base font-bold truncate">{{ room.name }}</h4>
-                                        <p class="text-slate-400 dark:text-slate-500 text-xs mt-0.5 font-medium">{{ room.type }}</p>
-                                        <p class="font-bold text-sm text-[#A27B5C] dark:text-amber-500 mt-2">
-                                            ₱{{ Number(room.price).toLocaleString() }}
-                                            <span class="text-[10px] text-slate-405 font-normal">/ night</span>
+                                        <p class="text-slate-455 dark:text-slate-500 text-[10px] font-semibold uppercase tracking-wider leading-none">Total Rooms</p>
+                                        <p class="text-2xl font-bold text-slate-850 dark:text-slate-100 mt-2 leading-none">
+                                            {{ roomStats.total }} <span class="font-serif font-normal text-lg text-slate-500 dark:text-slate-400">Rooms</span>
                                         </p>
                                     </div>
+                                </div>
 
-                                    <div class="flex items-center gap-2.5 pt-3 border-t border-slate-50 dark:border-slate-800">
-                                        <button 
-                                            @click="selectedRoomDetails = room; showRoomDetailsModal = true"
-                                            class="flex-grow py-2 rounded-xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-300 font-bold text-[10px] tracking-wide transition cursor-pointer text-center"
-                                        >
-                                            View Details
-                                        </button>
-                                        <button 
-                                            @click="openEditRoomModal(room)"
-                                            class="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition cursor-pointer"
-                                            title="Edit Room"
-                                        >
-                                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                                            </svg>
-                                        </button>
+                                <!-- Occupied Rooms -->
+                                <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm hover:shadow-md transition duration-200 flex items-center gap-4.5">
+                                    <div class="h-12 w-12 bg-rose-50 dark:bg-rose-955/20 rounded-2xl flex items-center justify-center text-rose-500 dark:text-rose-455 shrink-0 border border-rose-100 dark:border-rose-900/10">
+                                        <svg class="h-5.5 w-5.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-slate-455 dark:text-slate-500 text-[10px] font-semibold uppercase tracking-wider leading-none">Occupied</p>
+                                        <p class="text-2xl font-bold text-slate-850 dark:text-slate-100 mt-2 leading-none">
+                                            {{ roomStats.occupied }} <span class="font-serif font-normal text-lg text-slate-500 dark:text-slate-400">/ {{ roomStats.occupied_percentage }}%</span>
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- Available Rooms -->
+                                <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm hover:shadow-md transition duration-200 flex items-center gap-4.5">
+                                    <div class="h-12 w-12 bg-emerald-50 dark:bg-emerald-950/20 rounded-2xl flex items-center justify-center text-emerald-600 dark:text-emerald-400 shrink-0 border border-emerald-100 dark:border-emerald-900/10">
+                                        <svg class="h-5.5 w-5.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-slate-455 dark:text-slate-500 text-[10px] font-semibold uppercase tracking-wider leading-none">Available</p>
+                                        <p class="text-2xl font-bold text-slate-850 dark:text-slate-100 mt-2 leading-none">
+                                            {{ roomStats.available }} <span class="font-serif font-normal text-lg text-slate-500 dark:text-slate-400">Ready</span>
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- Maintenance / Service -->
+                                <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm hover:shadow-md transition duration-200 flex items-center gap-4.5">
+                                    <div class="h-12 w-12 bg-amber-50 dark:bg-amber-955/20 rounded-2xl flex items-center justify-center text-amber-700 dark:text-amber-500 shrink-0 border border-amber-100 dark:border-amber-900/10">
+                                        <svg class="h-5.5 w-5.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-slate-455 dark:text-slate-500 text-[10px] font-semibold uppercase tracking-wider leading-none">Under Service</p>
+                                        <p class="text-2xl font-bold text-slate-850 dark:text-slate-100 mt-2 leading-none">
+                                            {{ roomStats.maintenance + roomStats.cleaning }} <span class="font-serif font-normal text-lg text-slate-500 dark:text-slate-400">Rooms</span>
+                                        </p>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Empty State -->
-                        <div v-else class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-12 text-center shadow-sm space-y-4">
-                            <div class="h-16 w-16 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center text-slate-400 mx-auto">
-                                <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                                </svg>
+                            <!-- Search & Filter Controls -->
+                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-slate-900 border border-slate-50 dark:border-slate-800 rounded-3xl p-4 shadow-sm">
+                                <!-- Filter Chips -->
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <button 
+                                        @click="roomFilter = 'all'"
+                                        :class="['px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer',
+                                                 roomFilter === 'all' ? 'bg-[#0B1E3F] text-white dark:bg-amber-500 dark:text-slate-955' : 'bg-slate-50 dark:bg-slate-800 text-slate-500 hover:text-[#0B1E3F] dark:hover:text-white']"
+                                    >
+                                        All Rooms ({{ roomStats.total }})
+                                    </button>
+                                    <button 
+                                        @click="roomFilter = 'available'"
+                                        :class="['px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1.5',
+                                                 roomFilter === 'available' ? 'bg-[#0B1E3F] text-white dark:bg-amber-500 dark:text-slate-955' : 'bg-slate-50 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white']"
+                                    >
+                                        <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+                                        Available ({{ roomStats.available }})
+                                    </button>
+                                    <button 
+                                        @click="roomFilter = 'occupied'"
+                                        :class="['px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1.5',
+                                                 roomFilter === 'occupied' ? 'bg-[#0B1E3F] text-white dark:bg-amber-500 dark:text-slate-955' : 'bg-slate-50 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white']"
+                                    >
+                                        <span class="h-2 w-2 rounded-full bg-rose-500"></span>
+                                        Occupied ({{ roomStats.occupied }})
+                                    </button>
+                                    <button 
+                                        @click="roomFilter = 'cleaning'"
+                                        :class="['px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1.5',
+                                                 roomFilter === 'cleaning' ? 'bg-[#0B1E3F] text-white dark:bg-amber-500 dark:text-slate-955' : 'bg-slate-50 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white']"
+                                    >
+                                        <span class="h-2 w-2 rounded-full bg-blue-500"></span>
+                                        Cleaning ({{ roomStats.cleaning }})
+                                    </button>
+                                    <button 
+                                        @click="roomFilter = 'maintenance'"
+                                        :class="['px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1.5',
+                                                 roomFilter === 'maintenance' ? 'bg-[#0B1E3F] text-white dark:bg-amber-500 dark:text-slate-955' : 'bg-slate-50 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white']"
+                                    >
+                                        <span class="h-2 w-2 rounded-full bg-amber-700"></span>
+                                        Maintenance ({{ roomStats.maintenance }})
+                                    </button>
+                                </div>
+
+                                <!-- Search Bar -->
+                                <div class="relative w-full md:w-72">
+                                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                        </svg>
+                                    </span>
+                                    <input 
+                                        type="text" 
+                                        v-model="roomSearchQuery"
+                                        placeholder="Search by code, type..." 
+                                        class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-100 dark:bg-slate-800 dark:border-slate-700 focus:outline-none focus:bg-white dark:focus:bg-slate-900 rounded-xl text-xs transition dark:text-slate-100 font-medium"
+                                    />
+                                </div>
                             </div>
-                            <div>
-                                <h3 class="font-serif text-[#0b1c3d] dark:text-slate-100 text-lg font-bold">No Rooms Found</h3>
-                                <p class="text-slate-500 dark:text-slate-400 text-xs mt-1 max-w-sm mx-auto leading-relaxed">
-                                    We couldn't find any rooms matching your current filter and search query. Try adjusting your settings or add a new room.
-                                </p>
+
+                            <!-- Room Card Grid -->
+                            <div v-if="filteredRoomsList.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                                <div 
+                                    v-for="room in filteredRoomsList" 
+                                    :key="room.id"
+                                    class="group bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition duration-300 flex flex-col"
+                                >
+                                    <div class="relative h-48 overflow-hidden bg-slate-100 dark:bg-slate-800">
+                                        <img 
+                                            :src="room.image_url || 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=800&q=80'" 
+                                            class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                            alt="Room Image"
+                                        />
+                                        <span 
+                                            :class="[
+                                                'absolute top-4 right-4 px-3 py-1 rounded-full text-[10px] font-extrabold tracking-wider uppercase shadow-sm border',
+                                                room.status === 'available' ? 'bg-emerald-550/90 text-white border-emerald-450' :
+                                                room.status === 'occupied' ? 'bg-rose-550/90 text-white border-rose-450' :
+                                                room.status === 'cleaning' ? 'bg-blue-550/90 text-white border-blue-450' :
+                                                'bg-amber-700/90 text-white border-amber-600'
+                                            ]"
+                                        >
+                                            {{ room.status }}
+                                        </span>
+                                    </div>
+
+                                    <div class="p-5 flex-grow flex flex-col justify-between space-y-4">
+                                        <div>
+                                            <h4 class="font-serif text-slate-900 dark:text-slate-100 text-base font-bold truncate">{{ room.name }}</h4>
+                                            <p class="text-slate-400 dark:text-slate-500 text-xs mt-0.5 font-medium">{{ room.type }}</p>
+                                            <p class="font-bold text-sm text-[#A27B5C] dark:text-amber-500 mt-2">
+                                                ₱{{ Number(room.price).toLocaleString() }}
+                                                <span class="text-[10px] text-slate-405 font-normal">/ night</span>
+                                            </p>
+                                        </div>
+
+                                        <div class="flex items-center gap-2.5 pt-3 border-t border-slate-50 dark:border-slate-800">
+                                            <button 
+                                                @click="selectedRoomDetails = room"
+                                                class="flex-grow py-2 rounded-xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-300 font-bold text-[10px] tracking-wide transition cursor-pointer text-center"
+                                            >
+                                                View Details
+                                            </button>
+                                            <button 
+                                                @click="openEditRoomModal(room)"
+                                                class="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition cursor-pointer"
+                                                title="Edit Room"
+                                            >
+                                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Empty State -->
+                            <div v-else class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-12 text-center shadow-sm space-y-4">
+                                <div class="h-16 w-16 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center text-slate-400 mx-auto">
+                                    <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-serif text-[#0b1c3d] dark:text-slate-100 text-lg font-bold">No Rooms Found</h3>
+                                    <p class="text-slate-500 dark:text-slate-400 text-xs mt-1 max-w-sm mx-auto leading-relaxed">
+                                        We couldn't find any rooms matching your current filter and search query. Try adjusting your settings or add a new room.
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -4617,8 +4870,6 @@
                 </main>
             </div>
         </div>
-
-    </main>
 
     <!-- ========================================================================= -->
     <!-- MODAL: ADD NEW USER -->
@@ -5100,113 +5351,158 @@
     </div>
 
     <!-- ========================================================================= -->
-    <!-- MODAL: VIEW ROOM DETAILS -->
+    <!-- MODAL: ONSITE BOOKING -->
     <!-- ========================================================================= -->
-    <div v-if="showRoomDetailsModal && selectedRoomDetails" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
+    <div v-if="showOnsiteBookingModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
         <!-- Backdrop -->
-        <div class="absolute inset-0 bg-slate-950/40" @click="showRoomDetailsModal = false"></div>
+        <div class="absolute inset-0 bg-slate-950/40" @click="showOnsiteBookingModal = false"></div>
         
         <!-- Modal Body -->
-        <div class="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-2xl w-[550px] max-w-full animate-fade-in flex flex-col max-h-[90vh]">
-            <!-- Header Image -->
-            <div class="relative h-56 bg-slate-100 dark:bg-slate-850 shrink-0">
-                <img 
-                    :src="selectedRoomDetails.image_url || 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=800&q=80'" 
-                    class="h-full w-full object-cover"
-                    alt="Room Large View"
-                />
-                <button @click="showRoomDetailsModal = false" class="absolute top-4 right-4 p-2 bg-slate-950/40 hover:bg-slate-950/60 text-white rounded-full transition shadow-md backdrop-blur-sm">
+        <div class="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 shadow-2xl w-[520px] max-w-full animate-fade-in space-y-6 max-h-[95vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-slate-50 dark:border-slate-800 pb-4">
+                <div>
+                    <h3 class="font-serif text-[#0b1c3d] dark:text-slate-100 text-xl font-bold">Onsite Booking</h3>
+                    <p class="text-[#A27B5C] dark:text-amber-500 text-[10px] uppercase font-semibold tracking-wider mt-1">{{ selectedRoomDetails?.name }} ({{ selectedRoomDetails?.type }})</p>
+                </div>
+                <button @click="showOnsiteBookingModal = false" class="p-1 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 transition">
                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
             </div>
 
-            <!-- Content Area -->
-            <div class="p-8 space-y-6 overflow-y-auto flex-grow">
-                <!-- Title & Status -->
-                <div class="flex items-start justify-between gap-4">
+            <!-- Error message -->
+            <div v-if="modalError" class="p-3 text-xs text-rose-600 bg-rose-50 dark:bg-rose-955/20 dark:text-rose-300 rounded-xl border border-rose-100 dark:border-rose-900/30 font-medium">
+                {{ modalError }}
+            </div>
+
+            <form @submit.prevent="submitOnsiteBooking" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Guest Name</label>
+                    <input 
+                        type="text" 
+                        v-model="onsiteBookingForm.guest_name" 
+                        placeholder="e.g. Juan Dela Cruz"
+                        class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-[#0B1E3F] focus:ring-1 focus:ring-[#0B1E3F] bg-white dark:bg-slate-800 text-sm transition dark:text-slate-100"
+                        required
+                    />
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <h3 class="font-serif text-[#0b1c3d] dark:text-slate-100 text-2xl font-bold leading-tight">{{ selectedRoomDetails.name }}</h3>
-                        <p class="text-slate-400 dark:text-slate-500 text-sm mt-1 font-semibold tracking-wide">{{ selectedRoomDetails.type }}</p>
+                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Email Address</label>
+                        <input 
+                            type="email" 
+                            v-model="onsiteBookingForm.guest_email" 
+                            placeholder="guest@example.com"
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-[#0B1E3F] focus:ring-1 focus:ring-[#0B1E3F] bg-white dark:bg-slate-800 text-sm transition dark:text-slate-100"
+                            required
+                        />
                     </div>
-                    <span 
-                        :class="[
-                            'px-4 py-1.5 rounded-full text-xs font-extrabold tracking-wider uppercase border shadow-sm',
-                            selectedRoomDetails.status === 'available' ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' :
-                            selectedRoomDetails.status === 'occupied' ? 'bg-rose-500/10 text-rose-600 border-rose-500/20' :
-                            selectedRoomDetails.status === 'cleaning' ? 'bg-blue-500/10 text-blue-600 border-blue-500/20' :
-                            'bg-amber-700/10 text-amber-800 border-amber-700/20'
-                        ]"
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Phone Number</label>
+                        <input 
+                            type="text" 
+                            v-model="onsiteBookingForm.guest_phone" 
+                            placeholder="e.g. +63 912 345 6789"
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-[#0B1E3F] focus:ring-1 focus:ring-[#0B1E3F] bg-white dark:bg-slate-800 text-sm transition dark:text-slate-100"
+                            required
+                        />
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Check-in Date</label>
+                        <input 
+                            type="date" 
+                            v-model="onsiteBookingForm.check_in_date" 
+                            :min="getTodayStr()"
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-[#0B1E3F] focus:ring-1 focus:ring-[#0B1E3F] bg-white dark:bg-slate-800 text-sm transition dark:text-slate-100"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Check-out Date</label>
+                        <input 
+                            type="date" 
+                            v-model="onsiteBookingForm.check_out_date" 
+                            :min="getMinCheckOutDate"
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-[#0B1E3F] focus:ring-1 focus:ring-[#0B1E3F] bg-white dark:bg-slate-800 text-sm transition dark:text-slate-100"
+                            required
+                        />
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Number of Guests</label>
+                        <input 
+                            type="number" 
+                            v-model="onsiteBookingForm.guests_count" 
+                            min="1"
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-[#0B1E3F] focus:ring-1 focus:ring-[#0B1E3F] bg-white dark:bg-slate-800 text-sm transition dark:text-slate-100"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Payment Option</label>
+                        <div class="px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                            <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+                            Cash Payment
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Special Requests</label>
+                    <textarea 
+                        v-model="onsiteBookingForm.special_requests" 
+                        placeholder="e.g. Anniversary setup, extra towels..."
+                        rows="2"
+                        class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-[#0B1E3F] focus:ring-1 focus:ring-[#0B1E3F] bg-white dark:bg-slate-800 text-sm transition dark:text-slate-100 resize-none"
+                    ></textarea>
+                </div>
+
+                <!-- Booking Summary -->
+                <div class="bg-[#FAF9F6] dark:bg-slate-950 p-5 rounded-2xl border border-slate-100 dark:border-slate-850 space-y-2.5">
+                    <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest leading-none">Booking Summary</p>
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="text-slate-500 dark:text-slate-400">Rate per Night</span>
+                        <span class="font-semibold text-slate-800 dark:text-slate-200">₱{{ Number(selectedRoomDetails?.price || 0).toLocaleString() }}</span>
+                    </div>
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="text-slate-500 dark:text-slate-400">Duration of Stay</span>
+                        <span class="font-bold text-[#A27B5C] dark:text-amber-500">
+                            {{ onsiteBookingNights }} {{ onsiteBookingNights === 1 ? 'Night' : 'Nights' }}
+                        </span>
+                    </div>
+                    <div class="border-t border-slate-200/50 dark:border-slate-800 pt-2.5 flex items-center justify-between">
+                        <span class="text-xs font-bold text-slate-700 dark:text-slate-350">Total Booking Price</span>
+                        <span class="text-lg font-bold text-[#0B1E3F] dark:text-amber-500 font-serif">
+                            ₱{{ Number(onsiteBookingTotalPrice).toLocaleString() }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3 pt-4 border-t border-slate-50 dark:border-slate-800">
+                    <button 
+                        type="button" 
+                        @click="showOnsiteBookingModal = false"
+                        class="flex-grow py-3 px-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 text-xs font-semibold tracking-wide transition cursor-pointer"
                     >
-                        {{ selectedRoomDetails.status }}
-                    </span>
+                        Cancel
+                    </button>
+                    <button 
+                        type="submit"
+                        :disabled="modalSubmitting || onsiteBookingNights <= 0"
+                        class="flex-grow py-3 px-4 rounded-xl bg-[#0B1E3F] hover:bg-[#152e59] dark:bg-amber-500 dark:hover:bg-amber-600 dark:text-slate-950 text-white text-xs font-semibold tracking-wide transition shadow-md disabled:opacity-60 cursor-pointer"
+                    >
+                        <span v-if="modalSubmitting">Booking...</span>
+                        <span v-else>Confirm Booking</span>
+                    </button>
                 </div>
-
-                <!-- Price -->
-                <div class="bg-[#FAF9F6] dark:bg-slate-950 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                    <span class="text-xs text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider">Rate Per Night</span>
-                    <span class="text-xl font-bold text-[#A27B5C] dark:text-amber-500 font-serif">₱{{ Number(selectedRoomDetails.price).toLocaleString() }}</span>
-                </div>
-
-                <!-- Description -->
-                <div class="space-y-2">
-                    <h4 class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Description</h4>
-                    <p class="text-xs text-slate-650 dark:text-slate-355 leading-relaxed font-light">
-                        {{ selectedRoomDetails.description || 'No description provided for this room.' }}
-                    </p>
-                </div>
-
-                <!-- Amenities -->
-                <div class="space-y-3">
-                    <h4 class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Amenities</h4>
-                    <div class="flex flex-wrap gap-2">
-                        <span 
-                            v-for="(amenity, idx) in selectedRoomDetails.amenities"
-                            :key="idx"
-                            class="px-3 py-1.5 bg-slate-50 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 rounded-xl text-xs font-medium border border-slate-100 dark:border-slate-700"
-                        >
-                            {{ amenity }}
-                        </span>
-                        <span 
-                            v-if="!selectedRoomDetails.amenities || (Array.isArray(selectedRoomDetails.amenities) && selectedRoomDetails.amenities.length === 0)"
-                            class="text-xs text-slate-400 italic"
-                        >
-                            No amenities listed.
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Footer Actions -->
-            <div class="p-6 border-t border-slate-50 dark:border-slate-800 shrink-0 bg-slate-50/50 dark:bg-slate-950/50 flex items-center gap-3">
-                <button 
-                    v-if="currentUser?.role === 'admin' || currentUser?.role === 'manager'"
-                    @click="deleteRoom(selectedRoomDetails)"
-                    class="px-4 py-3 rounded-xl border border-rose-200 dark:border-rose-900/50 hover:bg-rose-50/50 dark:hover:bg-rose-955/30 text-rose-600 dark:text-rose-455 font-bold text-xs tracking-wide transition cursor-pointer flex items-center gap-1.5"
-                >
-                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                    Delete Room
-                </button>
-                <div class="flex-grow"></div>
-                <button 
-                    @click="showRoomDetailsModal = false"
-                    class="px-5 py-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-xs tracking-wide transition cursor-pointer"
-                >
-                    Close
-                </button>
-                <button 
-                    @click="showRoomDetailsModal = false; openEditRoomModal(selectedRoomDetails)"
-                    class="px-5 py-3 rounded-xl bg-[#0B1E3F] hover:bg-[#152e59] dark:bg-amber-500 dark:hover:bg-amber-600 dark:text-slate-955 text-white font-bold text-xs tracking-wide transition shadow-md cursor-pointer flex items-center gap-1.5"
-                >
-                    <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                    </svg>
-                    Edit Room
-                </button>
-            </div>
+            </form>
         </div>
     </div>
 
@@ -5315,6 +5611,7 @@
 
         </div>
     </div>
+</main>
 </template>
 
 <script setup>
@@ -6123,8 +6420,17 @@ const roomFilter = ref('all')
 const roomSearchQuery = ref('')
 const showAddRoomModal = ref(false)
 const showEditRoomModal = ref(false)
-const showRoomDetailsModal = ref(false)
 const selectedRoomDetails = ref(null)
+
+const formatAmenityName = (name) => {
+    const lower = name.toLowerCase();
+    if (lower.includes('wifi') || lower.includes('internet')) return 'Wi-Fi 6';
+    if (lower.includes('pool') || lower.includes('swim')) return 'Private Pool';
+    if (lower.includes('air conditioning') || lower.includes('aircon') || lower.includes('climate')) return 'Climate Control';
+    if (lower.includes('bar') || lower.includes('fridge') || lower.includes('refrigerator')) return 'Mini Bar';
+    if (lower.includes('balcony') || lower.includes('terrace') || lower.includes('deck')) return 'Balcony';
+    return name;
+}
 
 const filteredRoomsList = computed(() => {
     return roomsList.value.filter(room => {
@@ -6288,6 +6594,126 @@ const deleteRoom = async (room) => {
             }
         }
     })
+}
+
+const showOnsiteBookingModal = ref(false)
+const onsiteBookingForm = reactive({
+    guest_name: '',
+    guest_email: '',
+    guest_phone: '',
+    guests_count: 2,
+    check_in_date: '',
+    check_out_date: '',
+    payment_method: 'cash_at_property',
+    cash_securing_method: 'card',
+    special_requests: ''
+})
+
+const onsiteBookingNights = computed(() => {
+    if (!onsiteBookingForm.check_in_date || !onsiteBookingForm.check_out_date) return 0
+    const start = new Date(onsiteBookingForm.check_in_date)
+    const end = new Date(onsiteBookingForm.check_out_date)
+    const diffTime = end - start
+    if (diffTime <= 0) return 0
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+})
+
+const onsiteBookingTotalPrice = computed(() => {
+    if (!selectedRoomDetails.value) return 0
+    return onsiteBookingNights.value * Number(selectedRoomDetails.value.price)
+})
+
+const getMinCheckOutDate = computed(() => {
+    if (!onsiteBookingForm.check_in_date) return getTomorrowStr()
+    const d = new Date(onsiteBookingForm.check_in_date)
+    d.setDate(d.getDate() + 1)
+    const yyyy = d.getFullYear()
+    const mm = String(d.getMonth() + 1).padStart(2, '0')
+    const dd = String(d.getDate()).padStart(2, '0')
+    return `${yyyy}-${mm}-${dd}`
+})
+
+watch(() => onsiteBookingForm.check_in_date, (newVal) => {
+    const today = getTodayStr()
+    if (newVal && newVal < today) {
+        onsiteBookingForm.check_in_date = today
+    }
+    if (newVal && onsiteBookingForm.check_out_date && onsiteBookingForm.check_out_date <= newVal) {
+        const d = new Date(newVal)
+        d.setDate(d.getDate() + 1)
+        const yyyy = d.getFullYear()
+        const mm = String(d.getMonth() + 1).padStart(2, '0')
+        const dd = String(d.getDate()).padStart(2, '0')
+        onsiteBookingForm.check_out_date = `${yyyy}-${mm}-${dd}`
+    }
+})
+
+watch(() => onsiteBookingForm.check_out_date, (newVal) => {
+    if (newVal && onsiteBookingForm.check_in_date && newVal <= onsiteBookingForm.check_in_date) {
+        const d = new Date(onsiteBookingForm.check_in_date)
+        d.setDate(d.getDate() + 1)
+        const yyyy = d.getFullYear()
+        const mm = String(d.getMonth() + 1).padStart(2, '0')
+        const dd = String(d.getDate()).padStart(2, '0')
+        onsiteBookingForm.check_out_date = `${yyyy}-${mm}-${dd}`
+    }
+})
+
+const openOnsiteBookingModal = () => {
+    onsiteBookingForm.guest_name = ''
+    onsiteBookingForm.guest_email = ''
+    onsiteBookingForm.guest_phone = ''
+    onsiteBookingForm.guests_count = 2
+    onsiteBookingForm.check_in_date = getTodayStr()
+    onsiteBookingForm.check_out_date = getTomorrowStr()
+    onsiteBookingForm.payment_method = 'cash_at_property'
+    onsiteBookingForm.cash_securing_method = 'card'
+    onsiteBookingForm.special_requests = ''
+    modalError.value = ''
+    showOnsiteBookingModal.value = true
+}
+
+const submitOnsiteBooking = async () => {
+    modalSubmitting.value = true
+    modalError.value = ''
+    try {
+        const response = await axiosInstance.post('/api/admin/bookings/onsite', {
+            room_id: selectedRoomDetails.value.id,
+            guest_name: onsiteBookingForm.guest_name,
+            guest_email: onsiteBookingForm.guest_email,
+            guest_phone: onsiteBookingForm.guest_phone,
+            guests_count: Number(onsiteBookingForm.guests_count),
+            check_in_date: onsiteBookingForm.check_in_date,
+            check_out_date: onsiteBookingForm.check_out_date,
+            payment_method: onsiteBookingForm.payment_method,
+            cash_securing_method: onsiteBookingForm.payment_method === 'cash_at_property' ? onsiteBookingForm.cash_securing_method : null,
+            special_requests: onsiteBookingForm.special_requests
+        })
+
+        if (response.data.success) {
+            showCustomAlert({
+                title: 'Onsite Booking Confirmed',
+                message: `Successfully created onsite booking for ${onsiteBookingForm.guest_name}. Reference: ${response.data.booking.reference}`,
+                type: 'success'
+            })
+            showOnsiteBookingModal.value = false
+            await fetchAdminRooms()
+            const updated = roomsList.value.find(r => r.id === selectedRoomDetails.value.id)
+            if (updated) {
+                selectedRoomDetails.value = updated
+            }
+        }
+    } catch (e) {
+        modalError.value = e.response?.data?.message || 'Failed to create onsite booking. Please try again.'
+    } finally {
+        modalSubmitting.value = false
+    }
+}
+
+const formatDate = (dateStr) => {
+    if (!dateStr) return ''
+    const d = new Date(dateStr)
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
 const usersList = ref([])
