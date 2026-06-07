@@ -42,8 +42,8 @@ class BookingController extends Controller
             ], 422);
         }
 
-        // Find rooms matching type
-        $rooms = Room::where('type', $validated['room_type'])->get();
+        // Find rooms matching type (ordered by ID descending to select the latest available room)
+        $rooms = Room::where('type', $validated['room_type'])->orderBy('id', 'desc')->get();
 
         if ($rooms->isEmpty()) {
             return response()->json([
@@ -285,6 +285,22 @@ class BookingController extends Controller
         $booking = Booking::findOrFail($id);
         $booking->status = 'CONFIRMED';
         $booking->save();
+
+        // If the stay is active now, mark the room as occupied
+        $room = $booking->room;
+        if ($room) {
+            $now = Carbon::now('Asia/Manila');
+            $checkInTimeStr = $booking->check_in_time ?: '12:00 PM';
+            $checkOutTimeStr = $booking->check_out_time ?: '11:00 AM';
+            
+            $checkInDateTime = Carbon::parse($booking->check_in_date->toDateString() . ' ' . $checkInTimeStr, 'Asia/Manila');
+            $checkOutDateTime = Carbon::parse($booking->check_out_date->toDateString() . ' ' . $checkOutTimeStr, 'Asia/Manila');
+            
+            if ($now >= $checkInDateTime && $now < $checkOutDateTime) {
+                $room->status = 'occupied';
+                $room->save();
+            }
+        }
 
         return response()->json([
             'success' => true,

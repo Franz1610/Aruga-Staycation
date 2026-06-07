@@ -167,6 +167,43 @@ Route::post('/api/user/change-password', function (Request $request) {
 });
 
 Route::get('/api/rooms', function () {
+    $now = Illuminate\Support\Carbon::now('Asia/Manila');
+    $today = $now->toDateString();
+    
+    // Find all confirmed bookings overlapping today
+    $todayBookings = App\Models\Booking::where('status', 'CONFIRMED')
+        ->where('check_in_date', '<=', $today)
+        ->where('check_out_date', '>=', $today)
+        ->get();
+
+    $activeConfirmedRoomIds = [];
+    foreach ($todayBookings as $b) {
+        $checkInTimeStr = $b->check_in_time ?: '12:00 PM';
+        $checkOutTimeStr = $b->check_out_time ?: '11:00 AM';
+        
+        $checkInDateTime = Illuminate\Support\Carbon::parse($b->check_in_date->toDateString() . ' ' . $checkInTimeStr, 'Asia/Manila');
+        $checkOutDateTime = Illuminate\Support\Carbon::parse($b->check_out_date->toDateString() . ' ' . $checkOutTimeStr, 'Asia/Manila');
+        
+        if ($now >= $checkInDateTime && $now < $checkOutDateTime) {
+            $activeConfirmedRoomIds[] = $b->room_id;
+        }
+    }
+
+    $rooms = App\Models\Room::all();
+    foreach ($rooms as $room) {
+        if (in_array($room->id, $activeConfirmedRoomIds)) {
+            if ($room->status !== 'occupied') {
+                $room->status = 'occupied';
+                $room->save();
+            }
+        } else {
+            if ($room->status === 'occupied') {
+                $room->status = 'available';
+                $room->save();
+            }
+        }
+    }
+
     return response()->json([
         'success' => true,
         'rooms' => App\Models\Room::all()
@@ -193,18 +230,66 @@ Route::get('/api/admin/rooms', function () {
         return response()->json(['message' => 'Forbidden'], 403);
     }
 
+    $now = Illuminate\Support\Carbon::now('Asia/Manila');
+    $today = $now->toDateString();
+
+    // Auto-sync: Find all rooms that have an active confirmed booking today
+    $todayBookings = App\Models\Booking::where('status', 'CONFIRMED')
+        ->where('check_in_date', '<=', $today)
+        ->where('check_out_date', '>=', $today)
+        ->get();
+
+    $activeConfirmedRoomIds = [];
+    foreach ($todayBookings as $b) {
+        $checkInTimeStr = $b->check_in_time ?: '12:00 PM';
+        $checkOutTimeStr = $b->check_out_time ?: '11:00 AM';
+        
+        $checkInDateTime = Illuminate\Support\Carbon::parse($b->check_in_date->toDateString() . ' ' . $checkInTimeStr, 'Asia/Manila');
+        $checkOutDateTime = Illuminate\Support\Carbon::parse($b->check_out_date->toDateString() . ' ' . $checkOutTimeStr, 'Asia/Manila');
+        
+        if ($now >= $checkInDateTime && $now < $checkOutDateTime) {
+            $activeConfirmedRoomIds[] = $b->room_id;
+        }
+    }
+
     $rooms = App\Models\Room::orderBy('name', 'asc')->get();
-    $today = Illuminate\Support\Carbon::today()->toDateString();
+    foreach ($rooms as $room) {
+        if (in_array($room->id, $activeConfirmedRoomIds)) {
+            if ($room->status !== 'occupied') {
+                $room->status = 'occupied';
+                $room->save();
+            }
+        } else {
+            if ($room->status === 'occupied') {
+                $room->status = 'available';
+                $room->save();
+            }
+        }
+    }
     $startOfMonth = Illuminate\Support\Carbon::now()->startOfMonth()->toDateString();
     $startOfLastMonth = Illuminate\Support\Carbon::now()->subMonth()->startOfMonth()->toDateString();
 
     foreach ($rooms as $room) {
-        // Find active booking (CONFIRMED booking overlapping today)
-        $activeBooking = App\Models\Booking::where('room_id', $room->id)
+        // Find active booking (CONFIRMED booking overlapping today, verified with check-in/out times)
+        $roomTodayBookings = App\Models\Booking::where('room_id', $room->id)
             ->where('status', 'CONFIRMED')
             ->where('check_in_date', '<=', $today)
-            ->where('check_out_date', '>', $today)
-            ->first();
+            ->where('check_out_date', '>=', $today)
+            ->get();
+
+        $activeBooking = null;
+        foreach ($roomTodayBookings as $b) {
+            $checkInTimeStr = $b->check_in_time ?: '12:00 PM';
+            $checkOutTimeStr = $b->check_out_time ?: '11:00 AM';
+            
+            $checkInDateTime = Illuminate\Support\Carbon::parse($b->check_in_date->toDateString() . ' ' . $checkInTimeStr, 'Asia/Manila');
+            $checkOutDateTime = Illuminate\Support\Carbon::parse($b->check_out_date->toDateString() . ' ' . $checkOutTimeStr, 'Asia/Manila');
+            
+            if ($now >= $checkInDateTime && $now < $checkOutDateTime) {
+                $activeBooking = $b;
+                break;
+            }
+        }
             
         // Fallback: get the most recent non-rejected booking
         if (!$activeBooking) {
@@ -398,13 +483,9 @@ Route::post('/api/admin/bookings/onsite', function (Illuminate\Http\Request $req
     $rate = (float) $room->price;
     $totalPrice = $rate * $nights;
 
-    if ($validated['payment_method'] === 'cash_at_property') {
-        $downPayment = $totalPrice * 0.30;
-        $remainingBalance = $totalPrice * 0.70;
-    } else {
-        $downPayment = $totalPrice;
-        $remainingBalance = 0.00;
-    }
+    // For onsite bookings, the guest pays the full price in cash immediately.
+    $downPayment = $totalPrice;
+    $remainingBalance = 0.00;
 
     // Generate unique Reference Code
     $reference = '';

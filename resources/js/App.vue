@@ -1836,9 +1836,9 @@
         <!-- ========================================================================= -->
         <!-- VIEW: ADMIN DASHBOARD (Manager / Staff Portal) -->
         <!-- ========================================================================= -->
-        <div v-else-if="currentView === 'dashboard' && currentUser" class="min-h-screen w-full flex bg-[#F8FAFC] dark:bg-slate-950 animate-fade-in text-slate-800 dark:text-slate-200 transition-colors duration-300">
+        <div v-else-if="currentView === 'dashboard' && currentUser" class="h-screen w-full flex overflow-hidden bg-[#F8FAFC] dark:bg-slate-950 animate-fade-in text-slate-800 dark:text-slate-200 transition-colors duration-300">
             <!-- Sidebar -->
-            <aside class="hidden md:flex flex-col w-64 bg-white dark:bg-slate-900 border-r border-slate-100 dark:border-slate-800 p-6 shrink-0 justify-between transition-colors duration-300">
+            <aside class="hidden md:flex flex-col w-64 h-full bg-white dark:bg-slate-900 border-r border-slate-100 dark:border-slate-800 p-6 shrink-0 justify-between overflow-y-auto transition-colors duration-300">
                 <div>
                     <!-- Logo / Portal Brand -->
                     <div class="flex items-center gap-3 pb-6 border-b border-slate-50 dark:border-slate-800 mb-6">
@@ -6698,6 +6698,9 @@ const submitOnsiteBooking = async () => {
             })
             showOnsiteBookingModal.value = false
             await fetchAdminRooms()
+            await fetchPendingBookings()
+            await fetchConfirmedBookings()
+            await fetchRejectedBookings()
             const updated = roomsList.value.find(r => r.id === selectedRoomDetails.value.id)
             if (updated) {
                 selectedRoomDetails.value = updated
@@ -6804,6 +6807,24 @@ const getBgClass = (id) => {
     return classes[id % classes.length]
 }
 
+const formatToManilaDateString = (dateStr) => {
+    if (!dateStr) return ''
+    if (dateStr.length === 10 && !dateStr.includes('T')) {
+        return dateStr
+    }
+    const d = new Date(dateStr)
+    if (isNaN(d.getTime())) {
+        return dateStr.split('T')[0]
+    }
+    const formatter = new Intl.DateTimeFormat('sv-SE', {
+        timeZone: 'Asia/Manila',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    })
+    return formatter.format(d)
+}
+
 const formatTimestamp = (dateStr) => {
     if (!dateStr) return ''
     const d = new Date(dateStr)
@@ -6821,14 +6842,8 @@ const formatTimestamp = (dateStr) => {
 
 const formatDateMMMdd = (dateStr) => {
     if (!dateStr) return ''
-    if (dateStr.includes('T') || dateStr.includes('Z')) {
-        const d = new Date(dateStr)
-        if (!isNaN(d.getTime())) {
-            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-            return `${months[d.getMonth()]} ${String(d.getDate()).padStart(2, '0')}`
-        }
-    }
-    const parts = dateStr.split('T')[0].split('-')
+    const formattedDate = formatToManilaDateString(dateStr)
+    const parts = formattedDate.split('-')
     if (parts.length === 3) {
         const year = parseInt(parts[0], 10)
         const month = parseInt(parts[1], 10) - 1
@@ -6842,13 +6857,8 @@ const formatDateMMMdd = (dateStr) => {
 
 const getYearFromDate = (dateStr) => {
     if (!dateStr) return 2026
-    if (dateStr.includes('T') || dateStr.includes('Z')) {
-        const d = new Date(dateStr)
-        if (!isNaN(d.getTime())) {
-            return d.getFullYear()
-        }
-    }
-    const parts = dateStr.split('T')[0].split('-')
+    const formattedDate = formatToManilaDateString(dateStr)
+    const parts = formattedDate.split('-')
     if (parts.length === 3) {
         return parseInt(parts[0], 10)
     }
@@ -6858,13 +6868,8 @@ const getYearFromDate = (dateStr) => {
 const getDayOfWeekName = (dateStr) => {
     if (!dateStr) return ''
     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-    if (dateStr.includes('T') || dateStr.includes('Z')) {
-        const d = new Date(dateStr)
-        if (!isNaN(d.getTime())) {
-            return days[d.getDay()]
-        }
-    }
-    const parts = dateStr.split('T')[0].split('-')
+    const formattedDate = formatToManilaDateString(dateStr)
+    const parts = formattedDate.split('-')
     if (parts.length === 3) {
         const year = parseInt(parts[0], 10)
         const month = parseInt(parts[1], 10) - 1
@@ -6887,22 +6892,41 @@ const fetchConfirmedBookings = async () => {
                 const amountVal = b.total_price
 
                 // Dynamic stay status check (Manila time UTC+8)
-                const manilaTime = new Date(new Date().getTime() + (8 * 60 * 60 * 1000))
-                const todayStr = manilaTime.toISOString().split('T')[0]
-                const checkInStr = b.check_in_date ? b.check_in_date.split('T')[0] : ''
-                const checkOutStr = b.check_out_date ? b.check_out_date.split('T')[0] : ''
+                const now = new Date(new Date().getTime() + (8 * 60 * 60 * 1000))
+                
+                const checkInStr = formatToManilaDateString(b.check_in_date)
+                const checkOutStr = formatToManilaDateString(b.check_out_date)
+                
+                let checkInDateTime = null
+                let checkOutDateTime = null
+                
+                if (checkInStr && checkOutStr) {
+                    const parseTime = (dateStr, timeStr) => {
+                        const [time, modifier] = timeStr.split(' ')
+                        let [hours, minutes] = time.split(':').map(Number)
+                        if (modifier === 'PM' && hours < 12) hours += 12
+                        if (modifier === 'AM' && hours === 12) hours = 0
+                        
+                        const d = new Date(dateStr)
+                        d.setUTCHours(hours, minutes, 0, 0)
+                        return d
+                    }
+                    
+                    checkInDateTime = parseTime(checkInStr, b.check_in_time || '12:00 PM')
+                    checkOutDateTime = parseTime(checkOutStr, b.check_out_time || '11:00 AM')
+                }
                 
                 let statusText = 'Confirmed'
                 let statusTypeVal = 'confirmed'
                 
-                if (checkInStr && checkOutStr) {
-                    if (todayStr >= checkInStr && todayStr <= checkOutStr) {
+                if (checkInDateTime && checkOutDateTime) {
+                    if (now >= checkInDateTime && now < checkOutDateTime) {
                         statusText = 'In-Stay'
                         statusTypeVal = 'in_stay'
-                    } else if (todayStr > checkOutStr) {
+                    } else if (now >= checkOutDateTime) {
                         statusText = 'Completed'
                         statusTypeVal = 'completed'
-                    } else if (todayStr < checkInStr) {
+                    } else if (now < checkInDateTime) {
                         statusText = 'Pending Check-in'
                         statusTypeVal = 'pending_check_in'
                     }
@@ -7081,6 +7105,7 @@ const verifyPayment = async (submission) => {
                         message: 'The reservation has been successfully verified and confirmed.',
                         type: 'success'
                     })
+                    await fetchAdminRooms()
                     await fetchPendingBookings()
                     await fetchConfirmedBookings()
                     if (selectedPendingReservation.value && selectedPendingReservation.value.id === submission.id) {
