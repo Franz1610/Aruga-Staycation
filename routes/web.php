@@ -166,3 +166,23 @@ Route::post('/api/user/change-password', function (Request $request) {
     ]);
 });
 
+Route::get('/api/rooms', function () {
+    return response()->json([
+        'success' => true,
+        'rooms' => App\Models\Room::all()
+    ]);
+});
+
+use App\Http\Controllers\BookingController;
+
+Route::post('/api/bookings', [BookingController::class, 'store']);
+Route::get('/api/bookings/{reference}', [BookingController::class, 'show']);
+Route::get('/api/admin/bookings/pending', [BookingController::class, 'getPendingBookings']);
+Route::get('/api/admin/bookings/confirmed', [BookingController::class, 'getConfirmedBookings']);
+Route::get('/api/admin/bookings/rejected', [BookingController::class, 'getRejectedBookings']);
+Route::post('/api/admin/bookings/{id}/approve', [BookingController::class, 'approveBooking']);
+Route::post('/api/admin/bookings/{id}/reject', [BookingController::class, 'rejectBooking']);
+Route::get('/api/admin/sales', [BookingController::class, 'getSalesReport']);
+
+
+

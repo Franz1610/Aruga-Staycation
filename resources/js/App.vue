@@ -200,150 +200,81 @@
                 <!-- Accommodations Cards Grid -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     
-                    <!-- Card 1: Beachfront Villa -->
-                    <div class="bg-white border border-slate-100 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition duration-300 flex flex-col justify-between group">
+                    <!-- Dynamic Database Room Cards -->
+                    <div 
+                        v-for="room in roomChoices" 
+                        :key="room.id"
+                        class="bg-white border border-slate-100 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition duration-300 flex flex-col justify-between group"
+                    >
                         <div class="relative h-64 overflow-hidden shrink-0">
-                            <!-- Bestseller Badge -->
-                            <div class="absolute top-4 right-4 z-10 bg-white/95 backdrop-blur-sm text-[#A27B5C] border border-amber-500/10 px-3.5 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-wider shadow-sm">
+                            <!-- Bestseller / Category Badge -->
+                            <div 
+                                v-if="room.type === 'Couple Room'"
+                                class="absolute top-4 right-4 z-10 bg-white/95 backdrop-blur-sm text-[#A27B5C] border border-amber-500/10 px-3.5 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-wider shadow-sm"
+                            >
                                 Bestseller
                             </div>
+                            <div 
+                                v-else-if="room.type === 'Family Room'"
+                                class="absolute top-4 right-4 z-10 bg-white/95 backdrop-blur-sm text-emerald-700 border border-emerald-500/10 px-3.5 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-wider shadow-sm"
+                            >
+                                Popular
+                            </div>
+                            <div 
+                                v-else
+                                class="absolute top-4 right-4 z-10 bg-[#0B1E3F]/90 backdrop-blur-sm text-white px-3.5 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-wider shadow-sm"
+                            >
+                                Event Space
+                            </div>
+                            
                             <img 
-                                src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=800&q=80" 
-                                alt="Beachfront Villa" 
+                                :src="room.image_url" 
+                                :alt="room.type" 
                                 class="w-full h-full object-cover group-hover:scale-103 transition duration-700"
                             />
                         </div>
+                        
                         <div class="p-6 md:p-8 flex-grow flex flex-col justify-between">
                             <div class="space-y-4">
                                 <div class="flex items-start justify-between gap-4">
                                     <h3 class="font-serif text-[#0B1E3F] text-lg md:text-xl font-bold leading-snug">
-                                        Beachfront Villa
+                                        {{ room.type }}
                                     </h3>
                                     <div class="text-right shrink-0">
                                         <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">From</span>
-                                        <span class="font-bold text-[#0B1E3F] text-base">PHP 12,000</span>
+                                        <span class="font-bold text-[#0B1E3F] text-base">PHP {{ formatPrice(room.price) }}</span>
                                         <span class="text-[9px] text-slate-400 font-bold block mt-0.5">/night</span>
                                     </div>
                                 </div>
                                 <p class="text-xs text-slate-500 font-light leading-relaxed">
-                                    Direct access to the white sands, with a private infinity pool and sun deck.
+                                    {{ room.description }}
                                 </p>
-                                <!-- Tags / Amenities -->
+                                
+                                <!-- Dynamic Amenities Badges -->
                                 <div class="flex flex-wrap gap-2 pt-2">
-                                    <span class="bg-[#FAF6F0] border border-[#F6EBE0]/60 px-2.5 py-1.5 rounded-lg text-[9px] font-bold text-[#A27B5C] flex items-center gap-1.5 shadow-sm uppercase tracking-wider">
-                                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg>
-                                        Private Pool
-                                    </span>
-                                    <span class="bg-[#FAF6F0] border border-[#F6EBE0]/60 px-2.5 py-1.5 rounded-lg text-[9px] font-bold text-[#A27B5C] flex items-center gap-1.5 shadow-sm uppercase tracking-wider">
-                                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071a10.5 10.5 0 0114.14 0M1.414 8.414a15 15 0 0121.172 0" /></svg>
-                                        Wifi
-                                    </span>
-                                    <span class="bg-[#FAF6F0] border border-[#F6EBE0]/60 px-2.5 py-1.5 rounded-lg text-[9px] font-bold text-[#A27B5C] flex items-center gap-1.5 shadow-sm uppercase tracking-wider">
-                                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-11.314l.707.707m11.314 11.314l.707-.707M12 8a4 4 0 110 8 4 4 0 010-8z" /></svg>
-                                        Breakfast
+                                    <span 
+                                        v-for="(amenity, index) in room.amenities" 
+                                        :key="index"
+                                        class="bg-[#FAF6F0] border border-[#F6EBE0]/60 px-2.5 py-1.5 rounded-lg text-[9px] font-bold text-[#A27B5C] flex items-center gap-1.5 shadow-sm uppercase tracking-wider"
+                                    >
+                                        <!-- Checkmark SVG -->
+                                        <svg class="h-3 w-3 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                        {{ amenity }}
                                     </span>
                                 </div>
                             </div>
-                            <button @click="startBooking('Beachfront Villa', 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=800&q=80')" class="w-full mt-6 py-3.5 px-6 rounded-xl bg-[#0B1E3F] hover:bg-[#152e59] active:scale-[0.99] text-white font-bold text-xs tracking-wider uppercase transition-all duration-200 cursor-pointer shadow-md shadow-blue-950/10">
+                            
+                            <button 
+                                @click="startBooking(room.type, room.image_url, room.price)" 
+                                class="w-full mt-6 py-3.5 px-6 rounded-xl bg-[#0B1E3F] hover:bg-[#152e59] active:scale-[0.99] text-white font-bold text-xs tracking-wider uppercase transition-all duration-200 cursor-pointer shadow-md shadow-blue-950/10"
+                            >
                                 Book Now
                             </button>
                         </div>
                     </div>
-
-                    <!-- Card 2: Garden Suite -->
-                    <div class="bg-white border border-slate-100 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition duration-300 flex flex-col justify-between group">
-                        <div class="relative h-64 overflow-hidden shrink-0">
-                            <img 
-                                src="https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?auto=format&fit=crop&w=800&q=80" 
-                                alt="Garden Suite" 
-                                class="w-full h-full object-cover group-hover:scale-103 transition duration-700"
-                            />
-                        </div>
-                        <div class="p-6 md:p-8 flex-grow flex flex-col justify-between">
-                            <div class="space-y-4">
-                                <div class="flex items-start justify-between gap-4">
-                                    <h3 class="font-serif text-[#0B1E3F] text-lg md:text-xl font-bold leading-snug">
-                                        Garden Suite
-                                    </h3>
-                                    <div class="text-right shrink-0">
-                                        <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">From</span>
-                                        <span class="font-bold text-[#0B1E3F] text-base">PHP 8,500</span>
-                                        <span class="text-[9px] text-slate-400 font-bold block mt-0.5">/night</span>
-                                    </div>
-                                </div>
-                                <p class="text-xs text-slate-500 font-light leading-relaxed">
-                                    Secluded sanctuary surrounded by lush tropical flora and stone paths.
-                                </p>
-                                <div class="flex flex-wrap gap-2 pt-2">
-                                    <span class="bg-[#FAF6F0] border border-[#F6EBE0]/60 px-2.5 py-1.5 rounded-lg text-[9px] font-bold text-[#A27B5C] flex items-center gap-1.5 shadow-sm uppercase tracking-wider">
-                                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
-                                        Private Garden
-                                    </span>
-                                    <span class="bg-[#FAF6F0] border border-[#F6EBE0]/60 px-2.5 py-1.5 rounded-lg text-[9px] font-bold text-[#A27B5C] flex items-center gap-1.5 shadow-sm uppercase tracking-wider">
-                                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071a10.5 10.5 0 0114.14 0M1.414 8.414a15 15 0 0121.172 0" /></svg>
-                                        Wifi
-                                    </span>
-                                    <span class="bg-[#FAF6F0] border border-[#F6EBE0]/60 px-2.5 py-1.5 rounded-lg text-[9px] font-bold text-[#A27B5C] flex items-center gap-1.5 shadow-sm uppercase tracking-wider">
-                                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-11.314l.707.707m11.314 11.314l.707-.707M12 8a4 4 0 110 8 4 4 0 010-8z" /></svg>
-                                        Breakfast
-                                    </span>
-                                </div>
-                            </div>
-                            <button @click="startBooking('Garden Suite', 'https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?auto=format&fit=crop&w=800&q=80')" class="w-full mt-6 py-3.5 px-6 rounded-xl bg-[#0B1E3F] hover:bg-[#152e59] active:scale-[0.99] text-white font-bold text-xs tracking-wider uppercase transition-all duration-200 cursor-pointer shadow-md shadow-blue-950/10">
-                                Book Now
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Card 3: Overwater Bungalow -->
-                    <div class="bg-white border border-slate-100 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition duration-300 flex flex-col justify-between group">
-                        <div class="relative h-64 overflow-hidden shrink-0">
-                            <!-- Limited Badge -->
-                            <div class="absolute top-4 right-4 z-10 bg-[#0B1E3F]/90 backdrop-blur-sm text-white px-3.5 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-wider shadow-sm">
-                                Limited
-                            </div>
-                            <img 
-                                src="https://images.unsplash.com/photo-1506929562872-bb421503ef21?auto=format&fit=crop&w=800&q=80" 
-                                alt="Overwater Bungalow" 
-                                class="w-full h-full object-cover group-hover:scale-103 transition duration-700"
-                            />
-                        </div>
-                        <div class="p-6 md:p-8 flex-grow flex flex-col justify-between">
-                            <div class="space-y-4">
-                                <div class="flex items-start justify-between gap-4">
-                                    <h3 class="font-serif text-[#0B1E3F] text-lg md:text-xl font-bold leading-snug">
-                                        Overwater Bungalow
-                                    </h3>
-                                    <div class="text-right shrink-0">
-                                        <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">From</span>
-                                        <span class="font-bold text-[#0B1E3F] text-base">PHP 18,500</span>
-                                        <span class="text-[9px] text-slate-400 font-bold block mt-0.5">/night</span>
-                                    </div>
-                                </div>
-                                <p class="text-xs text-slate-500 font-light leading-relaxed">
-                                    Premium stilted bungalows with glass-floor panels and direct lagoon access.
-                                </p>
-                                <div class="flex flex-wrap gap-2 pt-2">
-                                    <span class="bg-[#FAF6F0] border border-[#F6EBE0]/60 px-2.5 py-1.5 rounded-lg text-[9px] font-bold text-[#A27B5C] flex items-center gap-1.5 shadow-sm uppercase tracking-wider">
-                                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                                        Glass Floor
-                                    </span>
-                                    <span class="bg-[#FAF6F0] border border-[#F6EBE0]/60 px-2.5 py-1.5 rounded-lg text-[9px] font-bold text-[#A27B5C] flex items-center gap-1.5 shadow-sm uppercase tracking-wider">
-                                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071a10.5 10.5 0 0114.14 0M1.414 8.414a15 15 0 0121.172 0" /></svg>
-                                        Wifi
-                                    </span>
-                                    <span class="bg-[#FAF6F0] border border-[#F6EBE0]/60 px-2.5 py-1.5 rounded-lg text-[9px] font-bold text-[#A27B5C] flex items-center gap-1.5 shadow-sm uppercase tracking-wider">
-                                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-11.314l.707.707m11.314 11.314l.707-.707M12 8a4 4 0 110 8 4 4 0 010-8z" /></svg>
-                                        Breakfast
-                                    </span>
-                                </div>
-                            </div>
-                            <button @click="startBooking('Overwater Bungalow', 'https://images.unsplash.com/photo-1506929562872-bb421503ef21?auto=format&fit=crop&w=800&q=80')" class="w-full mt-6 py-3.5 px-6 rounded-xl bg-[#0B1E3F] hover:bg-[#152e59] active:scale-[0.99] text-white font-bold text-xs tracking-wider uppercase transition-all duration-200 cursor-pointer shadow-md shadow-blue-950/10">
-                                Book Now
-                            </button>
-                        </div>
-                    </div>
-
+                    
                 </div>
             </section>
 
@@ -495,6 +426,7 @@
                                         <input 
                                             type="tel" 
                                             v-model="bookingForm.phone"
+                                            @input="bookingForm.phone = bookingForm.phone.replace(/[^0-9+\s()-]/g, '')"
                                             placeholder="+63 912 345 6789"
                                             class="w-full px-4 py-3.5 rounded-2xl border border-slate-200 focus:outline-none focus:border-[#0B1E3F] focus:ring-1 focus:ring-[#0B1E3F] bg-white text-xs font-semibold transition"
                                             required
@@ -573,19 +505,19 @@
                     </div>
                 </div>
 
-                <!-- STEP 2: STAY SCHEDULE & PAYMENT (New combined page matching image 1-to-1) -->
+                <!-- STEP 2: STAY SCHEDULE & DATES -->
                 <div v-else-if="currentBookingStep === 2" class="space-y-10 animate-fade-in">
                     
                     <!-- Layout Grid -->
                     <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
                         
-                        <!-- Left Column (Stay Schedule & Payment Method) -->
+                        <!-- Left Column (Stay Schedule) -->
                         <div class="lg:col-span-8 space-y-10">
                             
                             <!-- 1. Stay Schedule -->
                             <div class="space-y-4">
                                 <div class="flex items-center gap-3">
-                                    <div class="h-8 w-8 rounded-full bg-[#0B1E3F] text-white flex items-center justify-center font-bold text-sm">1</div>
+                                    <div class="h-8 w-8 rounded-full bg-[#0B1E3F] text-white flex items-center justify-center font-bold text-sm">2</div>
                                     <h3 class="font-serif text-xl font-bold text-[#0B1E3F]">Stay Schedule</h3>
                                 </div>
 
@@ -594,14 +526,14 @@
                                     <div class="flex-1">
                                         <!-- Month Header -->
                                         <div class="flex items-center justify-between mb-4 px-1">
-                                            <span class="font-serif text-[#0B1E3F] font-bold text-sm">December 2026</span>
+                                            <span class="font-serif text-[#0B1E3F] font-bold text-sm">{{ currentMonthName }} {{ currentCalendarYear }}</span>
                                             <div class="flex items-center gap-2">
-                                                <button type="button" class="p-1 text-slate-400 hover:text-[#0B1E3F] transition cursor-pointer">
+                                                <button @click="prevMonth" type="button" class="p-1 text-slate-400 hover:text-[#0B1E3F] transition cursor-pointer">
                                                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
                                                     </svg>
                                                 </button>
-                                                <button type="button" class="p-1 text-slate-400 hover:text-[#0B1E3F] transition cursor-pointer">
+                                                <button @click="nextMonth" type="button" class="p-1 text-slate-400 hover:text-[#0B1E3F] transition cursor-pointer">
                                                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                                                     </svg>
@@ -621,9 +553,11 @@
                                                 :key="idx"
                                                 type="button"
                                                 @click="handleCalendarDayClick(day)"
+                                                :disabled="isPastDay(day)"
                                                 :class="[
-                                                    'h-9 w-9 text-xs flex items-center justify-center transition-all cursor-pointer relative',
-                                                    day.isCurrentMonth ? 'text-[#0B1E3F] font-bold' : 'text-slate-300 font-light',
+                                                    'h-9 w-9 text-xs flex items-center justify-center transition-all relative',
+                                                    isPastDay(day) ? 'opacity-20 cursor-not-allowed pointer-events-none' : 'cursor-pointer',
+                                                    day.isCurrentMonth && !isPastDay(day) ? 'text-[#0B1E3F] font-bold' : 'text-slate-300 font-light',
                                                     isCheckInDay(day) ? 'bg-[#0B1E3F] text-white rounded-full font-bold shadow-md' : '',
                                                     isCheckOutDay(day) ? 'bg-[#0B1E3F] text-white rounded-full font-bold shadow-md' : '',
                                                     isDayInRange(day) ? 'bg-slate-100/80 text-[#0B1E3F] font-bold' : ''
@@ -634,29 +568,34 @@
                                         </div>
                                     </div>
 
-                                    <!-- Arrival Time side -->
+                                    <!-- Arrival Time (Fixed info card) -->
                                     <div class="flex-1 flex flex-col justify-between">
-                                        <div>
-                                            <h4 class="text-[#0B1E3F] font-bold text-sm mb-2">Arrival Time</h4>
-                                            <p class="text-xs text-slate-500 font-light leading-relaxed mb-4">
-                                                Standard check-in is after 2:00 PM. Please let us know your expected arrival time for villa preparation.
+                                        <div class="space-y-4">
+                                            <h4 class="text-[#0B1E3F] font-bold text-sm mb-2">Fixed Check-in & Check-out Schedules</h4>
+                                            <p class="text-xs text-slate-500 font-light leading-relaxed">
+                                                Our staycation has fixed schedules for check-in and check-out to ensure proper room sanitation and preparation.
                                             </p>
                                             
-                                            <label class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Select check-in window</label>
-                                            <div class="relative">
-                                                <select 
-                                                    v-model="checkInWindow" 
-                                                    class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#0B1E3F] focus:ring-1 focus:ring-[#0B1E3F] bg-white text-xs font-semibold appearance-none cursor-pointer pr-10"
-                                                >
-                                                    <option value="12:00 PM - 02:00 PM">12:00 PM - 02:00 PM</option>
-                                                    <option value="02:00 PM - 04:00 PM">02:00 PM - 04:00 PM</option>
-                                                    <option value="04:00 PM - 06:00 PM">04:00 PM - 06:00 PM</option>
-                                                    <option value="06:00 PM - 08:00 PM">06:00 PM - 08:00 PM</option>
-                                                </select>
-                                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-400">
-                                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                                            <!-- Fixed schedule details -->
+                                            <div class="space-y-3 pt-2">
+                                                <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
+                                                    <svg class="h-5 w-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-2-2m2 2l2-2m-2 2v-3m0 5a9 9 0 110-18 9 9 0 010 18z" />
                                                     </svg>
+                                                    <div>
+                                                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Fixed Check-in</p>
+                                                        <p class="text-xs font-bold text-[#0B1E3F]">12:00 PM</p>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
+                                                    <svg class="h-5 w-5 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                    </svg>
+                                                    <div>
+                                                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Fixed Check-out</p>
+                                                        <p class="text-xs font-bold text-[#0B1E3F]">11:00 AM</p>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -667,17 +606,122 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                             </svg>
                                             <p class="text-[10px] font-semibold tracking-wider leading-relaxed">
-                                                Early check-in is subject to villa availability upon arrival.
+                                                Early check-in or late check-out is subject to room availability upon request.
                                             </p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
+                            <!-- Back Navigation link -->
+                            <div class="flex items-center gap-2 pt-2">
+                                <button 
+                                    type="button" 
+                                    @click="currentBookingStep = 1"
+                                    class="text-xs font-bold text-slate-400 hover:text-[#0B1E3F] transition uppercase tracking-wider flex items-center gap-1.5 cursor-pointer"
+                                >
+                                    <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                                    </svg>
+                                    <span>Back to Guest Info</span>
+                                </button>
+                            </div>
+
+                        </div>
+
+                        <!-- Right Column (Checkout Summary Card) -->
+                        <div class="lg:col-span-4 sticky top-24">
+                            <div class="bg-white border border-slate-100 rounded-[32px] overflow-hidden shadow-xl shadow-slate-950/5 flex flex-col">
+                                <!-- Room header image -->
+                                <div class="relative h-48 overflow-hidden shrink-0">
+                                    <img 
+                                        :src="selectedRoomToBook.image" 
+                                        :alt="selectedRoomToBook.name" 
+                                        class="w-full h-full object-cover"
+                                    />
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+                                    <div class="absolute bottom-4 left-6 right-6 text-white">
+                                        <span class="bg-white/20 backdrop-blur-sm text-[8px] font-bold uppercase tracking-wider px-2 py-0.5 rounded">Selected Accomodation</span>
+                                        <h4 class="font-serif text-lg font-bold mt-1">{{ selectedRoomToBook.name }}</h4>
+                                    </div>
+                                </div>
+
+                                <!-- Stay summary stats (Dates & Guests) -->
+                                <div class="p-6 border-b border-slate-100 flex items-center justify-between text-xs">
+                                    <div>
+                                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Check-in</p>
+                                        <p class="font-bold text-[#0B1E3F] mt-0.5">{{ formattedCheckIn || 'Select Date' }}</p>
+                                    </div>
+                                    
+                                    <!-- Arrow divider -->
+                                    <svg class="h-4 w-4 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                    </svg>
+
+                                    <div>
+                                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Check-out</p>
+                                        <p class="font-bold text-[#0B1E3F] mt-0.5">{{ formattedCheckOut || 'Select Date' }}</p>
+                                    </div>
+
+                                    <div class="border-l border-slate-100 pl-4">
+                                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Guests</p>
+                                        <p class="font-bold text-[#0B1E3F] mt-0.5 flex items-center gap-1">
+                                            <svg class="h-3.5 w-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                            </svg>
+                                            <span>{{ bookingForm.guests }} Guests</span>
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- Price breakdown items -->
+                                <div class="p-6 space-y-4 text-xs">
+                                    <div class="flex justify-between items-center text-slate-550">
+                                        <span>{{ selectedRoomToBook.name }} x {{ bookingCalculations.nights }} nights</span>
+                                        <span class="font-bold text-[#0B1E3F]">PHP {{ formatPrice(bookingCalculations.baseTotal) }}</span>
+                                    </div>
+                                    
+                                    <!-- Total Price large text -->
+                                    <div class="border-t border-slate-100 pt-4 flex justify-between items-end">
+                                        <div>
+                                            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Total Price</span>
+                                        </div>
+                                        <span class="text-lg font-serif font-bold text-[#0B1E3F]">PHP {{ formatPrice(bookingCalculations.totalPrice) }}</span>
+                                    </div>
+
+                                    <!-- Main CTA Submit Button -->
+                                    <button 
+                                        type="button"
+                                        @click="goToPaymentStep"
+                                        class="w-full bg-[#0B1E3F] hover:bg-[#152e59] text-white py-4 rounded-2xl text-xs font-bold tracking-wider uppercase shadow-lg shadow-blue-950/20 active:scale-[0.99] transition-all cursor-pointer mt-4"
+                                    >
+                                        <span>Continue to Payment</span>
+                                    </button>
+
+                                    <!-- Security disclaimer -->
+                                    <p class="text-[8px] text-slate-400 text-center uppercase tracking-widest leading-relaxed mt-2 font-medium">
+                                        Secure 256-bit SSL encrypted transaction.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- STEP 3: PAYMENT METHOD & DETAILS -->
+                <div v-else-if="currentBookingStep === 3" class="space-y-10 animate-fade-in">
+                    
+                    <!-- Layout Grid -->
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+                        
+                        <!-- Left Column (Payment Method) -->
+                        <div class="lg:col-span-8 space-y-10">
+                            
                             <!-- 2. Payment Method -->
                             <div class="space-y-4">
                                 <div class="flex items-center gap-3">
-                                    <div class="h-8 w-8 rounded-full bg-[#0B1E3F] text-white flex items-center justify-center font-bold text-sm">2</div>
+                                    <div class="h-8 w-8 rounded-full bg-[#0B1E3F] text-white flex items-center justify-center font-bold text-sm">3</div>
                                     <h3 class="font-serif text-xl font-bold text-[#0B1E3F]">Payment Method</h3>
                                 </div>
 
@@ -702,7 +746,7 @@
                                                 </div>
                                                 <div>
                                                     <p class="text-xs font-bold text-[#0B1E3F]">Credit / Debit Card</p>
-                                                    <p class="text-[10px] text-slate-450 font-light mt-0.5">Secure payment via Stripe. All major cards accepted.</p>
+                                                    <p class="text-[10px] text-slate-450 font-light mt-0.5">Secure payment processing. All major cards accepted.</p>
                                                 </div>
                                             </div>
                                             <!-- Card Icon -->
@@ -730,7 +774,7 @@
                                                 </div>
                                                 <div>
                                                     <p class="text-xs font-bold text-[#0B1E3F]">GCash</p>
-                                                    <p class="text-[10px] text-slate-450 font-light mt-0.5">Instant confirmation via GCash mobile app.</p>
+                                                    <p class="text-[10px] text-slate-450 font-light mt-0.5">Instant confirmation via GCash mobile app transfer.</p>
                                                 </div>
                                             </div>
                                             <span class="bg-blue-600 text-white text-[8px] font-bold uppercase px-2 py-0.5 rounded tracking-wider shrink-0">E-Wallet</span>
@@ -755,7 +799,7 @@
                                                 </div>
                                                 <div>
                                                     <p class="text-xs font-bold text-[#0B1E3F]">Cash at Property</p>
-                                                    <p class="text-[10px] text-slate-450 font-light mt-0.5">Secure your booking with a 50% down payment via bank transfer or e-wallet. Pay the remaining balance upon check-in.</p>
+                                                    <p class="text-[10px] text-slate-450 font-light mt-0.5">Secure your booking with a 30% down payment via GCash or Card. Pay the remaining balance upon arrival.</p>
                                                 </div>
                                             </div>
                                             <!-- Bill Icon -->
@@ -772,8 +816,10 @@
                                             <input 
                                                 type="text" 
                                                 v-model="cardForm.number"
+                                                @input="cardForm.number = cardForm.number.replace(/[^0-9\s]/g, '')"
                                                 placeholder="0000 0000 0000 0000"
                                                 class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#0B1E3F] focus:ring-1 focus:ring-[#0B1E3F] bg-white text-xs font-semibold tracking-widest transition"
+                                                required
                                             />
                                         </div>
                                         <div class="grid grid-cols-2 gap-4">
@@ -782,8 +828,10 @@
                                                 <input 
                                                     type="text" 
                                                     v-model="cardForm.expiry"
+                                                    @input="cardForm.expiry = cardForm.expiry.replace(/[^0-9\s/]/g, '')"
                                                     placeholder="MM / YY"
                                                     class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#0B1E3F] focus:ring-1 focus:ring-[#0B1E3F] bg-white text-xs font-semibold tracking-wider transition"
+                                                    required
                                                 />
                                             </div>
                                             <div>
@@ -791,9 +839,109 @@
                                                 <input 
                                                     type="password" 
                                                     v-model="cardForm.cvv"
+                                                    @input="cardForm.cvv = cardForm.cvv.replace(/[^0-9]/g, '')"
                                                     placeholder="***"
                                                     maxlength="4"
                                                     class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#0B1E3F] focus:ring-1 focus:ring-[#0B1E3F] bg-white text-xs font-semibold tracking-wider transition"
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- GCash Payment Details Form -->
+                                    <div v-if="paymentMethod === 'gcash'" class="space-y-4 pt-5 border-t border-slate-100 animate-fade-in">
+                                        <div class="bg-[#FAF0E6]/50 dark:bg-slate-800/30 border border-[#A27B5C]/10 rounded-2xl p-4 space-y-2.5">
+                                            <p class="text-xs font-semibold text-[#0B1E3F] dark:text-amber-355 font-bold">GCash Transfer Details</p>
+                                            <p class="text-[10px] text-slate-550 font-light leading-relaxed">
+                                                Please send the total amount (PHP {{ formatPrice(bookingCalculations.totalPrice) }}) to our verified GCash account:<br />
+                                                Number: <strong class="text-slate-850 font-bold">0917 123 4567</strong><br />
+                                                Account Name: <strong class="text-slate-850 font-bold">ARUGA STAYCATION</strong>
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <label class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Upload Receipt Proof (Screenshot)</label>
+                                            <input 
+                                                type="file" 
+                                                @change="handleReceiptUpload"
+                                                accept="image/*"
+                                                class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#0B1E3F] bg-white text-xs font-semibold transition file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-semibold file:bg-[#0B1E3F] file:text-white hover:file:bg-[#152e59] cursor-pointer"
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <!-- Cash at Property Details Form -->
+                                    <div v-if="paymentMethod === 'cash_at_property'" class="space-y-4 pt-5 border-t border-slate-100 animate-fade-in">
+                                        <div>
+                                            <label class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Securing Method</label>
+                                            <select 
+                                                v-model="cashSecuringMethod"
+                                                class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#0B1E3F] bg-white text-xs font-semibold transition"
+                                            >
+                                                <option value="card">Credit Card</option>
+                                                <option value="gcash">GCash</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <!-- Secured by Card details -->
+                                        <div v-if="cashSecuringMethod === 'card'" class="space-y-4 animate-fade-in">
+                                            <div>
+                                                <label class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Card Number</label>
+                                                <input 
+                                                    type="text" 
+                                                    v-model="cardForm.number"
+                                                    @input="cardForm.number = cardForm.number.replace(/[^0-9\s]/g, '')"
+                                                    placeholder="0000 0000 0000 0000"
+                                                    class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#0B1E3F] bg-white text-xs font-semibold tracking-widest transition"
+                                                    required
+                                                />
+                                            </div>
+                                            <div class="grid grid-cols-2 gap-4">
+                                                <div>
+                                                    <label class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Expiry Date</label>
+                                                    <input 
+                                                        type="text" 
+                                                        v-model="cardForm.expiry"
+                                                        @input="cardForm.expiry = cardForm.expiry.replace(/[^0-9\s/]/g, '')"
+                                                        placeholder="MM / YY"
+                                                        class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#0B1E3F] bg-white text-xs font-semibold transition"
+                                                        required
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">CVV</label>
+                                                    <input 
+                                                        type="password" 
+                                                        v-model="cardForm.cvv"
+                                                        @input="cardForm.cvv = cardForm.cvv.replace(/[^0-9]/g, '')"
+                                                        placeholder="***"
+                                                        maxlength="4"
+                                                        class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#0B1E3F] bg-white text-xs font-semibold transition"
+                                                        required
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Secured by GCash details -->
+                                        <div v-if="cashSecuringMethod === 'gcash'" class="space-y-4 animate-fade-in">
+                                            <div class="bg-[#FAF0E6]/50 dark:bg-slate-800/30 border border-[#A27B5C]/10 rounded-2xl p-4 space-y-2.5">
+                                                <p class="text-xs font-semibold text-[#0B1E3F] dark:text-amber-355 font-bold">GCash 30% Down Payment Transfer</p>
+                                                <p class="text-[10px] text-slate-550 font-light leading-relaxed">
+                                                    Please send PHP {{ formatPrice(bookingCalculations.downPayment) }} to our verified GCash account:<br />
+                                                    Number: <strong class="text-slate-850 font-bold">0917 123 4567</strong><br />
+                                                    Account Name: <strong class="text-slate-850 font-bold">ARUGA STAYCATION</strong>
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <label class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Upload Receipt Proof (Screenshot)</label>
+                                                <input 
+                                                    type="file" 
+                                                    @change="handleReceiptUpload"
+                                                    accept="image/*"
+                                                    class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#0B1E3F] bg-white text-xs font-semibold transition file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-semibold file:bg-[#0B1E3F] file:text-white hover:file:bg-[#152e59] cursor-pointer"
+                                                    required
                                                 />
                                             </div>
                                         </div>
@@ -805,19 +953,19 @@
                             <div class="flex items-center gap-2 pt-2">
                                 <button 
                                     type="button" 
-                                    @click="currentBookingStep = 1"
+                                    @click="currentBookingStep = 2"
                                     class="text-xs font-bold text-slate-400 hover:text-[#0B1E3F] transition uppercase tracking-wider flex items-center gap-1.5 cursor-pointer"
                                 >
                                     <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                                     </svg>
-                                    <span>Back to Guest Info</span>
+                                    <span>Back to Stay Schedule</span>
                                 </button>
                             </div>
 
                         </div>
 
-                        <!-- Right Column (Checkout Summary Card matching mockup image 1-to-1) -->
+                        <!-- Right Column (Checkout Summary Card) -->
                         <div class="lg:col-span-4 sticky top-24">
                             <div class="bg-white border border-slate-100 rounded-[32px] overflow-hidden shadow-xl shadow-slate-950/5 flex flex-col">
                                 <!-- Room header image -->
@@ -829,7 +977,7 @@
                                     />
                                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
                                     <div class="absolute bottom-4 left-6 right-6 text-white">
-                                        <span class="bg-white/20 backdrop-blur-sm text-[8px] font-bold uppercase tracking-wider px-2 py-0.5 rounded">Premium Selection</span>
+                                        <span class="bg-white/20 backdrop-blur-sm text-[8px] font-bold uppercase tracking-wider px-2 py-0.5 rounded">Selected Accomodation</span>
                                         <h4 class="font-serif text-lg font-bold mt-1">{{ selectedRoomToBook.name }}</h4>
                                     </div>
                                 </div>
@@ -868,22 +1016,14 @@
                                         <span>{{ selectedRoomToBook.name }} x {{ bookingCalculations.nights }} nights</span>
                                         <span class="font-bold text-[#0B1E3F]">PHP {{ formatPrice(bookingCalculations.baseTotal) }}</span>
                                     </div>
-                                    <div class="flex justify-between items-center text-slate-550">
-                                        <span>Taxes & Fees</span>
-                                        <span class="font-bold text-[#0B1E3F]">PHP {{ formatPrice(bookingCalculations.taxesAndFees) }}</span>
-                                    </div>
-                                    <div class="flex justify-between items-center text-[#2D5A27] bg-[#E8F5E9]/50 px-3 py-1.5 rounded-xl border border-[#C8E6C9]/35 font-medium">
-                                        <span>Tropical Modernism Member Discount</span>
-                                        <span class="font-bold">-PHP {{ formatPrice(bookingCalculations.discount) }}</span>
-                                    </div>
                                     
                                     <div class="border-t border-slate-100 pt-4 space-y-3">
-                                        <div class="flex justify-between items-center text-slate-550">
-                                            <span>Down Payment (50%)</span>
+                                        <div v-if="paymentMethod === 'cash_at_property'" class="flex justify-between items-center text-slate-550">
+                                            <span>Down Payment (30%)</span>
                                             <span class="font-bold text-[#0B1E3F]">PHP {{ formatPrice(bookingCalculations.downPayment) }}</span>
                                         </div>
-                                        <div class="flex justify-between items-center text-slate-400">
-                                            <span>Remaining Balance</span>
+                                        <div v-if="paymentMethod === 'cash_at_property'" class="flex justify-between items-center text-slate-400">
+                                            <span>Remaining Balance (70%)</span>
                                             <span>PHP {{ formatPrice(bookingCalculations.remainingBalance) }}</span>
                                         </div>
                                     </div>
@@ -892,7 +1032,6 @@
                                     <div class="border-t border-slate-100 pt-4 flex justify-between items-end">
                                         <div>
                                             <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Total Price</span>
-                                            <span class="text-[9px] text-slate-400 font-semibold line-through">PHP {{ formatPrice(bookingCalculations.baseTotal + bookingCalculations.taxesAndFees) }}</span>
                                         </div>
                                         <span class="text-lg font-serif font-bold text-[#0B1E3F]">PHP {{ formatPrice(bookingCalculations.totalPrice) }}</span>
                                     </div>
@@ -908,7 +1047,7 @@
                                     </button>
 
                                     <!-- Security disclaimer -->
-                                    <p class="text-[8px] text-slate-400 text-center uppercase tracking-widest leading-relaxed mt-2 font-medium">
+                                    <p class="text-[8px] text-slate-450 text-center uppercase tracking-widest leading-relaxed mt-2 font-medium">
                                         By clicking confirm, you agree to our Terms of Service and Cancellation Policy. Secure 256-bit SSL encrypted transaction.
                                     </p>
                                 </div>
@@ -1018,6 +1157,25 @@
                                         v-model="bookingRefInput"
                                         placeholder="e.g. ARUGA-123456"
                                         class="w-full pl-11 pr-4 py-3.5 rounded-2xl border border-slate-200 focus:outline-none focus:border-[#0B1E3F] focus:ring-1 focus:ring-[#0B1E3F] bg-white text-xs font-semibold uppercase tracking-wider transition"
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Email Address</label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400">
+                                        <!-- Mail Icon SVG -->
+                                        <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                        </svg>
+                                    </span>
+                                    <input 
+                                        type="email" 
+                                        v-model="bookingEmailInput"
+                                        placeholder="e.g. guest@example.com"
+                                        class="w-full pl-11 pr-4 py-3.5 rounded-2xl border border-slate-200 focus:outline-none focus:border-[#0B1E3F] focus:ring-1 focus:ring-[#0B1E3F] bg-white text-xs font-semibold transition"
                                         required
                                     />
                                 </div>
@@ -1945,7 +2103,7 @@
                                 </div>
                                 <div class="mt-4">
                                     <p class="text-slate-400 text-[10px] font-semibold uppercase tracking-wider">Pending</p>
-                                    <p class="text-2xl font-bold text-slate-800 mt-1">12</p>
+                                    <p class="text-2xl font-bold text-slate-800 mt-1">{{ pendingReservations.length }}</p>
                                 </div>
                             </div>
 
@@ -1962,7 +2120,7 @@
                                 </div>
                                 <div class="mt-4">
                                     <p class="text-slate-400 text-[10px] font-semibold uppercase tracking-wider">Approved</p>
-                                    <p class="text-2xl font-bold text-slate-800 mt-1">24</p>
+                                    <p class="text-2xl font-bold text-slate-800 mt-1">{{ approvedReservations.length }}</p>
                                 </div>
                             </div>
 
@@ -1979,7 +2137,7 @@
                                 </div>
                                 <div class="mt-4">
                                     <p class="text-slate-400 text-[10px] font-semibold uppercase tracking-wider">Rejected</p>
-                                    <p class="text-2xl font-bold text-slate-800 mt-1">6</p>
+                                    <p class="text-2xl font-bold text-slate-800 mt-1">{{ rejectedReservations.length }}</p>
                                 </div>
                             </div>
 
@@ -2381,7 +2539,7 @@
 
                             <!-- Table Pagination Footer -->
                             <div class="flex justify-between items-center border-t border-slate-50 dark:border-slate-800 pt-4 text-[10px] text-slate-400 dark:text-slate-500 font-medium">
-                                <span>Showing 4 of 28 reservations</span>
+                                <span>Showing {{ pendingReservations.length }} of {{ pendingReservations.length }} reservations</span>
                                 <div class="flex items-center gap-1.5">
                                     <button class="p-1 px-2 border border-slate-100 dark:border-slate-800 rounded-md hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50" disabled>&lt;</button>
                                     <span class="px-2.5 py-1 font-bold text-white bg-[#0B1E3F] dark:bg-amber-500/20 dark:text-amber-300 rounded shadow-sm">1</span>
@@ -2399,8 +2557,8 @@
                             <div class="bg-white dark:bg-slate-900 border border-slate-50 dark:border-slate-800 rounded-3xl p-6 shadow-sm flex items-center justify-between relative overflow-hidden group hover:shadow-md transition duration-250">
                                 <div class="space-y-2.5 relative z-10">
                                     <p class="text-slate-400 dark:text-slate-500 text-[10px] font-semibold uppercase tracking-wider">Urgent Attention</p>
-                                    <p class="text-3xl font-bold text-slate-900 dark:text-slate-100">5 Bookings</p>
-                                    <p class="text-[11px] text-slate-500 dark:text-slate-400">Bookings exceeding the 24h payment window.</p>
+                                    <p class="text-3xl font-bold text-slate-900 dark:text-slate-100">{{ urgentBookingsCount }} Bookings</p>
+                                    <p class="text-[11px] text-slate-500 dark:text-slate-400">Bookings awaiting payment verification.</p>
                                 </div>
                                 <div class="h-12 w-12 bg-rose-50 dark:bg-rose-950/30 rounded-2xl flex items-center justify-center text-rose-500 shrink-0">
                                     <svg class="h-5.5 w-5.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -2413,7 +2571,7 @@
                             <div class="bg-white dark:bg-slate-900 border border-slate-50 dark:border-slate-800 rounded-3xl p-6 shadow-sm flex items-center justify-between relative overflow-hidden group hover:shadow-md transition duration-250">
                                 <div class="space-y-2.5 relative z-10">
                                     <p class="text-slate-400 dark:text-slate-500 text-[10px] font-semibold uppercase tracking-wider">Projected Revenue</p>
-                                    <p class="text-3xl font-bold text-[#2D5A27] dark:text-emerald-400">₱142,800.00</p>
+                                    <p class="text-3xl font-bold text-[#2D5A27] dark:text-emerald-400">₱{{ projectedRevenue }}</p>
                                     <p class="text-[11px] text-slate-500 dark:text-slate-400">Total value of collected DPs and remaining balances.</p>
                                 </div>
                                 <div class="h-12 w-12 bg-emerald-50 dark:bg-emerald-950/30 rounded-2xl flex items-center justify-center text-emerald-600 dark:text-emerald-400 shrink-0">
@@ -2427,8 +2585,8 @@
                             <div class="bg-white dark:bg-slate-900 border border-slate-50 dark:border-slate-800 rounded-3xl p-6 shadow-sm flex items-center justify-between relative overflow-hidden group hover:shadow-md transition duration-250">
                                 <div class="space-y-2.5 relative z-10">
                                     <p class="text-slate-400 dark:text-slate-500 text-[10px] font-semibold uppercase tracking-wider">Next Check-In</p>
-                                    <p class="text-3xl font-bold text-slate-900 dark:text-slate-100">Oct 12, 2:00 PM</p>
-                                    <p class="text-[11px] text-slate-500 dark:text-slate-400">Julianne Smith (Ocean Villa) is expected next.</p>
+                                    <p class="text-3xl font-bold text-slate-900 dark:text-slate-100">{{ nextPendingCheckIn.dateText }}</p>
+                                    <p class="text-[11px] text-slate-500 dark:text-slate-400">{{ nextPendingCheckIn.subText }}</p>
                                 </div>
                                 <div class="h-12 w-12 bg-blue-50 dark:bg-blue-950/30 rounded-2xl flex items-center justify-center text-blue-500 shrink-0">
                                     <svg class="h-5.5 w-5.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -2437,8 +2595,7 @@
                                 </div>
                             </div>
                         </div>
-
-                        </div>
+                    </div>
 
                         <!-- DETAILED VIEW -->
                         <div v-else class="space-y-8 animate-fade-in">
@@ -2458,13 +2615,13 @@
                                 <div>
                                     <div class="flex flex-wrap items-center gap-3">
                                         <h1 class="font-serif text-[#0b1c3d] dark:text-slate-100 text-3xl font-bold tracking-tight">
-                                            Reservation <span class="text-slate-400 font-light">#AS-{{ 88200 + selectedPendingReservation.id }}</span>
+                                            Reservation <span class="text-slate-400 font-light">#{{ selectedPendingReservation.reference }}</span>
                                         </h1>
                                         <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 dark:bg-amber-950/20 text-[#A27B5C] dark:text-amber-300 border border-amber-100/10 dark:border-amber-900/30">
                                             Pending Verification
                                         </span>
                                         <span class="text-slate-400 dark:text-slate-500 text-xs font-semibold">
-                                            Received Oct 24, 2023, 10:45 AM
+                                            Received {{ selectedPendingReservation.createdTime }}
                                         </span>
                                     </div>
                                 </div>
@@ -2495,7 +2652,7 @@
                                             </div>
                                             <div>
                                                 <label class="block text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1">Phone Number</label>
-                                                <p class="font-semibold text-slate-800 dark:text-slate-200 text-sm">+63 917 123 4567</p>
+                                                <p class="font-semibold text-slate-800 dark:text-slate-200 text-sm">{{ selectedPendingReservation.phone }}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -2518,7 +2675,7 @@
                                                     <div>
                                                         <p class="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider leading-none">Check-in — Check-out</p>
                                                         <p class="font-bold text-slate-800 dark:text-slate-200 text-sm mt-2">
-                                                            {{ selectedPendingReservation.startDate }}, 2023 — {{ selectedPendingReservation.endDate }}, 2023
+                                                            {{ selectedPendingReservation.startDate }}, {{ selectedPendingReservation.year }} — {{ selectedPendingReservation.endDate }}, {{ selectedPendingReservation.year }}
                                                         </p>
                                                         <span class="text-slate-450 dark:text-slate-500 text-xs mt-1 block">
                                                             {{ selectedPendingReservation.nights }} Nights, {{ selectedPendingReservation.nights + 1 }} Days
@@ -2540,7 +2697,7 @@
                                                             {{ selectedPendingReservation.roomType }}
                                                         </p>
                                                         <span class="text-slate-455 dark:text-slate-500 text-xs mt-1 block">
-                                                            Villa 04, Private Pool Access
+                                                            {{ selectedPendingReservation.roomName }}
                                                         </span>
                                                     </div>
                                                 </div>
@@ -2582,7 +2739,7 @@
                                                 <span class="text-[10px] font-semibold uppercase tracking-wider">Special Requests</span>
                                             </div>
                                             <div class="bg-slate-50 dark:bg-slate-855 p-5 rounded-2xl text-xs text-slate-655 dark:text-slate-400 leading-relaxed border border-slate-100/50 dark:border-slate-800/40">
-                                                Guest requested a high floor with a view of the ocean. Also mentioned they are celebrating their 10th wedding anniversary and would appreciate a small surprise or room decoration if possible. No dietary restrictions noted.
+                                                {{ selectedPendingReservation.specialRequests || 'No special requests.' }}
                                             </div>
                                         </div>
                                     </div>
@@ -2603,7 +2760,7 @@
                                                 </div>
                                                 <div>
                                                     <h4 class="text-xs font-bold text-slate-800 dark:text-slate-205">Reservation Request Received</h4>
-                                                    <span class="text-[10px] text-slate-400 dark:text-slate-500 font-semibold block mt-0.5">Oct 24, 2023 • 10:45 AM</span>
+                                                    <span class="text-[10px] text-slate-400 dark:text-slate-500 font-semibold block mt-0.5">{{ selectedPendingReservation.createdTime }}</span>
                                                     <p class="text-xs text-slate-550 dark:text-slate-400 mt-1.5 leading-relaxed">
                                                         Guest submitted booking via Aruga Direct Web Portal.
                                                     </p>
@@ -2772,23 +2929,8 @@
                                                     <p class="font-semibold text-slate-800 dark:text-slate-200 text-sm leading-snug">
                                                         {{ reservation.roomType }}
                                                     </p>
-                                                    <span 
-                                                        v-if="reservation.roomClass === 'PREMIUM'" 
-                                                        class="inline-block mt-1 px-2.5 py-0.5 text-[9px] font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 rounded tracking-wider uppercase"
-                                                    >
-                                                        PREMIUM
-                                                    </span>
-                                                    <span 
-                                                        v-else-if="reservation.roomClass === 'STANDARD'" 
-                                                        class="inline-block mt-1 px-2.5 py-0.5 text-[9px] font-bold bg-amber-50 dark:bg-amber-950/20 text-[#A27B5C] dark:text-amber-300 rounded tracking-wider uppercase border border-amber-100/30"
-                                                    >
-                                                        STANDARD
-                                                    </span>
-                                                    <span 
-                                                        v-else-if="reservation.roomClass === 'LUXURY'" 
-                                                        class="inline-block mt-1 px-2.5 py-0.5 text-[9px] font-bold bg-blue-50 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 rounded tracking-wider uppercase"
-                                                    >
-                                                        LUXURY
+                                                    <span class="inline-block mt-1 px-2.5 py-0.5 text-[9px] font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 rounded tracking-wider uppercase">
+                                                        {{ reservation.roomName }}
                                                     </span>
                                                 </div>
                                             </td>
@@ -2867,7 +3009,7 @@
                                             Booking Confirmed
                                         </span>
                                         <span class="text-slate-400 dark:text-slate-500 text-sm font-semibold">
-                                            #RES-2024-8842{{ selectedApprovedReservation.id }}
+                                            #{{ selectedApprovedReservation.reference }}
                                         </span>
                                     </div>
                                     <h1 class="font-serif text-[#0b1c3d] dark:text-slate-100 text-3xl font-bold tracking-tight mt-2">Reservation Details</h1>
@@ -2882,7 +3024,7 @@
                                     </button>
                                 </div>
                             </div>
-
+ 
                             <!-- Banner Card -->
                             <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-5 rounded-[20px] flex items-start gap-4 shadow-sm">
                                 <div class="h-10 w-10 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center shrink-0 border border-emerald-100/10 dark:border-emerald-900/30">
@@ -2895,7 +3037,7 @@
                                     <p class="text-xs text-slate-550 dark:text-slate-400 mt-1">Payment received and villa schedule locked. No further action required from admin.</p>
                                 </div>
                             </div>
-
+ 
                             <!-- Grid Content Layout -->
                             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                                 <!-- Left column: Guest Profile & Special Requests -->
@@ -2909,7 +3051,7 @@
                                         <div class="h-14 w-14 rounded-full bg-[#FAF0E6] dark:bg-amber-950/20 text-[#A27B5C] dark:text-amber-400 font-bold flex items-center justify-center text-lg tracking-wider border border-slate-200 dark:border-slate-700 uppercase shrink-0 shadow-sm">
                                             {{ selectedApprovedReservation.initials }}
                                         </div>
-
+ 
                                         <div class="my-1">
                                             <h4 class="font-serif text-[#0b1c3d] dark:text-slate-100 text-lg font-bold">{{ selectedApprovedReservation.name }}</h4>
                                         </div>
@@ -2925,20 +3067,19 @@
                                                 <svg class="h-4.5 w-4.5 text-slate-405" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                                                 </svg>
-                                                <span class="font-medium">+63 917 123 4567</span>
+                                                <span class="font-medium">{{ selectedApprovedReservation.phone }}</span>
                                             </div>
                                         </div>
                                     </div>
-
+ 
                                     <!-- Special Requests Card -->
                                     <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[28px] p-6 shadow-sm space-y-4">
                                         <p class="text-[10px] font-semibold text-slate-455 dark:text-slate-500 uppercase tracking-wider">Special Requests</p>
                                         
                                         <div class="bg-slate-50 dark:bg-slate-855 p-4.5 rounded-2xl border border-slate-100/50 dark:border-slate-800/40 space-y-3">
                                             <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Requirements</p>
-                                            <div class="text-xs text-slate-650 dark:text-slate-400 space-y-2.5 leading-relaxed">
-                                                <p>• Dietary requirements: Gluten-free options requested for breakfast.</p>
-                                                <p>• Anniversary surprise: Flower petals on bed upon arrival.</p>
+                                            <div class="text-xs text-slate-650 dark:text-slate-400 leading-relaxed whitespace-pre-line">
+                                                {{ selectedApprovedReservation.specialRequests }}
                                             </div>
                                         </div>
                                         
@@ -2962,13 +3103,13 @@
                                             <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/30 to-slate-950/20"></div>
                                             
                                             <div class="absolute bottom-6 left-6 text-white max-w-md">
-                                                <h2 class="font-serif text-2xl font-bold tracking-tight">{{ selectedApprovedReservation.roomType }} – Suite 4</h2>
+                                                <h2 class="font-serif text-2xl font-bold tracking-tight">{{ selectedApprovedReservation.roomType }} – {{ selectedApprovedReservation.roomName }}</h2>
                                                 <p class="text-white/85 text-xs font-semibold mt-1">
-                                                    {{ selectedApprovedReservation.roomClass === 'PREMIUM' || selectedApprovedReservation.roomClass === 'LUXURY' ? '2 Bedrooms • Private Pool • Sea View' : '1 Bedroom • Garden Access • Mountain View' }}
+                                                    {{ selectedApprovedReservation.roomDescription }}
                                                 </p>
                                             </div>
                                         </div>
-
+ 
                                         <!-- Grid Columns Section -->
                                         <div class="grid grid-cols-2 md:grid-cols-4 gap-6 p-6 divide-y-0 md:divide-x divide-slate-100 dark:divide-slate-800/80">
                                             
@@ -2976,37 +3117,37 @@
                                             <div class="flex flex-col">
                                                 <span class="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Check In</span>
                                                 <span class="font-serif text-[#0b1c3d] dark:text-slate-100 text-lg font-bold mt-1.5">{{ selectedApprovedReservation.startDate }}</span>
-                                                <span class="text-slate-550 dark:text-slate-450 text-[10px] font-semibold mt-0.5">Thursday, 2:00 PM</span>
+                                                <span class="text-slate-550 dark:text-slate-450 text-[10px] font-semibold mt-0.5">{{ selectedApprovedReservation.checkInDayOfWeek }}, 2:00 PM</span>
                                             </div>
-
+ 
                                             <!-- Check Out -->
                                             <div class="flex flex-col md:pl-6">
                                                 <span class="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Check Out</span>
                                                 <span class="font-serif text-[#0b1c3d] dark:text-slate-100 text-lg font-bold mt-1.5">{{ selectedApprovedReservation.endDate }}</span>
-                                                <span class="text-slate-550 dark:text-slate-450 text-[10px] font-semibold mt-0.5">Sunday, 11:00 AM</span>
+                                                <span class="text-slate-550 dark:text-slate-455 text-[10px] font-semibold mt-0.5">{{ selectedApprovedReservation.checkOutDayOfWeek }}, 11:00 AM</span>
                                             </div>
-
+ 
                                             <!-- Guests -->
                                             <div class="flex flex-col md:pl-6">
                                                 <span class="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Guests</span>
                                                 <span class="font-serif text-[#0b1c3d] dark:text-slate-100 text-lg font-bold mt-1.5">
-                                                    {{ selectedApprovedReservation.guestsText.match(/\d+/) ? selectedApprovedReservation.guestsText.match(/\d+/)[0] : '02' }}
+                                                    {{ String(selectedApprovedReservation.guestsCount).padStart(2, '0') }}
                                                 </span>
                                                 <span class="text-slate-550 dark:text-slate-455 text-[10px] font-semibold mt-0.5">Adults</span>
                                             </div>
-
+ 
                                             <!-- Duration -->
                                             <div class="flex flex-col md:pl-6">
                                                 <span class="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Duration</span>
                                                 <span class="font-serif text-[#0b1c3d] dark:text-slate-100 text-lg font-bold mt-1.5">
-                                                    {{ selectedApprovedReservation.nights.match(/\d+/) ? selectedApprovedReservation.nights.match(/\d+/)[0] : '3' }}
+                                                    {{ String(selectedApprovedReservation.nightsCount).padStart(2, '0') }}
                                                 </span>
                                                 <span class="text-slate-550 dark:text-slate-455 text-[10px] font-semibold mt-0.5">Nights</span>
                                             </div>
-
+ 
                                         </div>
                                     </div>
-
+ 
                                     <!-- Timeline Card -->
                                     <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[28px] p-6 shadow-sm space-y-6">
                                         <p class="text-[10px] font-semibold text-slate-455 dark:text-slate-500 uppercase tracking-wider">Reservation Timeline</p>
@@ -3022,17 +3163,17 @@
                                                 </div>
                                                 <div>
                                                     <h4 class="text-xs font-bold text-slate-800 dark:text-slate-202">Booking Confirmed & Paid</h4>
-                                                    <span class="text-[10px] text-slate-400 dark:text-slate-505 font-semibold block mt-0.5">Today, 09:14 AM</span>
+                                                    <span class="text-[10px] text-slate-400 dark:text-slate-505 font-semibold block mt-0.5">{{ selectedApprovedReservation.createdTime }}</span>
                                                     <p class="text-xs text-slate-550 dark:text-slate-400 mt-1.5 leading-relaxed">
                                                         Full payment of 
                                                         <span class="font-bold text-slate-800 dark:text-slate-200">
-                                                            ₱{{ ((selectedApprovedReservation.roomClass === 'PREMIUM' ? 25000 : (selectedApprovedReservation.roomClass === 'LUXURY' ? 55000 : 15000)) * (parseInt(selectedApprovedReservation.nights.match(/\d+/)) || 3)).toLocaleString('en-US') }}
+                                                            ₱{{ selectedApprovedReservation.totalPrice }}
                                                         </span> 
-                                                        processed via Credit Card.
+                                                        processed via {{ selectedApprovedReservation.paymentMethodText }}.
                                                     </p>
                                                 </div>
                                             </div>
-
+ 
                                             <!-- Item 2: Admin Approval -->
                                             <div class="relative">
                                                 <div class="absolute -left-[35px] top-0.5 h-6 w-6 rounded-full bg-amber-50 dark:bg-amber-950/20 text-[#A27B5C] dark:text-amber-300 flex items-center justify-center shadow-sm border border-amber-100/10 dark:border-amber-900/30">
@@ -3042,13 +3183,13 @@
                                                 </div>
                                                 <div>
                                                     <h4 class="text-xs font-bold text-slate-800 dark:text-slate-202">Admin Approval</h4>
-                                                    <span class="text-[10px] text-slate-400 dark:text-slate-550 font-semibold block mt-0.5">Oct 05, 02:45 PM</span>
+                                                    <span class="text-[10px] text-slate-400 dark:text-slate-550 font-semibold block mt-0.5">{{ selectedApprovedReservation.createdTime }}</span>
                                                     <p class="text-xs text-slate-550 dark:text-slate-400 mt-1.5 leading-relaxed">
                                                         Availability verified and reservation approved by Admin Manager.
                                                     </p>
                                                 </div>
                                             </div>
-
+ 
                                             <!-- Item 3: Request Received -->
                                             <div class="relative">
                                                 <div class="absolute -left-[35px] top-0.5 h-6 w-6 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-450 dark:text-slate-500 flex items-center justify-center shadow-sm border border-slate-200/50 dark:border-slate-700">
@@ -3058,13 +3199,12 @@
                                                 </div>
                                                 <div>
                                                     <h4 class="text-xs font-bold text-slate-800 dark:text-slate-202">Booking Request Received</h4>
-                                                    <span class="text-[10px] text-slate-400 dark:text-slate-550 font-semibold block mt-0.5">Oct 05, 10:20 AM</span>
+                                                    <span class="text-[10px] text-slate-400 dark:text-slate-550 font-semibold block mt-0.5">{{ selectedApprovedReservation.createdTime }}</span>
                                                     <p class="text-xs text-slate-555 dark:text-slate-400 mt-1.5 leading-relaxed">
                                                         Initial reservation request submitted by guest via Aruga Direct Web Portal.
                                                     </p>
                                                 </div>
                                             </div>
-
                                         </div>
                                     </div>
                                 </div>
@@ -3118,7 +3258,7 @@
                                         <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                                         </svg>
-                                        <span>Export CSV</span>
+                                        <span>Export</span>
                                     </button>
                                 </div>
                             </div>
@@ -3138,25 +3278,25 @@
                                         +12%
                                     </span>
                                 </div>
-                                <p class="text-2xl font-serif font-bold text-slate-850 dark:text-slate-100 mt-3">124</p>
+                                <p class="text-2xl font-serif font-bold text-slate-850 dark:text-slate-100 mt-3">{{ rejectedReservations.length }}</p>
                             </div>
 
                             <!-- Invalid Payments Card -->
                             <div class="bg-white dark:bg-slate-900 border border-slate-50 dark:border-slate-800 rounded-2xl p-5 shadow-sm hover:shadow-md transition duration-200 flex flex-col justify-between min-h-[110px]">
                                 <p class="text-slate-450 dark:text-slate-500 text-[10px] font-semibold uppercase tracking-wider leading-none">Invalid Payments</p>
-                                <p class="text-2xl font-serif font-bold text-slate-850 dark:text-slate-100 mt-3">45</p>
+                                <p class="text-2xl font-serif font-bold text-slate-850 dark:text-slate-100 mt-3">{{ rejectedInvalidPaymentsCount }}</p>
                             </div>
 
                             <!-- Duplicate Bookings Card -->
                             <div class="bg-white dark:bg-slate-900 border border-slate-50 dark:border-slate-800 rounded-2xl p-5 shadow-sm hover:shadow-md transition duration-200 flex flex-col justify-between min-h-[110px]">
                                 <p class="text-slate-450 dark:text-slate-500 text-[10px] font-semibold uppercase tracking-wider leading-none">Duplicate Bookings</p>
-                                <p class="text-2xl font-serif font-bold text-slate-850 dark:text-slate-100 mt-3">18</p>
+                                <p class="text-2xl font-serif font-bold text-slate-850 dark:text-slate-100 mt-3">{{ rejectedDuplicateBookingsCount }}</p>
                             </div>
 
                             <!-- User Cancelled Card -->
                             <div class="bg-white dark:bg-slate-900 border border-slate-50 dark:border-slate-800 rounded-2xl p-5 shadow-sm hover:shadow-md transition duration-200 flex flex-col justify-between min-h-[110px]">
                                 <p class="text-slate-450 dark:text-slate-500 text-[10px] font-semibold uppercase tracking-wider leading-none">User Cancelled</p>
-                                <p class="text-2xl font-serif font-bold text-slate-850 dark:text-slate-100 mt-3">61</p>
+                                <p class="text-2xl font-serif font-bold text-slate-850 dark:text-slate-100 mt-3">{{ rejectedUserCancelledCount }}</p>
                             </div>
                         </div>
 
@@ -3219,16 +3359,8 @@
 
                                             <!-- Reason for Rejection Badge -->
                                             <td class="py-5 text-center">
-                                                <div class="inline-block text-[9px] font-bold tracking-wide uppercase px-2.5 py-1.5 rounded-lg max-w-[110px] leading-tight">
-                                                    <span v-if="reservation.reasonType === 'invalid_payment'" class="text-rose-600 bg-rose-50 dark:bg-rose-950/20 dark:text-rose-300 block">
-                                                        Invalid<br/>Payment
-                                                    </span>
-                                                    <span v-else-if="reservation.reasonType === 'user_cancelled'" class="text-slate-500 bg-slate-50 dark:bg-slate-800 dark:text-slate-405 block">
-                                                        User<br/>Cancelled
-                                                    </span>
-                                                    <span v-else-if="reservation.reasonType === 'duplicate_booking'" class="text-[#A27B5C] bg-[#FAF0E6] dark:bg-amber-950/20 dark:text-amber-300 block">
-                                                        Duplicate<br/>Booking
-                                                    </span>
+                                                <div class="inline-block text-[10px] font-bold tracking-wide uppercase px-2.5 py-1.5 rounded-lg max-w-[160px] leading-tight text-rose-600 bg-rose-50 dark:bg-rose-950/20 dark:text-rose-300">
+                                                    {{ reservation.rejectionReason }}
                                                 </div>
                                             </td>
 
@@ -3250,15 +3382,11 @@
 
                             <!-- Table Pagination Footer -->
                             <div class="flex justify-between items-center border-t border-slate-50 dark:border-slate-800 pt-4 text-[10px] text-slate-400 dark:text-slate-500 font-medium">
-                                <span>Showing 1 to 5 of 124 entries</span>
+                                <span>Showing {{ rejectedReservations.length }} entry{{ rejectedReservations.length === 1 ? '' : 'es' }}</span>
                                 <div class="flex items-center gap-1.5">
                                     <button class="p-1 px-2 border border-slate-200 dark:border-slate-800 rounded-md hover:bg-slate-50 dark:hover:bg-slate-800/50 disabled:opacity-50 text-slate-600 dark:text-slate-400" disabled>&lt;</button>
                                     <span class="px-2.5 py-1 font-bold text-white bg-[#0B1E3F] dark:bg-amber-500/20 dark:text-amber-300 rounded shadow-sm">1</span>
-                                    <button class="px-2.5 py-1 border border-slate-200 dark:border-slate-800 rounded hover:bg-slate-50 dark:hover:bg-slate-800/50 font-semibold text-slate-700 dark:text-slate-350 cursor-pointer">2</button>
-                                    <button class="px-2.5 py-1 border border-slate-200 dark:border-slate-800 rounded hover:bg-slate-50 dark:hover:bg-slate-800/50 font-semibold text-slate-700 dark:text-slate-350 cursor-pointer">3</button>
-                                    <span class="px-1 text-slate-450 dark:text-slate-600 font-bold">...</span>
-                                    <button class="px-2.5 py-1 border border-slate-200 dark:border-slate-800 rounded hover:bg-slate-50 dark:hover:bg-slate-800/50 font-semibold text-slate-700 dark:text-slate-350 cursor-pointer">25</button>
-                                    <button class="p-1 px-2 border border-slate-200 dark:border-slate-800 rounded-md hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer text-slate-600 dark:text-slate-400">&gt;</button>
+                                    <button class="p-1 px-2 border border-slate-200 dark:border-slate-800 rounded-md hover:bg-slate-50 dark:hover:bg-slate-800/50 disabled:opacity-50 text-slate-600 dark:text-slate-400" disabled>&gt;</button>
                                 </div>
                             </div>
                         </div>
@@ -3282,7 +3410,7 @@
                             <div>
                                 <div class="flex flex-wrap items-center gap-3">
                                     <h1 class="font-serif text-[#0b1c3d] dark:text-slate-100 text-3xl font-bold tracking-tight">
-                                        Reservation <span class="text-slate-400 font-light">#AR-882{{ selectedRejectedReservation.id }}</span>
+                                        Reservation <span class="text-slate-400 font-light">#{{ selectedRejectedReservation.reference }}</span>
                                     </h1>
                                     <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-rose-50 dark:bg-rose-950/20 text-rose-700 dark:text-rose-300 border border-rose-100/10 dark:border-rose-900/30">
                                         REJECTED
@@ -3457,196 +3585,207 @@
 
                 </div>
 
-                    <!-- TAB: PAYMENTS VERIFICATION -->
-                    <div v-else-if="activeTab === 'payments'" class="space-y-8 animate-fade-in">
+                <!-- TAB: PAYMENTS VERIFICATION -->
+                <div v-else-if="activeTab === 'payments'" class="space-y-8 animate-fade-in">
+                    
+                    <!-- Overview Stat Cards Grid (3 Columns) -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         
-                        <!-- Overview Stat Cards Grid (3 Columns) -->
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            
-                            <!-- Total Pending Card -->
-                            <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm hover:shadow-md transition duration-200 flex items-center gap-4.5">
-                                <div class="h-12 w-12 bg-[#FAF0E6] dark:bg-amber-950/20 rounded-2xl flex items-center justify-center text-[#A27B5C] dark:text-amber-450 shrink-0 border border-[#A27B5C]/10">
-                                    <svg class="h-5.5 w-5.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <p class="text-slate-450 dark:text-slate-500 text-[10px] font-semibold uppercase tracking-wider leading-none">Total Pending</p>
-                                    <p class="text-2xl font-bold text-slate-850 dark:text-slate-100 mt-2 leading-none">
-                                        24 <span class="font-serif font-normal text-lg text-slate-500 dark:text-slate-400">Entries</span>
-                                    </p>
-                                </div>
+                        <!-- Total Pending Card -->
+                        <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm hover:shadow-md transition duration-200 flex items-center gap-4.5">
+                            <div class="h-12 w-12 bg-[#FAF0E6] dark:bg-amber-950/20 rounded-2xl flex items-center justify-center text-[#A27B5C] dark:text-amber-455 shrink-0 border border-[#A27B5C]/10">
+                                <svg class="h-5.5 w-5.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
                             </div>
-
-                            <!-- Urgent Discrepancies Card -->
-                            <div class="bg-white dark:bg-slate-900 border border-rose-100 dark:border-rose-950 rounded-3xl p-6 shadow-sm hover:shadow-md transition duration-200 flex items-center gap-4.5">
-                                <div class="h-12 w-12 bg-rose-50 dark:bg-rose-950/30 rounded-2xl flex items-center justify-center text-rose-500 shrink-0">
-                                    <svg class="h-5.5 w-5.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <p class="text-slate-450 dark:text-slate-500 text-[10px] font-semibold uppercase tracking-wider leading-none">Urgent Discrepancies</p>
-                                    <p class="text-2xl font-bold text-rose-600 dark:text-rose-450 mt-2 leading-none">
-                                        03 <span class="font-serif font-normal text-lg text-rose-500/80 dark:text-rose-400/80">Flags</span>
-                                    </p>
-                                </div>
-                            </div>
-
-                            <!-- Missing DP Card -->
-                            <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm hover:shadow-md transition duration-200 flex items-center gap-4.5">
-                                <div class="h-12 w-12 bg-rose-50 dark:bg-rose-950/30 rounded-2xl flex items-center justify-center text-rose-500 shrink-0">
-                                    <svg class="h-5.5 w-5.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <p class="text-slate-450 dark:text-slate-500 text-[10px] font-semibold uppercase tracking-wider leading-none">Missing DP</p>
-                                    <p class="text-2xl font-bold text-rose-600 dark:text-rose-450 mt-2 leading-none">
-                                        05 <span class="font-serif font-normal text-lg text-rose-500/80 dark:text-rose-400/80">Bookings</span>
-                                    </p>
-                                </div>
+                            <div>
+                                <p class="text-slate-450 dark:text-slate-500 text-[10px] font-semibold uppercase tracking-wider leading-none">Total Pending</p>
+                                <p class="text-2xl font-bold text-slate-850 dark:text-slate-100 mt-2 leading-none">
+                                    {{ paymentSubmissions.length }} <span class="font-serif font-normal text-lg text-slate-500 dark:text-slate-400">Entries</span>
+                                </p>
                             </div>
                         </div>
 
-                        <!-- Active Submissions Card Table -->
-                        <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm space-y-5">
-                            
-                            <!-- Card Header -->
-                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                                <h3 class="font-serif text-[#0b1c3d] dark:text-slate-100 text-lg font-bold">Active Submissions</h3>
-                                
-                                <div class="flex items-center gap-3 w-full sm:w-auto">
-                                    <!-- Search guests -->
-                                    <div class="relative flex-grow sm:w-72">
-                                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
-                                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                            </svg>
-                                        </span>
-                                        <input 
-                                            type="text" 
-                                            placeholder="Search guests..." 
-                                            class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-100 dark:bg-slate-800 dark:border-slate-700 focus:outline-none focus:bg-white dark:focus:bg-slate-900 rounded-xl text-xs transition dark:text-slate-100"
-                                        />
-                                    </div>
-                                    
-                                    <!-- Filter Button -->
-                                    <button class="flex items-center gap-1.5 px-3.5 py-2 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-600 dark:text-slate-350 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold transition cursor-pointer">
-                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-                                        </svg>
-                                        Filter
-                                    </button>
-                                </div>
+                        <!-- Urgent Discrepancies Card -->
+                        <div class="bg-white dark:bg-slate-900 border border-rose-100 dark:border-rose-950 rounded-3xl p-6 shadow-sm hover:shadow-md transition duration-200 flex items-center gap-4.5">
+                            <div class="h-12 w-12 bg-rose-50 dark:bg-rose-950/30 rounded-2xl flex items-center justify-center text-rose-500 shrink-0">
+                                <svg class="h-5.5 w-5.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
                             </div>
-
-                            <!-- Submissions Table -->
-                            <div class="overflow-x-auto">
-                                <table class="w-full min-w-[800px] border-collapse text-left text-xs">
-                                    <thead>
-                                        <tr class="border-b border-slate-100 dark:border-slate-800 text-slate-400 dark:text-slate-500 font-semibold uppercase tracking-wider">
-                                            <th class="py-4 font-semibold w-[28%]">Guest & Suite</th>
-                                            <th class="py-4 font-semibold w-[16%]">Amount Due</th>
-                                            <th class="py-4 font-semibold w-[18%]">Payment Type</th>
-                                            <th class="py-4 font-semibold w-[14%]">Receipt Proof</th>
-                                            <th class="py-4 font-semibold w-[14%]">Timestamp</th>
-                                            <th class="py-4 text-right pr-6 font-semibold w-[10%]">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-slate-50 dark:divide-slate-800">
-                                        <tr 
-                                            v-for="submission in paymentSubmissions" 
-                                            :key="submission.id" 
-                                            class="group hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition"
-                                        >
-                                            <!-- Guest & Suite -->
-                                            <td class="py-5 flex items-center gap-3">
-                                                <div 
-                                                    :class="['h-9 w-9 rounded-full font-bold flex items-center justify-center text-xs tracking-wider border border-slate-200/50 dark:border-slate-700 uppercase shrink-0', submission.bgClass]"
-                                                >
-                                                    {{ submission.initials }}
-                                                </div>
-                                                <div>
-                                                    <p class="font-bold text-slate-900 dark:text-slate-100 group-hover:text-[#0b1c3d] dark:group-hover:text-amber-300 transition text-sm leading-snug">
-                                                        {{ submission.name }}
-                                                    </p>
-                                                    <span class="text-slate-400 dark:text-slate-500 text-[11px] mt-0.5 block leading-none font-medium">
-                                                        {{ submission.suite }}
-                                                    </span>
-                                                </div>
-                                            </td>
-
-                                            <!-- Amount Due -->
-                                            <td class="py-5">
-                                                <p :class="['font-bold text-sm leading-snug', submission.amountColorClass]">
-                                                    ₱{{ submission.amount }}
-                                                </p>
-                                                <!-- Red DP Missing Badge if applicable -->
-                                                <span 
-                                                    v-if="submission.isMissing" 
-                                                    class="inline-block mt-1 px-1.5 py-0.5 text-[8px] font-extrabold bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-450 rounded-sm tracking-wider uppercase border border-rose-100/30"
-                                                >
-                                                    DP MISSING
-                                                </span>
-                                            </td>
-
-                                            <!-- Payment Type -->
-                                            <td class="py-5 text-slate-700 dark:text-slate-300 font-medium text-xs">
-                                                {{ submission.paymentType }}
-                                            </td>
-
-                                            <!-- Receipt Proof image -->
-                                            <td class="py-5">
-                                                <div class="h-10 w-16 rounded overflow-hidden border border-slate-100 dark:border-slate-800 shadow-sm relative group/thumb cursor-zoom-in">
-                                                    <img 
-                                                        :src="submission.proofUrl" 
-                                                        class="h-full w-full object-cover transition-transform duration-300 group-hover/thumb:scale-110" 
-                                                        alt="Receipt proof"
-                                                    />
-                                                </div>
-                                            </td>
-
-                                            <!-- Timestamp -->
-                                            <td class="py-5 text-slate-500 dark:text-slate-400 font-medium">
-                                                {{ submission.timestamp }}
-                                            </td>
-
-                                            <!-- Actions (Sheet icon, Verify button, Reject button) -->
-                                            <td class="py-5 text-right pr-6">
-                                                <div class="flex items-center justify-end gap-2.5">
-                                                    <button class="text-slate-400 hover:text-slate-650 dark:text-slate-500 dark:hover:text-slate-355 transition cursor-pointer" title="View Logs">
-                                                        <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                                        </svg>
-                                                    </button>
-                                                    <button class="px-3 py-1.5 rounded-lg bg-[#0B1E3F] hover:bg-[#152e59] dark:bg-amber-500/10 dark:hover:bg-amber-500/20 dark:text-amber-300 text-white font-bold text-[10px] tracking-wide transition cursor-pointer">
-                                                        Verify
-                                                    </button>
-                                                    <button class="px-3 py-1.5 rounded-lg border border-rose-200 dark:border-rose-900/50 hover:bg-rose-50/30 text-rose-600 dark:text-rose-450 font-bold text-[10px] tracking-wide transition cursor-pointer">
-                                                        Reject
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            <!-- Table Pagination Footer -->
-                            <div class="flex justify-between items-center border-t border-slate-50 dark:border-slate-800 pt-4 text-[10px] text-slate-400 dark:text-slate-500 font-medium">
-                                <span>Showing 3 of 24 pending payments</span>
-                                <div class="flex items-center gap-1.5">
-                                    <button class="p-1 px-2 border border-slate-200 dark:border-slate-800 rounded-md hover:bg-slate-50 dark:hover:bg-slate-800/50 disabled:opacity-50 text-slate-600 dark:text-slate-400" disabled>&lt;</button>
-                                    <span class="px-2.5 py-1 font-bold text-white bg-[#0B1E3F] dark:bg-amber-500/20 dark:text-amber-300 rounded shadow-sm">1</span>
-                                    <button class="px-2.5 py-1 border border-slate-200 dark:border-slate-800 rounded hover:bg-slate-50 dark:hover:bg-slate-800/50 font-semibold text-slate-700 dark:text-slate-350 cursor-pointer">2</button>
-                                    <button class="px-2.5 py-1 border border-slate-200 dark:border-slate-800 rounded hover:bg-slate-50 dark:hover:bg-slate-800/50 font-semibold text-slate-700 dark:text-slate-350 cursor-pointer">3</button>
-                                    <button class="p-1 px-2 border border-slate-200 dark:border-slate-800 rounded-md hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer text-slate-600 dark:text-slate-400">&gt;</button>
-                                </div>
+                            <div>
+                                <p class="text-slate-450 dark:text-slate-500 text-[10px] font-semibold uppercase tracking-wider leading-none">Urgent Discrepancies</p>
+                                <p class="text-2xl font-bold text-rose-600 dark:text-rose-455 mt-2 leading-none">
+                                    {{ String(paymentSubmissions.filter(s => s.isMissing).length).padStart(2, '0') }} <span class="font-serif font-normal text-lg text-rose-500/80 dark:text-rose-400/80">Flags</span>
+                                </p>
                             </div>
                         </div>
 
+                        <!-- Missing DP Card -->
+                        <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm hover:shadow-md transition duration-200 flex items-center gap-4.5">
+                            <div class="h-12 w-12 bg-rose-50 dark:bg-rose-950/30 rounded-2xl flex items-center justify-center text-rose-500 shrink-0">
+                                <svg class="h-5.5 w-5.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-slate-455 dark:text-slate-500 text-[10px] font-semibold uppercase tracking-wider leading-none">Missing DP</p>
+                                <p class="text-2xl font-bold text-rose-600 dark:text-rose-450 mt-2 leading-none">
+                                    {{ String(paymentSubmissions.filter(s => s.isMissing).length).padStart(2, '0') }} <span class="font-serif font-normal text-lg text-rose-500/80 dark:text-rose-400/80">Bookings</span>
+                                </p>
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- Active Submissions Card Table -->
+                    <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm space-y-5">
+                        
+                        <!-- Card Header -->
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <h3 class="font-serif text-[#0b1c3d] dark:text-slate-100 text-lg font-bold">Active Submissions</h3>
+                            
+                            <div class="flex items-center gap-3 w-full sm:w-auto">
+                                <!-- Search guests -->
+                                <div class="relative flex-grow sm:w-72">
+                                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                        </svg>
+                                    </span>
+                                    <input 
+                                        type="text" 
+                                        placeholder="Search guests..." 
+                                        class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-100 dark:bg-slate-800 dark:border-slate-700 focus:outline-none focus:bg-white dark:focus:bg-slate-900 rounded-xl text-xs transition dark:text-slate-100"
+                                    />
+                                </div>
+                                
+                                <!-- Filter Button -->
+                                <button class="flex items-center gap-1.5 px-3.5 py-2 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-600 dark:text-slate-355 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold transition cursor-pointer">
+                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                                    </svg>
+                                    Filter
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Submissions Table -->
+                        <div class="overflow-x-auto">
+                            <table class="w-full min-w-[800px] border-collapse text-left text-xs">
+                                <thead>
+                                    <tr class="border-b border-slate-100 dark:border-slate-800 text-slate-400 dark:text-slate-500 font-semibold uppercase tracking-wider">
+                                        <th class="py-4 font-semibold w-[28%]">Guest & Suite</th>
+                                        <th class="py-4 font-semibold w-[16%]">Amount Due</th>
+                                        <th class="py-4 font-semibold w-[18%]">Payment Type</th>
+                                        <th class="py-4 font-semibold w-[14%]">Receipt Proof</th>
+                                        <th class="py-4 font-semibold w-[14%]">Timestamp</th>
+                                        <th class="py-4 text-right pr-6 font-semibold w-[10%]">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-50 dark:divide-slate-800">
+                                    <tr 
+                                        v-for="submission in paymentSubmissions" 
+                                        :key="submission.id" 
+                                        class="group hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition"
+                                    >
+                                        <!-- Guest & Suite -->
+                                        <td class="py-5 flex items-center gap-3">
+                                            <div 
+                                                :class="['h-9 w-9 rounded-full font-bold flex items-center justify-center text-xs tracking-wider border border-slate-200/50 dark:border-slate-700 uppercase shrink-0', submission.bgClass]"
+                                            >
+                                                {{ submission.initials }}
+                                            </div>
+                                            <div>
+                                                <p class="font-bold text-slate-900 dark:text-slate-100 group-hover:text-[#0b1c3d] dark:group-hover:text-amber-300 transition text-sm leading-snug">
+                                                    {{ submission.name }}
+                                                </p>
+                                                <span class="text-slate-400 dark:text-slate-500 text-[11px] mt-0.5 block leading-none font-medium">
+                                                    {{ submission.suite }}
+                                                </span>
+                                            </div>
+                                        </td>
+
+                                        <!-- Amount Due -->
+                                        <td class="py-5">
+                                            <p :class="['font-bold text-sm leading-snug', submission.amountColorClass]">
+                                                ₱{{ submission.amount }}
+                                            </p>
+                                            <!-- Red DP Missing Badge if applicable -->
+                                            <span 
+                                                v-if="submission.isMissing" 
+                                                class="inline-block mt-1 px-1.5 py-0.5 text-[8px] font-extrabold bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-455 rounded-sm tracking-wider uppercase border border-rose-100/30"
+                                            >
+                                                DP MISSING
+                                            </span>
+                                        </td>
+
+                                        <!-- Payment Type -->
+                                        <td class="py-5 text-slate-700 dark:text-slate-300 font-medium text-xs">
+                                            {{ submission.paymentType }}
+                                        </td>
+
+                                        <!-- Receipt Proof image -->
+                                        <td class="py-5">
+                                            <div 
+                                                v-if="submission.hasProof"
+                                                @click="openReceipt(submission.proofUrl)"
+                                                class="h-10 w-16 rounded overflow-hidden border border-slate-100 dark:border-slate-800 shadow-sm relative group/thumb cursor-zoom-in"
+                                            >
+                                                <img 
+                                                    :src="submission.proofUrl" 
+                                                    class="h-full w-full object-cover transition-transform duration-300 group-hover/thumb:scale-110" 
+                                                    alt="Receipt proof"
+                                                />
+                                            </div>
+                                            <span v-else class="text-slate-400 dark:text-slate-500 italic text-[11px]">No Receipt</span>
+                                        </td>
+
+                                        <!-- Timestamp -->
+                                        <td class="py-5 text-slate-500 dark:text-slate-400 font-medium">
+                                            {{ submission.timestamp }}
+                                        </td>
+
+                                        <!-- Actions (Sheet icon, Verify button, Reject button) -->
+                                        <td class="py-5 text-right pr-6">
+                                            <div class="flex items-center justify-end gap-2.5">
+                                                <button class="text-slate-400 hover:text-slate-650 dark:text-slate-500 dark:hover:text-slate-355 transition cursor-pointer" title="View Logs">
+                                                    <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                    </svg>
+                                                </button>
+                                                <button 
+                                                    @click="verifyPayment(submission)"
+                                                    class="px-3 py-1.5 rounded-lg bg-[#0B1E3F] hover:bg-[#152e59] dark:bg-amber-500/10 dark:hover:bg-amber-500/20 dark:text-amber-300 text-white font-bold text-[10px] tracking-wide transition cursor-pointer"
+                                                >
+                                                    Verify
+                                                </button>
+                                                <button 
+                                                    @click="rejectPayment(submission)"
+                                                    class="px-3 py-1.5 rounded-lg border border-rose-200 dark:border-rose-900/50 hover:bg-rose-50/30 text-rose-600 dark:text-rose-455 font-bold text-[10px] tracking-wide transition cursor-pointer"
+                                                >
+                                                    Reject
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Table Pagination Footer -->
+                        <div class="flex justify-between items-center border-t border-slate-50 dark:border-slate-800 pt-4 text-[10px] text-slate-400 dark:text-slate-500 font-medium">
+                            <span>Showing {{ paymentSubmissions.length }} of {{ paymentSubmissions.length }} pending payments</span>
+                            <div class="flex items-center gap-1.5">
+                                <button class="p-1 px-2 border border-slate-200 dark:border-slate-800 rounded-md hover:bg-slate-50 dark:hover:bg-slate-800/50 disabled:opacity-50 text-slate-600 dark:text-slate-400" disabled>&lt;</button>
+                                <span class="px-2.5 py-1 font-bold text-white bg-[#0B1E3F] dark:bg-amber-500/20 dark:text-amber-300 rounded shadow-sm">1</span>
+                                <button class="px-2.5 py-1 border border-slate-200 dark:border-slate-800 rounded hover:bg-slate-50 dark:hover:bg-slate-800/50 font-semibold text-slate-700 dark:text-slate-350 cursor-pointer">2</button>
+                                <button class="px-2.5 py-1 border border-slate-200 dark:border-slate-800 rounded hover:bg-slate-50 dark:hover:bg-slate-800/50 font-semibold text-slate-700 dark:text-slate-350 cursor-pointer">3</button>
+                                <button class="p-1 px-2 border border-slate-200 dark:border-slate-800 rounded-md hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer text-slate-600 dark:text-slate-400">&gt;</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
 
                     <!-- TAB: USER MANAGEMENT -->
                     <div v-else-if="activeTab === 'user_management'" class="space-y-8 animate-fade-in">
@@ -3840,10 +3979,22 @@
                             
                             <!-- Timeframe Selector -->
                             <div class="bg-slate-100 dark:bg-slate-900 p-0.5 rounded-xl flex items-center gap-1 shrink-0 self-end sm:self-auto border border-slate-200/40 dark:border-slate-800">
-                                <button class="bg-white dark:bg-slate-850 text-slate-850 dark:text-slate-100 text-xs font-semibold px-3 py-1.5 rounded-lg shadow-sm">Daily</button>
-                                <button class="text-slate-500 hover:text-slate-750 dark:text-slate-400 dark:hover:text-slate-200 text-xs font-semibold px-3 py-1.5 transition">Weekly</button>
-                                <button class="text-slate-500 hover:text-slate-750 dark:text-slate-400 dark:hover:text-slate-200 text-xs font-semibold px-3 py-1.5 transition">Monthly</button>
-                                <button class="text-slate-500 hover:text-slate-750 dark:text-slate-400 dark:hover:text-slate-200 text-xs font-semibold px-3 py-1.5 transition">Yearly</button>
+                                <button 
+                                    @click="salesTimeframe = 'daily'"
+                                    :class="[salesTimeframe === 'daily' ? 'bg-white dark:bg-slate-850 text-slate-850 dark:text-slate-100 shadow-sm' : 'text-slate-500 hover:text-slate-750 dark:text-slate-400 dark:hover:text-slate-200', 'text-xs font-semibold px-3 py-1.5 rounded-lg transition cursor-pointer']"
+                                >Daily</button>
+                                <button 
+                                    @click="salesTimeframe = 'weekly'"
+                                    :class="[salesTimeframe === 'weekly' ? 'bg-white dark:bg-slate-850 text-slate-850 dark:text-slate-100 shadow-sm' : 'text-slate-500 hover:text-slate-750 dark:text-slate-400 dark:hover:text-slate-200', 'text-xs font-semibold px-3 py-1.5 rounded-lg transition cursor-pointer']"
+                                >Weekly</button>
+                                <button 
+                                    @click="salesTimeframe = 'monthly'"
+                                    :class="[salesTimeframe === 'monthly' ? 'bg-white dark:bg-slate-850 text-slate-850 dark:text-slate-100 shadow-sm' : 'text-slate-500 hover:text-slate-750 dark:text-slate-400 dark:hover:text-slate-200', 'text-xs font-semibold px-3 py-1.5 rounded-lg transition cursor-pointer']"
+                                >Monthly</button>
+                                <button 
+                                    @click="salesTimeframe = 'yearly'"
+                                    :class="[salesTimeframe === 'yearly' ? 'bg-white dark:bg-slate-850 text-slate-850 dark:text-slate-100 shadow-sm' : 'text-slate-500 hover:text-slate-750 dark:text-slate-400 dark:hover:text-slate-200', 'text-xs font-semibold px-3 py-1.5 rounded-lg transition cursor-pointer']"
+                                >Yearly</button>
                             </div>
                         </div>
 
@@ -3858,16 +4009,16 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
                                         </svg>
                                     </div>
-                                    <span class="text-[9px] text-[#2D5A27] bg-emerald-50 dark:bg-emerald-950/30 dark:text-emerald-300 px-1.5 py-0.5 rounded font-bold flex items-center gap-0.5">
+                                    <span :class="[salesStats.revenue.change >= 0 ? 'text-[#2D5A27] bg-emerald-50 dark:bg-emerald-950/30 dark:text-emerald-300' : 'text-rose-600 bg-rose-50 dark:bg-rose-950/20 dark:text-rose-450', 'text-[9px] px-1.5 py-0.5 rounded font-bold flex items-center gap-0.5']">
                                         <svg class="h-2.5 w-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" :d="salesStats.revenue.change >= 0 ? 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6' : 'M19 13l-7 7-7-7m14-6l-7 7-7-7'" />
                                         </svg>
-                                        +12.4%
+                                        {{ salesStats.revenue.change >= 0 ? '+' : '' }}{{ salesStats.revenue.change.toFixed(1) }}%
                                     </span>
                                 </div>
                                 <div class="mt-4">
                                     <p class="text-slate-450 dark:text-slate-500 text-[10px] font-semibold uppercase tracking-wider leading-none">Total Revenue</p>
-                                    <p class="text-2xl font-serif font-bold text-[#0B1E3F] dark:text-amber-300 mt-2">₱2,450,000</p>
+                                    <p class="text-2xl font-serif font-bold text-[#0B1E3F] dark:text-amber-300 mt-2">₱{{ salesStats.revenue.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}</p>
                                 </div>
                             </div>
 
@@ -3879,16 +4030,16 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                         </svg>
                                     </div>
-                                    <span class="text-[9px] text-[#2D5A27] bg-emerald-50 dark:bg-emerald-950/30 dark:text-emerald-300 px-1.5 py-0.5 rounded font-bold flex items-center gap-0.5">
+                                    <span :class="[salesStats.bookings.change >= 0 ? 'text-[#2D5A27] bg-emerald-50 dark:bg-emerald-950/30 dark:text-emerald-300' : 'text-rose-600 bg-rose-50 dark:bg-rose-950/20 dark:text-rose-450', 'text-[9px] px-1.5 py-0.5 rounded font-bold flex items-center gap-0.5']">
                                         <svg class="h-2.5 w-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" :d="salesStats.bookings.change >= 0 ? 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6' : 'M19 13l-7 7-7-7m14-6l-7 7-7-7'" />
                                         </svg>
-                                        +5.2%
+                                        {{ salesStats.bookings.change >= 0 ? '+' : '' }}{{ salesStats.bookings.change.toFixed(1) }}%
                                     </span>
                                 </div>
                                 <div class="mt-4">
                                     <p class="text-slate-450 dark:text-slate-500 text-[10px] font-semibold uppercase tracking-wider leading-none">Bookings</p>
-                                    <p class="text-2xl font-serif font-bold text-[#0B1E3F] dark:text-amber-300 mt-2">128</p>
+                                    <p class="text-2xl font-serif font-bold text-[#0B1E3F] dark:text-amber-300 mt-2">{{ salesStats.bookings.value }}</p>
                                 </div>
                             </div>
 
@@ -3900,16 +4051,16 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                         </svg>
                                     </div>
-                                    <span class="text-[9px] text-rose-600 bg-rose-50 dark:bg-rose-950/20 dark:text-rose-450 px-1.5 py-0.5 rounded font-bold flex items-center gap-0.5">
+                                    <span :class="[salesStats.approved.change >= 0 ? 'text-[#2D5A27] bg-emerald-50 dark:bg-emerald-950/30 dark:text-emerald-300' : 'text-rose-600 bg-rose-50 dark:bg-rose-950/20 dark:text-rose-450', 'text-[9px] px-1.5 py-0.5 rounded font-bold flex items-center gap-0.5']">
                                         <svg class="h-2.5 w-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 13l-7 7-7-7m14-6l-7 7-7-7" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" :d="salesStats.approved.change >= 0 ? 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6' : 'M19 13l-7 7-7-7m14-6l-7 7-7-7'" />
                                         </svg>
-                                        -2.1%
+                                        {{ salesStats.approved.change >= 0 ? '+' : '' }}{{ salesStats.approved.change.toFixed(1) }}%
                                     </span>
                                 </div>
                                 <div class="mt-4">
                                     <p class="text-slate-450 dark:text-slate-500 text-[10px] font-semibold uppercase tracking-wider leading-none">Approved</p>
-                                    <p class="text-2xl font-serif font-bold text-[#0B1E3F] dark:text-amber-300 mt-2">112</p>
+                                    <p class="text-2xl font-serif font-bold text-[#0B1E3F] dark:text-amber-300 mt-2">{{ salesStats.approved.value }}</p>
                                 </div>
                             </div>
 
@@ -3921,16 +4072,16 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
                                         </svg>
                                     </div>
-                                    <span class="text-[9px] text-[#2D5A27] bg-emerald-50 dark:bg-emerald-950/30 dark:text-emerald-300 px-1.5 py-0.5 rounded font-bold flex items-center gap-0.5">
+                                    <span :class="[salesStats.occupancy.change >= 0 ? 'text-[#2D5A27] bg-emerald-50 dark:bg-emerald-950/30 dark:text-emerald-300' : 'text-rose-600 bg-rose-50 dark:bg-rose-950/20 dark:text-rose-450', 'text-[9px] px-1.5 py-0.5 rounded font-bold flex items-center gap-0.5']">
                                         <svg class="h-2.5 w-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" :d="salesStats.occupancy.change >= 0 ? 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6' : 'M19 13l-7 7-7-7m14-6l-7 7-7-7'" />
                                         </svg>
-                                        +8.9%
+                                        {{ salesStats.occupancy.change >= 0 ? '+' : '' }}{{ salesStats.occupancy.change.toFixed(1) }}%
                                     </span>
                                 </div>
                                 <div class="mt-4">
                                     <p class="text-slate-450 dark:text-slate-500 text-[10px] font-semibold uppercase tracking-wider leading-none">Occupancy</p>
-                                    <p class="text-2xl font-serif font-bold text-[#0B1E3F] dark:text-amber-300 mt-2">94%</p>
+                                    <p class="text-2xl font-serif font-bold text-[#0B1E3F] dark:text-amber-300 mt-2">{{ salesStats.occupancy.value.toFixed(1) }}%</p>
                                 </div>
                             </div>
                         </div>
@@ -4036,13 +4187,29 @@
 
                             <!-- Table Pagination Footer -->
                             <div class="flex justify-between items-center border-t border-slate-50 dark:border-slate-800 pt-4 text-[10px] text-slate-400 dark:text-slate-500 font-medium">
-                                <span>Showing 1 to 5 of 128 transactions</span>
-                                <div class="flex items-center gap-1.5">
-                                    <button class="p-1 px-2 border border-slate-200 dark:border-slate-800 rounded-md hover:bg-slate-50 dark:hover:bg-slate-800/50 disabled:opacity-50 text-slate-600 dark:text-slate-400" disabled>&lt;</button>
-                                    <span class="px-2.5 py-1 font-bold text-white bg-[#0B1E3F] dark:bg-amber-500/20 dark:text-amber-300 rounded shadow-sm">1</span>
-                                    <button class="px-2.5 py-1 border border-slate-200 dark:border-slate-800 rounded hover:bg-slate-50 dark:hover:bg-slate-800/50 font-semibold text-slate-700 dark:text-slate-350 cursor-pointer">2</button>
-                                    <button class="px-2.5 py-1 border border-slate-200 dark:border-slate-800 rounded hover:bg-slate-50 dark:hover:bg-slate-800/50 font-semibold text-slate-700 dark:text-slate-350 cursor-pointer">3</button>
-                                    <button class="p-1 px-2 border border-slate-200 dark:border-slate-800 rounded-md hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer text-slate-600 dark:text-slate-400">&gt;</button>
+                                <span>Showing {{ recentTransactions.length > 0 ? (salesCurrentPage - 1) * 10 + 1 : 0 }} to {{ Math.min(salesCurrentPage * 10, salesTotalTransactions) }} of {{ salesTotalTransactions }} transaction{{ salesTotalTransactions === 1 ? '' : 's' }}</span>
+                                <div class="flex items-center gap-1.5" v-if="salesTotalPages > 1">
+                                    <button 
+                                        @click="fetchSalesReport(salesCurrentPage - 1)" 
+                                        class="p-1 px-2 border border-slate-200 dark:border-slate-800 rounded-md hover:bg-slate-50 dark:hover:bg-slate-800/50 disabled:opacity-50 text-slate-600 dark:text-slate-400 cursor-pointer" 
+                                        :disabled="salesCurrentPage === 1"
+                                    >&lt;</button>
+                                    <template v-for="page in salesTotalPages" :key="page">
+                                        <span 
+                                            v-if="page === salesCurrentPage" 
+                                            class="px-2.5 py-1 font-bold text-white bg-[#0B1E3F] dark:bg-amber-500/20 dark:text-amber-300 rounded shadow-sm"
+                                        >{{ page }}</span>
+                                        <button 
+                                            v-else 
+                                            @click="fetchSalesReport(page)" 
+                                            class="px-2.5 py-1 border border-slate-200 dark:border-slate-800 rounded hover:bg-slate-50 dark:hover:bg-slate-800/50 font-semibold text-slate-700 dark:text-slate-350 cursor-pointer"
+                                        >{{ page }}</button>
+                                    </template>
+                                    <button 
+                                        @click="fetchSalesReport(salesCurrentPage + 1)" 
+                                        class="p-1 px-2 border border-slate-200 dark:border-slate-800 rounded-md hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer text-slate-600 dark:text-slate-400" 
+                                        :disabled="salesCurrentPage === salesTotalPages"
+                                    >&gt;</button>
                                 </div>
                             </div>
                         </div>
@@ -4433,6 +4600,112 @@
             </form>
         </div>
     </div>
+
+    <!-- Receipt Preview Modal -->
+    <div v-if="showReceiptModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in" @click.self="showReceiptModal = false">
+        <div class="relative max-w-lg w-full bg-white dark:bg-slate-900 rounded-[32px] overflow-hidden shadow-2xl p-6 border border-slate-100 dark:border-slate-850 animate-scale-in">
+            <!-- Close Button -->
+            <button @click="showReceiptModal = false" class="absolute top-4 right-4 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-650 dark:hover:text-slate-355 transition cursor-pointer">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            <h3 class="font-serif text-lg font-bold text-[#0b1c3d] dark:text-slate-100 mb-4 pr-10">Receipt Proof</h3>
+            <div class="rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-850 bg-slate-50 dark:bg-slate-950 flex items-center justify-center max-h-[70vh]">
+                <img :src="activeReceiptUrl" class="max-w-full max-h-[60vh] object-contain" alt="Receipt proof large" />
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Modal/Alert dialog -->
+    <div v-if="customAlert.show" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in" @click.self="handleCustomCancel">
+        <div class="relative max-w-md w-full bg-white dark:bg-slate-900 rounded-[32px] overflow-hidden shadow-2xl p-8 border border-slate-100 dark:border-slate-850 animate-scale-in space-y-6">
+            
+            <!-- Close Button -->
+            <button @click="handleCustomCancel" class="absolute top-4 right-4 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-650 dark:hover:text-slate-355 transition cursor-pointer">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+
+            <!-- Icon Header -->
+            <div class="flex flex-col items-center text-center space-y-3">
+                <!-- Success Icon -->
+                <div v-if="customAlert.type === 'success'" class="h-16 w-16 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center border border-emerald-100 dark:border-emerald-900/20">
+                    <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+                <!-- Confirm Icon -->
+                <div v-else-if="customAlert.type === 'confirm'" class="h-16 w-16 bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center border border-blue-100 dark:border-blue-900/20">
+                    <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <!-- Prompt Icon -->
+                <div v-else-if="customAlert.type === 'prompt'" class="h-16 w-16 bg-rose-50 dark:bg-rose-955/20 text-rose-600 dark:text-rose-455 rounded-full flex items-center justify-center border border-rose-100 dark:border-rose-900/30">
+                    <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </div>
+                <!-- Default Info/Error Icon -->
+                <div v-else class="h-16 w-16 bg-rose-50 dark:bg-rose-955/20 text-rose-600 dark:text-rose-455 rounded-full flex items-center justify-center border border-rose-100 dark:border-rose-900/30">
+                    <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </div>
+
+                <h3 class="font-serif text-2xl font-bold text-[#0b1c3d] dark:text-slate-100 pt-2">{{ customAlert.title }}</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400 font-light leading-relaxed px-2">{{ customAlert.message }}</p>
+            </div>
+
+            <!-- Booking Success Specific Fields -->
+            <div v-if="customAlert.type === 'success' && customAlert.reference" class="bg-[#FAF9F6] dark:bg-slate-950 p-5 rounded-2xl border border-slate-100 dark:border-slate-855 space-y-3.5">
+                <div class="flex items-center justify-between text-xs border-b border-slate-200/50 dark:border-slate-800 pb-2.5">
+                    <span class="text-slate-400 font-semibold uppercase tracking-wider">Guest Name</span>
+                    <span class="font-bold text-[#0b1c3d] dark:text-slate-200">{{ customAlert.guestName }}</span>
+                </div>
+                <div class="flex items-center justify-between text-xs">
+                    <span class="text-slate-400 font-semibold uppercase tracking-wider">Booking Reference</span>
+                    <div class="flex items-center gap-2">
+                        <span class="font-extrabold text-[#A27B5C] dark:text-amber-300 text-sm tracking-wider">{{ customAlert.reference }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rejection Prompt Input Field -->
+            <div v-if="customAlert.type === 'prompt'" class="space-y-1.5">
+                <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Reason for Rejection</label>
+                <input 
+                    type="text" 
+                    v-model="customAlert.inputValue"
+                    :placeholder="customAlert.inputPlaceholder"
+                    class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#0B1E3F] bg-white text-xs font-semibold transition"
+                    required
+                />
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex items-center gap-4">
+                <button 
+                    v-if="customAlert.type === 'confirm' || customAlert.type === 'prompt'"
+                    type="button"
+                    @click="handleCustomCancel"
+                    class="flex-grow py-3.5 px-4 rounded-2xl border border-slate-200 hover:bg-slate-50 text-slate-500 text-xs font-bold tracking-wider uppercase transition cursor-pointer"
+                >
+                    Cancel
+                </button>
+                <button 
+                    type="button"
+                    @click="handleCustomConfirm"
+                    class="flex-grow py-3.5 px-4 rounded-2xl bg-[#0B1E3F] hover:bg-[#152e59] text-white text-xs font-bold tracking-wider uppercase transition shadow-md cursor-pointer"
+                >
+                    {{ customAlert.type === 'confirm' ? 'Confirm' : customAlert.type === 'prompt' ? 'Reject Booking' : 'Continue' }}
+                </button>
+            </div>
+
+        </div>
+    </div>
 </template>
 
 <script setup>
@@ -4446,6 +4719,66 @@ const loginError = ref('')
 const isSubmitting = ref(false)
 const currentUser = ref(null)
 
+const dbRooms = ref([
+    {
+        name: 'Couple Room 1',
+        type: 'Couple Room',
+        price: 2500.00,
+        description: 'A cozy retreat designed for couples, featuring a king-size bed, warm ambient lighting, and modern amenities.',
+        image_url: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=800&q=80',
+        amenities: ['King Bed', 'High-speed WiFi', 'Flat-screen TV', 'Air Conditioning', 'Private Bathroom', 'Mini Fridge']
+    },
+    {
+        name: 'Family Room 1',
+        type: 'Family Room',
+        price: 4500.00,
+        description: 'Spacious and elegant accommodation for families, featuring two queen-size beds, a lounge area, and garden views.',
+        image_url: 'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&w=800&q=80',
+        amenities: ['2 Queen Beds', 'High-speed WiFi', 'Smart TV', 'Air Conditioning', 'Refrigerator', 'Hot Shower', 'Balcony']
+    },
+    {
+        name: 'Function Hall',
+        type: 'Function Hall',
+        price: 5000.00,
+        description: 'A grand and versatile event venue perfect for conferences, weddings, celebrations, or workshops. Customizable seating layout.',
+        image_url: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=800&q=80',
+        amenities: ['Premium Sound System', 'HD Projector & Screen', 'High-speed WiFi', 'Air Conditioning', 'Dedicated Restrooms', 'Custom Seating Layout']
+    }
+])
+
+const fetchRooms = async () => {
+    try {
+        const response = await axiosInstance.get('/api/rooms')
+        if (response.data && response.data.success) {
+            dbRooms.value = response.data.rooms
+        }
+    } catch (e) {
+        console.error('Failed to fetch rooms from database:', e)
+    }
+}
+
+const roomChoices = computed(() => {
+    const unique = {}
+    dbRooms.value.forEach(room => {
+        if (!unique[room.type]) {
+            let parsedAmenities = room.amenities
+            if (typeof parsedAmenities === 'string') {
+                try {
+                    parsedAmenities = JSON.parse(parsedAmenities)
+                } catch (e) {
+                    parsedAmenities = []
+                }
+            }
+            unique[room.type] = {
+                ...room,
+                amenities: parsedAmenities || []
+            }
+        }
+    })
+    return Object.values(unique)
+})
+
+
 const selectedRoomToBook = ref(null)
 const bookingForm = reactive({
     name: '',
@@ -4457,7 +4790,20 @@ const bookingForm = reactive({
 const currentBookingStep = ref(1)
 
 const bookingRefInput = ref('')
+const bookingEmailInput = ref('')
 const retrievedBooking = ref(null)
+
+const receiptFile = ref(null)
+const receiptPreviewUrl = ref('')
+const cashSecuringMethod = ref('card')
+
+const handleReceiptUpload = (e) => {
+    const file = e.target.files[0]
+    if (file) {
+        receiptFile.value = file
+        receiptPreviewUrl.value = URL.createObjectURL(file)
+    }
+}
 
 const bookingsList = ref([
     {
@@ -4488,28 +4834,110 @@ const bookingsList = ref([
     }
 ])
 
-const handleRetrieveBooking = () => {
-    const refUpper = bookingRefInput.value.trim().toUpperCase()
-    const found = bookingsList.value.find(b => b.reference.toUpperCase() === refUpper)
-    if (found) {
-        retrievedBooking.value = found
-    } else {
-        alert('Booking reference not found. (Tip: Try entering AS-88209)')
+const handleRetrieveBooking = async () => {
+    const refVal = bookingRefInput.value.trim().toUpperCase()
+    const emailVal = bookingEmailInput.value.trim().toLowerCase()
+    if (!refVal || !emailVal) {
+        showCustomAlert({
+            title: 'Fields Required',
+            message: 'Please enter both your Booking Reference Number and Email Address.',
+            type: 'error'
+        })
+        return
+    }
+    
+    try {
+        const response = await axiosInstance.get(`/api/bookings/${refVal}`, {
+            params: { email: emailVal }
+        })
+        
+        if (response.data.success) {
+            const b = response.data.booking
+            
+            const checkInFormatted = formatDateString(b.check_in_date)
+            const checkOutFormatted = formatDateString(b.check_out_date)
+            
+            let cardEnd = 'Credit Card'
+            if (b.payment_method === 'credit_card') {
+                cardEnd = `Card ending in **** ${b.card_last_four || '4429'}`
+            } else if (b.payment_method === 'gcash') {
+                cardEnd = 'GCash Mobile Wallet (Paid)'
+            } else {
+                cardEnd = `Cash Down Payment (Secured by ${b.cash_securing_method === 'gcash' ? 'GCash' : 'Card'})`
+            }
+            
+            let displayRoomName = b.room ? b.room.name : (b.room_type || 'Beachfront Villa')
+            let displayRoomImage = b.room && b.room.image_url ? b.room.image_url : '/images/staycation_hero.png'
+            
+            retrievedBooking.value = {
+                reference: b.reference,
+                currencySymbol: 'PHP ',
+                name: b.guest_name,
+                email: b.guest_email,
+                phone: b.guest_phone,
+                checkIn: checkInFormatted,
+                checkInTime: b.check_in_time || 'From 2:00 PM',
+                checkOut: checkOutFormatted,
+                checkOutTime: b.check_out_time || 'Before 11:00 AM',
+                guests: `${b.guests_count} Guests`,
+                roomType: displayRoomName,
+                roomDetails: displayRoomName.includes('Garden') || displayRoomName.includes('Family') ? 'Building B, Floor 4' : 'Villa Area, Beachfront',
+                roomImage: displayRoomImage,
+                nights: b.nights_count,
+                nightlyRate: b.room ? parseFloat(b.room.price) : 12000,
+                subtotal: parseFloat(b.total_price),
+                serviceFee: 0,
+                localTaxes: 0,
+                totalPrice: parseFloat(b.total_price),
+                paymentCard: cardEnd,
+                transactionId: `TR-${b.id}`,
+                specialRequests: b.special_requests || 'None',
+                amenities: ['High-Speed WiFi', 'Private Infinity Pool', 'Daily Breakfast', 'Welcome Drinks'],
+                status: b.status
+            }
+        }
+    } catch (e) {
+        console.error('Failed to retrieve booking:', e)
+        showCustomAlert({
+            title: 'Retrieve Failed',
+            message: e.response?.data?.message || 'Booking reference not found or email address does not match.',
+            type: 'error'
+        })
     }
 }
 
 const shareReservation = (ref) => {
     if (navigator.clipboard) {
         navigator.clipboard.writeText(window.location.origin + '/bookings/' + ref)
-            .then(() => alert(`Booking details link copied to clipboard for reference: ${ref}`))
-            .catch(() => alert(`Booking reference: ${ref}`))
+            .then(() => {
+                showCustomAlert({
+                    title: 'Link Copied',
+                    message: `Booking details link copied to clipboard for reference: ${ref}`,
+                    type: 'success'
+                })
+            })
+            .catch(() => {
+                showCustomAlert({
+                    title: 'Booking Info',
+                    message: `Booking reference code: ${ref}`,
+                    type: 'success'
+                })
+            })
     } else {
-        alert(`Booking reference: ${ref}`)
+        showCustomAlert({
+            title: 'Booking Info',
+            message: `Booking reference code: ${ref}`,
+            type: 'success'
+        })
     }
 }
 
 const downloadInvoice = (ref) => {
-    alert(`Generating invoice for reservation ${ref}...\nYour download will begin shortly in PDF format.`)
+    showCustomAlert({
+        title: 'Invoice Request',
+        message: `Generating invoice for reservation ${ref}...\nYour download will begin shortly in PDF format.`,
+        type: 'success'
+    })
 }
 
 const formatDateString = (dateStr) => {
@@ -4524,8 +4952,32 @@ const formatDateString = (dateStr) => {
     }
 }
 
-const checkInDate = ref('2026-12-06')
-const checkOutDate = ref('2026-12-09')
+const getPhilippineDate = () => {
+    const now = new Date()
+    const utc = now.getTime() + (now.getTimezoneOffset() * 60000)
+    const phOffset = 8
+    return new Date(utc + (3600000 * phOffset))
+}
+
+const getTodayStr = () => {
+    const d = getPhilippineDate()
+    const yyyy = d.getFullYear()
+    const mm = String(d.getMonth() + 1).padStart(2, '0')
+    const dd = String(d.getDate()).padStart(2, '0')
+    return `${yyyy}-${mm}-${dd}`
+}
+
+const getTomorrowStr = () => {
+    const d = getPhilippineDate()
+    d.setDate(d.getDate() + 1)
+    const yyyy = d.getFullYear()
+    const mm = String(d.getMonth() + 1).padStart(2, '0')
+    const dd = String(d.getDate()).padStart(2, '0')
+    return `${yyyy}-${mm}-${dd}`
+}
+
+const checkInDate = ref(getTodayStr())
+const checkOutDate = ref(getTomorrowStr())
 const checkInWindow = ref('02:00 PM - 04:00 PM')
 const paymentMethod = ref('credit_card')
 const cardForm = reactive({
@@ -4535,11 +4987,11 @@ const cardForm = reactive({
 })
 
 const bookingNights = computed(() => {
-    if (!checkInDate.value || !checkOutDate.value) return 3
+    if (!checkInDate.value || !checkOutDate.value) return 0
     const start = new Date(checkInDate.value)
     const end = new Date(checkOutDate.value)
     const diff = end - start
-    if (diff <= 0) return 1
+    if (diff <= 0) return 0
     return Math.ceil(diff / (1000 * 60 * 60 * 24))
 })
 
@@ -4561,19 +5013,17 @@ const formatPrice = (value) => {
 
 const bookingCalculations = computed(() => {
     if (!selectedRoomToBook.value) return null
-    const rateMap = {
-        'Beachfront Villa': 12000,
-        'Garden Suite': 8500,
-        'Overwater Bungalow': 18500
-    }
-    const rate = rateMap[selectedRoomToBook.value.name] || 10000
+    const rate = parseFloat(selectedRoomToBook.value.price) || 2500
     const nights = bookingNights.value
     const baseTotal = rate * nights
-    const taxesAndFees = baseTotal * 0.12
-    const discount = 2000
-    const totalPrice = baseTotal + taxesAndFees - discount
-    const downPayment = totalPrice * 0.50
-    const remainingBalance = totalPrice * 0.50
+    const taxesAndFees = 0
+    const discount = 0
+    const totalPrice = baseTotal
+    
+    // Cash-at-Property requires a 30% down payment; others are 100% full payment
+    const downPaymentPercent = paymentMethod.value === 'cash_at_property' ? 0.30 : 1.00
+    const downPayment = totalPrice * downPaymentPercent
+    const remainingBalance = totalPrice - downPayment
     
     return {
         rate,
@@ -4587,17 +5037,82 @@ const bookingCalculations = computed(() => {
     }
 })
 
+
+const todayDateObj = getPhilippineDate()
+const currentCalendarMonth = ref(todayDateObj.getMonth())
+const currentCalendarYear = ref(todayDateObj.getFullYear())
+
+const monthNames = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+]
+
+const currentMonthName = computed(() => {
+    return monthNames[currentCalendarMonth.value]
+})
+
+const prevMonth = () => {
+    currentCalendarMonth.value--
+    if (currentCalendarMonth.value < 0) {
+        currentCalendarMonth.value = 11
+        currentCalendarYear.value--
+    }
+}
+
+const nextMonth = () => {
+    currentCalendarMonth.value++
+    if (currentCalendarMonth.value > 11) {
+        currentCalendarMonth.value = 0
+        currentCalendarYear.value++
+    }
+}
+
+const isPastDay = (dayObj) => {
+    const today = getPhilippineDate()
+    today.setHours(0, 0, 0, 0)
+    const dayDate = new Date(dayObj.year, dayObj.month - 1, dayObj.day)
+    return dayDate.getTime() < today.getTime()
+}
+
 const calendarDays = computed(() => {
+    const year = currentCalendarYear.value
+    const month = currentCalendarMonth.value
+    
+    const firstDay = new Date(year, month, 1)
+    const startDayOfWeek = firstDay.getDay()
+    
+    const totalDays = new Date(year, month + 1, 0).getDate()
+    const prevMonthDays = new Date(year, month, 0).getDate()
+    
     const days = []
-    // Dec 2026 calendar (Dec 1 is Tuesday, so we pad Nov 29 & Nov 30)
-    days.push({ day: 29, month: 11, year: 2026, isCurrentMonth: false })
-    days.push({ day: 30, month: 11, year: 2026, isCurrentMonth: false })
-    for (let i = 1; i <= 31; i++) {
-        days.push({ day: i, month: 12, year: 2026, isCurrentMonth: true })
+    
+    for (let i = startDayOfWeek - 1; i >= 0; i--) {
+        const d = prevMonthDays - i
+        let pm = month - 1
+        let py = year
+        if (pm < 0) {
+            pm = 11
+            py = year - 1
+        }
+        days.push({ day: d, month: pm + 1, year: py, isCurrentMonth: false })
     }
-    for (let i = 1; i <= 9; i++) {
-        days.push({ day: i, month: 1, year: 2027, isCurrentMonth: false })
+    
+    for (let i = 1; i <= totalDays; i++) {
+        days.push({ day: i, month: month + 1, year: year, isCurrentMonth: true })
     }
+    
+    const totalCells = Math.ceil(days.length / 7) * 7
+    const nextPadding = totalCells - days.length
+    for (let i = 1; i <= nextPadding; i++) {
+        let nm = month + 1
+        let ny = year
+        if (nm > 11) {
+            nm = 0
+            ny = year + 1
+        }
+        days.push({ day: i, month: nm + 1, year: ny, isCurrentMonth: false })
+    }
+    
     return days
 })
 
@@ -4618,6 +5133,14 @@ const isDayInRange = (dayObj) => {
 }
 
 const handleCalendarDayClick = (dayObj) => {
+    if (isPastDay(dayObj)) {
+        showCustomAlert({
+            title: 'Invalid Date',
+            message: 'You cannot select a date in the past.',
+            type: 'error'
+        })
+        return
+    }
     const dateStr = `${dayObj.year}-${String(dayObj.month).padStart(2, '0')}-${String(dayObj.day).padStart(2, '0')}`
     if (!checkInDate.value || (checkInDate.value && checkOutDate.value)) {
         checkInDate.value = dateStr
@@ -4640,16 +5163,16 @@ const scrollToSection = (id) => {
     }
 }
 
-const startBooking = (roomName, roomImage) => {
-    selectedRoomToBook.value = { name: roomName, image: roomImage }
+const startBooking = (roomName, roomImage, roomPrice) => {
+    selectedRoomToBook.value = { name: roomName, image: roomImage, price: parseFloat(roomPrice) }
     bookingForm.name = ''
     bookingForm.phone = ''
     bookingForm.email = ''
     bookingForm.guests = '2'
     bookingForm.specialRequests = ''
-    checkInDate.value = '2026-12-06'
-    checkOutDate.value = '2026-12-09'
-    checkInWindow.value = '02:00 PM - 04:00 PM'
+    checkInDate.value = getTodayStr()
+    checkOutDate.value = getTomorrowStr()
+    checkInWindow.value = '12:00 PM'
     paymentMethod.value = 'credit_card'
     cardForm.number = ''
     cardForm.expiry = ''
@@ -4658,84 +5181,144 @@ const startBooking = (roomName, roomImage) => {
     currentView.value = 'booking'
 }
 
-const submitBookingSimulated = () => {
-    const randomNum = Math.floor(10000 + Math.random() * 90000)
-    const newRef = `AS-${randomNum}`
-    
-    const nights = bookingCalculations.value ? bookingCalculations.value.nights : 3
-    const rate = bookingCalculations.value ? bookingCalculations.value.rate : 12000
-    const subtotal = bookingCalculations.value ? bookingCalculations.value.baseTotal : (rate * nights)
-    const serviceCharge = subtotal * 0.10
-    const localTaxes = subtotal * 0.04
-    const total = subtotal + serviceCharge + localTaxes
-    
-    const checkInFormatted = formatDateString(checkInDate.value)
-    const checkOutFormatted = formatDateString(checkOutDate.value)
-    
-    let pmText = 'Credit Card'
-    let cardEnd = 'Card ending in **** 4429'
-    if (paymentMethod.value === 'credit_card') {
-        const num = cardForm.number.trim()
-        const last4 = num ? num.slice(-4) : '4429'
-        cardEnd = `Card ending in **** ${last4}`
-    } else if (paymentMethod.value === 'gcash') {
-        pmText = 'GCash'
-        cardEnd = 'GCash Mobile Wallet (Paid)'
-    } else {
-        pmText = 'Cash'
-        cardEnd = 'Cash Down Payment (Pending Verification)'
+const goToPaymentStep = () => {
+    if (!checkInDate.value || !checkOutDate.value) {
+        showCustomAlert({
+            title: 'Dates Required',
+            message: 'Please select both Check-in and Check-out dates on the calendar before proceeding.',
+            type: 'error'
+        })
+        return
     }
+    currentBookingStep.value = 3
+}
 
-    const newBooking = {
-        reference: newRef,
-        currencySymbol: 'PHP ',
-        name: bookingForm.name || 'Valued Guest',
-        email: bookingForm.email || 'guest@example.com',
-        phone: bookingForm.phone || '+63 917 123 4567',
-        checkIn: checkInFormatted,
-        checkInTime: checkInWindow.value || 'From 2:00 PM',
-        checkOut: checkOutFormatted,
-        checkOutTime: 'Until 12:00 PM',
-        guests: `${bookingForm.guests} Guests`,
-        roomType: selectedRoomToBook.value ? selectedRoomToBook.value.name : 'Beachfront Villa',
-        roomDetails: selectedRoomToBook.value && selectedRoomToBook.value.name === 'Garden Suite' ? 'Building B, Floor 4' : 'Villa Area, Beachfront',
-        roomImage: selectedRoomToBook.value ? selectedRoomToBook.value.image : '/images/staycation_hero.png',
-        nights: nights,
-        nightlyRate: rate,
-        subtotal: subtotal,
-        serviceFee: serviceCharge,
-        localTaxes: localTaxes,
-        totalPrice: total,
-        paymentCard: cardEnd,
-        transactionId: `TR-${Math.floor(100000 + Math.random() * 900000)}`,
-        specialRequests: bookingForm.specialRequests || 'None',
-        amenities: ['High-Speed WiFi', 'Private Infinity Pool', 'Daily Breakfast', 'Welcome Drinks'],
-        status: paymentMethod.value === 'cash' ? 'PENDING' : 'PAID'
+
+const submitBookingSimulated = async () => {
+    isSubmitting.value = true
+    try {
+        const formData = new FormData()
+        formData.append('guest_name', bookingForm.name)
+        formData.append('guest_email', bookingForm.email)
+        formData.append('guest_phone', bookingForm.phone)
+        formData.append('guests_count', parseInt(bookingForm.guests))
+        
+        const roomType = selectedRoomToBook.value?.name || 'Couple Room'
+        formData.append('room_type', roomType)
+        
+        formData.append('check_in_date', checkInDate.value)
+        formData.append('check_out_date', checkOutDate.value)
+        formData.append('payment_method', paymentMethod.value)
+        
+        if (paymentMethod.value === 'credit_card') {
+            const num = cardForm.number.trim()
+            const last4 = num ? num.slice(-4) : '4429'
+            formData.append('card_last_four', last4)
+        } else if (paymentMethod.value === 'gcash') {
+            if (receiptFile.value) {
+                formData.append('receipt', receiptFile.value)
+            }
+        } else if (paymentMethod.value === 'cash_at_property') {
+            formData.append('cash_securing_method', cashSecuringMethod.value)
+            if (cashSecuringMethod.value === 'gcash' && receiptFile.value) {
+                formData.append('receipt', receiptFile.value)
+            } else if (cashSecuringMethod.value === 'card') {
+                const num = cardForm.number.trim()
+                const last4 = num ? num.slice(-4) : '4429'
+                formData.append('card_last_four', last4)
+            }
+        }
+        
+        // Add special requests if any
+        if (bookingForm.specialRequests) {
+            formData.append('special_requests', bookingForm.specialRequests)
+        }
+        
+        const response = await axiosInstance.post('/api/bookings', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        })
+        
+        if (response.data.success) {
+            const b = response.data.booking
+            
+            // Reset fields function
+            const resetBookingFields = () => {
+                bookingForm.name = ''
+                bookingForm.phone = ''
+                bookingForm.email = ''
+                bookingForm.guests = '2'
+                bookingForm.specialRequests = ''
+                receiptFile.value = null
+                receiptPreviewUrl.value = ''
+            }
+            
+            showCustomAlert({
+                title: 'Sanctuary Reserved',
+                message: 'Your tropical getaway request has been successfully created. We are waiting to verify your payment.',
+                type: 'success',
+                guestName: b.guest_name,
+                reference: b.reference,
+                onConfirm: () => {
+                    const checkInFormatted = formatDateString(b.check_in_date)
+                    const checkOutFormatted = formatDateString(b.check_out_date)
+                    
+                    let cardEnd = 'Credit Card'
+                    if (b.payment_method === 'credit_card') {
+                        cardEnd = `Card ending in **** ${b.card_last_four || '4429'}`
+                    } else if (b.payment_method === 'gcash') {
+                        cardEnd = 'GCash Mobile Wallet (Paid)'
+                    } else {
+                        cardEnd = `Cash Down Payment (Secured by ${b.cash_securing_method === 'gcash' ? 'GCash' : 'Card'})`
+                    }
+                    
+                    let displayRoomName = b.room ? b.room.name : (b.room_type || 'Beachfront Villa')
+                    let displayRoomImage = b.room && b.room.image_url ? b.room.image_url : '/images/staycation_hero.png'
+                    
+                    retrievedBooking.value = {
+                        reference: b.reference,
+                        currencySymbol: 'PHP ',
+                        name: b.guest_name,
+                        email: b.guest_email,
+                        phone: b.guest_phone,
+                        checkIn: checkInFormatted,
+                        checkInTime: b.check_in_time || 'From 2:00 PM',
+                        checkOut: checkOutFormatted,
+                        checkOutTime: b.check_out_time || 'Before 11:00 AM',
+                        guests: `${b.guests_count} Guests`,
+                        roomType: displayRoomName,
+                        roomDetails: displayRoomName.includes('Garden') || displayRoomName.includes('Family') ? 'Building B, Floor 4' : 'Villa Area, Beachfront',
+                        roomImage: displayRoomImage,
+                        nights: b.nights_count,
+                        nightlyRate: b.room ? parseFloat(b.room.price) : 12000,
+                        subtotal: parseFloat(b.total_price),
+                        serviceFee: 0,
+                        localTaxes: 0,
+                        totalPrice: parseFloat(b.total_price),
+                        paymentCard: cardEnd,
+                        transactionId: `TR-${b.id}`,
+                        specialRequests: b.special_requests || 'None',
+                        amenities: ['High-Speed WiFi', 'Private Infinity Pool', 'Daily Breakfast', 'Welcome Drinks'],
+                        status: b.status
+                    }
+                    
+                    bookingRefInput.value = b.reference
+                    currentView.value = 'my_bookings'
+                    resetBookingFields()
+                }
+            })
+        }
+    } catch (e) {
+        console.error('Failed to submit booking:', e)
+        showCustomAlert({
+            title: 'Booking Failed',
+            message: e.response?.data?.message || 'Failed to submit booking. Please try again.',
+            type: 'error'
+        })
+    } finally {
+        isSubmitting.value = false
     }
-    
-    bookingsList.value.push(newBooking)
-    
-    alert(`Thank you, ${newBooking.name}!\nYour reservation has been created with Reference: ${newRef}.\nDirecting you to your confirmation details.`)
-    
-    // Set active view to retrieve
-    bookingRefInput.value = newRef
-    retrievedBooking.value = newBooking
-    currentView.value = 'my_bookings'
-    
-    // Reset form fields
-    bookingForm.name = ''
-    bookingForm.phone = ''
-    bookingForm.email = ''
-    bookingForm.guests = '2'
-    bookingForm.specialRequests = ''
-    checkInDate.value = '2026-12-06'
-    checkOutDate.value = '2026-12-09'
-    checkInWindow.value = '02:00 PM - 04:00 PM'
-    paymentMethod.value = 'credit_card'
-    cardForm.number = ''
-    cardForm.expiry = ''
-    cardForm.cvv = ''
-    currentBookingStep.value = 1
 }
 
 const activeTab = ref('dashboard_overview')
@@ -4762,6 +5345,37 @@ const priceBreakdown = computed(() => {
         total: amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
     }
 })
+
+const urgentBookingsCount = computed(() => {
+    return pendingReservations.value.filter(r => r.statusType === 'awaiting_verification').length
+})
+
+const projectedRevenue = computed(() => {
+    const total = pendingReservations.value.reduce((acc, r) => {
+        const val = parseFloat(r.amount.replace(/,/g, '')) || 0
+        return acc + val
+    }, 0)
+    return total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+})
+
+const nextPendingCheckIn = computed(() => {
+    if (pendingReservations.value.length === 0) {
+        return {
+            dateText: 'No check-ins',
+            subText: 'No pending reservations found.'
+        }
+    }
+    const sorted = [...pendingReservations.value].sort((a, b) => {
+        const timeA = a.checkInDateRaw ? new Date(a.checkInDateRaw).getTime() : 0
+        const timeB = b.checkInDateRaw ? new Date(b.checkInDateRaw).getTime() : 0
+        return timeA - timeB
+    })
+    const next = sorted[0]
+    return {
+        dateText: `${next.startDate}, 2:00 PM`,
+        subText: `${next.name} (${next.roomType}) is expected next.`
+    }
+})
 const settingsSubmitting = ref(false)
 const settingsSuccessMsg = ref('')
 const settingsErrorMsg = ref('')
@@ -4776,367 +5390,123 @@ const showConfirmPassword = ref(false)
 const showAddUserPassword = ref(false)
 const showEditUserPassword = ref(false)
 
-const pendingReservations = ref([
-    {
-        id: 1,
-        initials: 'JS',
-        name: 'Julianne Smith',
-        email: 'julianne.s@example.com',
-        roomType: 'Ocean Villa',
-        startDate: 'Oct 12',
-        endDate: 'Oct 15',
-        nights: 3,
-        guests: '2 Adults',
-        amount: '24,500.00',
-        statusType: 'awaiting_verification'
-    },
-    {
-        id: 2,
-        initials: 'MR',
-        name: 'Marcus Rivera',
-        email: 'm.rivera@global.net',
-        roomType: 'Garden Suite',
-        startDate: 'Oct 14',
-        endDate: 'Oct 18',
-        nights: 4,
-        guests: '1 Adult',
-        amount: '18,200.00',
-        statusType: 'verified'
-    },
-    {
-        id: 3,
-        initials: 'AL',
-        name: 'Amara Lim',
-        email: 'amara.lim@mail.com',
-        roomType: 'Penthouse',
-        startDate: 'Oct 20',
-        endDate: 'Oct 22',
-        nights: 2,
-        guests: '4 Adults',
-        amount: '55,000.00',
-        statusType: 'discrepancy'
-    },
-    {
-        id: 4,
-        initials: 'ET',
-        name: 'Elena Torres',
-        email: 'e.torres@lifestyle.ph',
-        roomType: 'Ocean Villa',
-        startDate: 'Nov 01',
-        endDate: 'Nov 05',
-        nights: 4,
-        guests: '2 Adults',
-        amount: '32,000.00',
-        statusType: 'receipt_uploaded'
-    }
-])
+const pendingReservations = ref([])
 
-const approvedReservations = ref([
-    {
-        id: 1,
-        initials: 'ER',
-        name: 'Elena Rodriguez',
-        email: 'elena.r@example.com',
-        guestsText: 'Confirmed • 2 Guests',
-        roomType: 'Infinity Pool Villa',
-        roomClass: 'PREMIUM',
-        startDate: 'Oct 12',
-        endDate: 'Oct 15',
-        nights: '3 Nights',
-        status: 'Confirmed',
-        statusType: 'confirmed',
-        avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=120&q=80'
-    },
-    {
-        id: 2,
-        initials: 'JS',
-        name: 'James Sutherland',
-        email: 'james.s@example.com',
-        guestsText: 'Confirmed • 1 Guest',
-        roomType: 'Ocean View Suite',
-        roomClass: 'STANDARD',
-        startDate: 'Oct 14',
-        endDate: 'Oct 18',
-        nights: '4 Nights',
-        status: 'In-Stay',
-        statusType: 'in_stay',
-        avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=120&q=80'
-    },
-    {
-        id: 3,
-        initials: 'SJ',
-        name: 'Sarah Jenkins',
-        email: 'sarah.j@example.com',
-        guestsText: 'Confirmed • 4 Guests',
-        roomType: 'Presidential Pavilion',
-        roomClass: 'LUXURY',
-        startDate: 'Oct 15',
-        endDate: 'Oct 22',
-        nights: '7 Nights',
-        status: 'Pending Check-in',
-        statusType: 'pending_check_in',
-        avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=120&q=80'
-    },
-    {
-        id: 4,
-        initials: 'MC',
-        name: 'Michael Chen',
-        email: 'michael.c@example.com',
-        guestsText: 'Confirmed • 2 Guests',
-        roomType: 'Garden Villa',
-        roomClass: 'PREMIUM',
-        startDate: 'Oct 18',
-        endDate: 'Oct 20',
-        nights: '2 Nights',
-        status: 'Confirmed',
-        statusType: 'confirmed',
-        avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80'
-    }
-])
+const approvedReservations = ref([])
 
-const rejectedReservations = ref([
-    {
-        id: 1,
-        initials: 'JT',
-        name: 'Jameson Thorne',
-        email: 'j.thorne@premium-client.com',
-        phone: '+63 917 123 4567',
-        roomType: 'Ocean Breeze Villa 402',
-        roomCategory: 'Luxury Villa',
-        startDate: 'Oct 24',
-        endDate: 'Oct 28',
-        year: '2023',
-        amount: '42,500.00',
-        guests: '2 Adults',
-        guestsSubtext: 'King Bed Suite',
-        reasonType: 'invalid_payment',
-        rejectionReason: 'Invalid Payment',
-        rejectionDetail: 'The credit card authorization failed twice. Security protocol triggered automatic rejection after 24 hours of no response.',
-        refundStatus: 'Refund Pending',
-        internalNotes: 'Guest attempted to use a corporate card that was flagged by the bank. I reached out via phone at 10:15 AM but went to voicemail. Reservation held for additional 3 hours before system auto-reject. Please flag for future priority re-booking if guest contacts back.',
-        bgClass: 'bg-[#FEF2F2] text-[#991B1B] dark:bg-red-950/40 dark:text-red-350',
-        roomDescription: 'Private Infinity Pool • Sunrise View',
-        checkInTime: 'From 2:00 PM',
-        checkOutTime: 'Before 11:00 AM',
-        timeline: [
-            { title: 'Reservation Rejected', actionedBy: 'Actioned by: System Auto-Guardian', timestamp: 'Oct 23, 2023 • 02:45 PM', iconType: 'rejected' },
-            { title: 'Staff Note Added', actionedBy: 'Actioned by: Admin Elena Rossi', timestamp: 'Oct 23, 2023 • 10:20 AM', iconType: 'note' },
-            { title: 'Reservation Initiated', actionedBy: 'Origin: Mobile App Checkout', timestamp: 'Oct 22, 2023 • 11:12 PM', iconType: 'initiated' }
-        ]
-    },
-    {
-        id: 2,
-        initials: 'RK',
-        name: 'Robert Kawinski',
-        email: 'robert.k@example.com',
-        phone: '+63 918 765 4321',
-        roomType: 'Garden Suite 102',
-        roomCategory: 'Standard Room',
-        startDate: 'Nov 02',
-        endDate: 'Nov 05',
-        year: '2024',
-        amount: '8,900.00',
-        guests: '1 Adult',
-        guestsSubtext: 'Queen Bed Room',
-        reasonType: 'user_cancelled',
-        rejectionReason: 'User Cancelled',
-        rejectionDetail: 'The guest cancelled the booking request directly from their guest portal prior to payment validation.',
-        refundStatus: 'No Refund Required',
-        internalNotes: 'Guest left a message saying their travel plans changed due to a business trip cancellation. Recommended offering a promotional code for their next stay.',
-        bgClass: 'bg-[#E0F2FE] text-[#0369A1] dark:bg-blue-950/40 dark:text-blue-300',
-        roomDescription: 'Garden View • Ground Floor Patio',
-        checkInTime: 'From 2:00 PM',
-        checkOutTime: 'Before 11:00 AM',
-        timeline: [
-            { title: 'Reservation Cancelled', actionedBy: 'Actioned by: Guest Portal Request', timestamp: 'Nov 01, 2024 • 04:30 PM', iconType: 'rejected' },
-            { title: 'Reservation Initiated', actionedBy: 'Origin: Direct Web Portal', timestamp: 'Nov 01, 2024 • 11:15 AM', iconType: 'initiated' }
-        ]
-    },
-    {
-        id: 3,
-        initials: 'EL',
-        name: 'Elena Lopez',
-        email: 'elena.l@example.com',
-        phone: '+63 915 222 3333',
-        roomType: 'Royal Beachfront 10',
-        roomCategory: 'Luxury Villa',
-        startDate: 'Dec 20',
-        endDate: 'Dec 28',
-        year: '2024',
-        amount: '124,000.00',
-        guests: '4 Guests',
-        guestsSubtext: '2 King Beds',
-        reasonType: 'duplicate_booking',
-        rejectionReason: 'Duplicate Booking',
-        rejectionDetail: 'This reservation was flag-rejected because a duplicate booking reference existed for the same guest and check-in date.',
-        refundStatus: 'Refund Processed',
-        internalNotes: 'Duplicate request detected by system. Spoke with Elena Lopez, she confirmed submitting twice by accident. Validated and kept her first booking active, rejected this duplicate.',
-        bgClass: 'bg-[#FEF3C7] text-[#B45309] dark:bg-amber-950/30 dark:text-amber-400',
-        roomDescription: 'Direct Beachfront • Private Gazebo',
-        checkInTime: 'From 2:00 PM',
-        checkOutTime: 'Before 11:00 AM',
-        timeline: [
-            { title: 'Reservation Rejected', actionedBy: 'Actioned by: Front Desk Agent', timestamp: 'Dec 10, 2024 • 09:15 AM', iconType: 'rejected' },
-            { title: 'Reservation Initiated', actionedBy: 'Origin: Mobile App Checkout', timestamp: 'Dec 10, 2024 • 09:10 AM', iconType: 'initiated' }
-        ]
-    },
-    {
-        id: 4,
-        initials: 'MC',
-        name: 'Marcus Chen',
-        email: 'marcus.chen@example.com',
-        phone: '+63 916 444 5555',
-        roomType: 'Garden Suite 204',
-        roomCategory: 'Standard Room',
-        startDate: 'Oct 25',
-        endDate: 'Oct 30',
-        year: '2024',
-        amount: '12,500.00',
-        guests: '2 Adults',
-        guestsSubtext: '1 King Bed',
-        reasonType: 'invalid_payment',
-        rejectionReason: 'Invalid Payment',
-        rejectionDetail: 'Bank returned insufficient funds (Code 51) for the down payment transaction. Reservation auto-rejected.',
-        refundStatus: 'No Refund Required',
-        internalNotes: 'Automatic bank verification failed. System automatically released the room after 24 hours of non-payment window.',
-        bgClass: 'bg-[#F1F5F9] text-slate-600 dark:bg-slate-800 dark:text-slate-350',
-        roomDescription: 'Garden View • High Floor Balcony',
-        checkInTime: 'From 2:00 PM',
-        checkOutTime: 'Before 11:00 AM',
-        timeline: [
-            { title: 'Reservation Rejected', actionedBy: 'Actioned by: System Auto-Guardian', timestamp: 'Oct 24, 2024 • 12:00 PM', iconType: 'rejected' },
-            { title: 'Reservation Initiated', actionedBy: 'Origin: Direct Web Portal', timestamp: 'Oct 23, 2024 • 12:00 PM', iconType: 'initiated' }
-        ]
-    },
-    {
-        id: 5,
-        initials: 'SH',
-        name: 'Sarah Hughes',
-        email: 'sarah.hughes@example.com',
-        phone: '+63 919 666 7777',
-        roomType: 'Overwater Villa 08',
-        roomCategory: 'Luxury Villa',
-        startDate: 'Jan 05',
-        endDate: 'Jan 10',
-        year: '2025',
-        amount: '48,000.00',
-        guests: '2 Adults',
-        guestsSubtext: 'King Bed Suite',
-        reasonType: 'user_cancelled',
-        rejectionReason: 'User Cancelled',
-        rejectionDetail: 'Cancelled by guest via API request. Reasons provided: family emergency.',
-        refundStatus: 'Refund Completed',
-        internalNotes: 'Guest contacted support requesting cancellation. Processed and fully refunded within policy guidelines.',
-        bgClass: 'bg-[#0B1E3F] text-white dark:bg-slate-700 dark:text-slate-100',
-        roomDescription: 'Private Infinity Pool • Sunrise View',
-        checkInTime: 'From 2:00 PM',
-        checkOutTime: 'Before 11:00 AM',
-        timeline: [
-            { title: 'Reservation Cancelled', actionedBy: 'Actioned by: Support Agent', timestamp: 'Jan 02, 2025 • 03:22 PM', iconType: 'rejected' },
-            { title: 'Reservation Initiated', actionedBy: 'Origin: Direct Web Portal', timestamp: 'Jan 01, 2025 • 10:45 AM', iconType: 'initiated' }
-        ]
-    }
-])
 
-const paymentSubmissions = ref([
-    {
-        id: 1,
-        initials: 'SM',
-        bgClass: 'bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300',
-        name: 'Sofia Montenegro',
-        suite: 'Presidential Overwater Villa',
-        amount: '142,500.00',
-        paymentType: 'Down Payment (50%)',
-        proofUrl: 'https://images.unsplash.com/photo-1554415707-6e8cfc93fe23?auto=format&fit=crop&w=120&q=80',
-        timestamp: '24 Oct, 09:42 AM',
-        amountColorClass: 'text-slate-850 dark:text-slate-100',
-        isMissing: false
-    },
-    {
-        id: 2,
-        initials: 'JL',
-        bgClass: 'bg-[#0B1E3F] text-white dark:bg-slate-700 dark:text-slate-100',
-        name: 'Julian Lorenzo',
-        suite: 'Garden Pool Suite',
-        amount: '85,200.00',
-        paymentType: 'Down Payment (50%)',
-        proofUrl: 'https://images.unsplash.com/photo-1563013544-824ae1d704d3?auto=format&fit=crop&w=120&q=80',
-        timestamp: '24 Oct, 08:15 AM',
-        amountColorClass: 'text-rose-600 dark:text-rose-450',
-        isMissing: true
-    },
-    {
-        id: 3,
-        initials: 'MK',
-        bgClass: 'bg-amber-100 text-amber-750 dark:bg-amber-950/30 dark:text-amber-400',
-        name: 'Marcus Knight',
-        suite: 'Lagoon Access Suite',
-        amount: '62,000.00',
-        paymentType: 'Full Payment',
-        proofUrl: 'https://images.unsplash.com/photo-1507925921958-8a62f3d1a50d?auto=format&fit=crop&w=120&q=80',
-        timestamp: '24 Oct, 07:30 AM',
-        amountColorClass: 'text-slate-850 dark:text-slate-100',
-        isMissing: false
-    }
-])
+const rejectedReservations = ref([])
 
-const recentTransactions = ref([
-    {
-        id: 1,
-        date: 'Oct 12, 2024',
-        name: 'Isabella Rodriguez',
-        roomType: 'Azure Ocean Villa',
-        method: 'Credit Card',
-        methodType: 'credit_card',
-        amount: '45,000',
-        status: 'Paid',
-        statusType: 'paid'
-    },
-    {
-        id: 2,
-        date: 'Oct 11, 2024',
-        name: 'Mateo Santos',
-        roomType: 'Sunrise Suite',
-        method: 'G-Cash',
-        methodType: 'gcash',
-        amount: '28,500',
-        status: 'Paid',
-        statusType: 'paid'
-    },
-    {
-        id: 3,
-        date: 'Oct 11, 2024',
-        name: 'Sophia Chen',
-        roomType: 'Garden Terrace',
-        method: 'Cash',
-        methodType: 'cash',
-        amount: '18,200',
-        status: 'Pending',
-        statusType: 'pending'
-    },
-    {
-        id: 4,
-        date: 'Oct 10, 2024',
-        name: 'Julian Dela Cruz',
-        roomType: 'Azure Ocean Villa',
-        method: 'Bank Transfer',
-        methodType: 'bank_transfer',
-        amount: '45,000',
-        status: 'Paid',
-        statusType: 'paid'
-    },
-    {
-        id: 5,
-        date: 'Oct 09, 2024',
-        name: 'Elena Gilbert',
-        roomType: 'Family Pavilion',
-        method: 'Credit Card',
-        methodType: 'credit_card',
-        amount: '72,400',
-        status: 'Failed',
-        statusType: 'failed'
+const rejectedInvalidPaymentsCount = computed(() => {
+    return rejectedReservations.value.filter(r => {
+        const reason = (r.rejectionReason || '').toLowerCase()
+        return reason.includes('payment') || reason.includes('receipt') || reason.includes('proof') || reason.includes('blurry') || reason.includes('amount') || reason.includes('cash') || reason.includes('gcash') || reason.includes('card')
+    }).length
+})
+
+const rejectedDuplicateBookingsCount = computed(() => {
+    return rejectedReservations.value.filter(r => {
+        const reason = (r.rejectionReason || '').toLowerCase()
+        return reason.includes('duplicate') || reason.includes('double') || reason.includes('already booked') || reason.includes('same')
+    }).length
+})
+
+const rejectedUserCancelledCount = computed(() => {
+    return rejectedReservations.value.filter(r => {
+        const reason = (r.rejectionReason || '').toLowerCase()
+        if (reason.includes('cancel') || reason.includes('guest') || reason.includes('user') || reason.includes('change')) {
+            return true
+        }
+        return !reason.includes('payment') && !reason.includes('receipt') && !reason.includes('proof') && !reason.includes('blurry') && !reason.includes('amount') && !reason.includes('cash') && !reason.includes('gcash') && !reason.includes('card') && !reason.includes('duplicate') && !reason.includes('double') && !reason.includes('already booked') && !reason.includes('same')
+    }).length
+})
+
+
+const paymentSubmissions = ref([])
+
+const showReceiptModal = ref(false)
+const activeReceiptUrl = ref('')
+
+// Custom Alert Modal System
+const customAlert = reactive({
+    show: false,
+    title: '',
+    message: '',
+    type: 'success', // 'success', 'confirm', 'prompt', 'error'
+    guestName: '',
+    reference: '',
+    inputValue: '',
+    inputPlaceholder: '',
+    confirmCallback: null,
+    cancelCallback: null
+})
+
+const showCustomAlert = (options) => {
+    customAlert.title = options.title || 'Notification'
+    customAlert.message = options.message || ''
+    customAlert.type = options.type || 'success'
+    customAlert.guestName = options.guestName || ''
+    customAlert.reference = options.reference || ''
+    customAlert.inputValue = ''
+    customAlert.inputPlaceholder = options.inputPlaceholder || ''
+    customAlert.confirmCallback = options.onConfirm || null
+    customAlert.cancelCallback = options.onCancel || null
+    customAlert.show = true
+}
+
+const handleCustomConfirm = () => {
+    if (customAlert.confirmCallback) {
+        customAlert.confirmCallback(customAlert.inputValue)
     }
-])
+    customAlert.show = false
+}
+
+const handleCustomCancel = () => {
+    if (customAlert.cancelCallback) {
+        customAlert.cancelCallback()
+    }
+    customAlert.show = false
+}
+
+const recentTransactions = ref([])
+const salesTimeframe = ref('monthly')
+const salesLoading = ref(false)
+const salesStats = ref({
+    revenue: { value: 0, change: 0 },
+    bookings: { value: 0, change: 0 },
+    approved: { value: 0, change: 0 },
+    occupancy: { value: 0, change: 0 }
+})
+const salesCurrentPage = ref(1)
+const salesTotalPages = ref(1)
+const salesTotalTransactions = ref(0)
+
+const fetchSalesReport = async (page = 1) => {
+    salesLoading.value = true
+    salesCurrentPage.value = page
+    try {
+        const response = await axiosInstance.get('/api/admin/sales', {
+            params: {
+                timeframe: salesTimeframe.value,
+                page: page
+            }
+        })
+        if (response.data.success) {
+            salesStats.value = response.data.stats
+            recentTransactions.value = response.data.transactions
+            salesTotalPages.value = response.data.pagination.last_page
+            salesTotalTransactions.value = response.data.pagination.total
+        }
+    } catch (e) {
+        console.error('Failed to fetch sales report:', e)
+    } finally {
+        salesLoading.value = false
+    }
+}
+
+watch(salesTimeframe, () => {
+    fetchSalesReport(1)
+})
 
 const usersList = ref([])
 const fetchUsersLoading = ref(false)
@@ -5206,6 +5576,370 @@ const fetchUsers = async () => {
     }
 }
 
+const getInitials = (name) => {
+    if (!name) return '??'
+    const parts = name.trim().split(/\s+/)
+    if (parts.length >= 2) {
+        return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+    }
+    return name.slice(0, 2).toUpperCase()
+}
+
+const getBgClass = (id) => {
+    const classes = [
+        'bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300',
+        'bg-[#0B1E3F] text-white dark:bg-slate-700 dark:text-slate-100',
+        'bg-[#FAF0E6] text-[#A27B5C] dark:bg-amber-950/20 dark:text-amber-455',
+        'bg-[#FAF6F0] text-[#A27B5C] dark:bg-emerald-955/40 dark:text-emerald-350',
+        'bg-blue-100 text-blue-700 dark:bg-blue-955/40 dark:text-blue-350'
+    ]
+    return classes[id % classes.length]
+}
+
+const formatTimestamp = (dateStr) => {
+    if (!dateStr) return ''
+    const d = new Date(dateStr)
+    if (isNaN(d.getTime())) return dateStr
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    const month = months[d.getMonth()]
+    const day = d.getDate()
+    let hours = d.getHours()
+    const minutes = String(d.getMinutes()).padStart(2, '0')
+    const ampm = hours >= 12 ? 'PM' : 'AM'
+    hours = hours % 12
+    hours = hours ? hours : 12
+    return `${day} ${month}, ${String(hours).padStart(2, '0')}:${minutes} ${ampm}`
+}
+
+const formatDateMMMdd = (dateStr) => {
+    if (!dateStr) return ''
+    if (dateStr.includes('T') || dateStr.includes('Z')) {
+        const d = new Date(dateStr)
+        if (!isNaN(d.getTime())) {
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            return `${months[d.getMonth()]} ${String(d.getDate()).padStart(2, '0')}`
+        }
+    }
+    const parts = dateStr.split('T')[0].split('-')
+    if (parts.length === 3) {
+        const year = parseInt(parts[0], 10)
+        const month = parseInt(parts[1], 10) - 1
+        const day = parseInt(parts[2], 10)
+        const d = new Date(year, month, day)
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        return `${months[d.getMonth()]} ${String(d.getDate()).padStart(2, '0')}`
+    }
+    return dateStr
+}
+
+const getYearFromDate = (dateStr) => {
+    if (!dateStr) return 2026
+    if (dateStr.includes('T') || dateStr.includes('Z')) {
+        const d = new Date(dateStr)
+        if (!isNaN(d.getTime())) {
+            return d.getFullYear()
+        }
+    }
+    const parts = dateStr.split('T')[0].split('-')
+    if (parts.length === 3) {
+        return parseInt(parts[0], 10)
+    }
+    return 2026
+}
+
+const getDayOfWeekName = (dateStr) => {
+    if (!dateStr) return ''
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+    if (dateStr.includes('T') || dateStr.includes('Z')) {
+        const d = new Date(dateStr)
+        if (!isNaN(d.getTime())) {
+            return days[d.getDay()]
+        }
+    }
+    const parts = dateStr.split('T')[0].split('-')
+    if (parts.length === 3) {
+        const year = parseInt(parts[0], 10)
+        const month = parseInt(parts[1], 10) - 1
+        const day = parseInt(parts[2], 10)
+        const d = new Date(year, month, day)
+        return days[d.getDay()]
+    }
+    return ''
+}
+
+const fetchConfirmedBookings = async () => {
+    try {
+        const response = await axiosInstance.get('/api/admin/bookings/confirmed')
+        if (response.data && response.data.success) {
+            approvedReservations.value = response.data.bookings.map(b => {
+                const initials = getInitials(b.guest_name)
+                const checkInDayOfWeek = getDayOfWeekName(b.check_in_date)
+                const checkOutDayOfWeek = getDayOfWeekName(b.check_out_date)
+                const guestsTextVal = `Confirmed • ${b.guests_count === 1 ? '1 Guest' : `${b.guests_count} Guests`}`
+                const amountVal = b.total_price
+
+                // Dynamic stay status check (Manila time UTC+8)
+                const manilaTime = new Date(new Date().getTime() + (8 * 60 * 60 * 1000))
+                const todayStr = manilaTime.toISOString().split('T')[0]
+                const checkInStr = b.check_in_date ? b.check_in_date.split('T')[0] : ''
+                const checkOutStr = b.check_out_date ? b.check_out_date.split('T')[0] : ''
+                
+                let statusText = 'Confirmed'
+                let statusTypeVal = 'confirmed'
+                
+                if (checkInStr && checkOutStr) {
+                    if (todayStr >= checkInStr && todayStr <= checkOutStr) {
+                        statusText = 'In-Stay'
+                        statusTypeVal = 'in_stay'
+                    } else if (todayStr > checkOutStr) {
+                        statusText = 'Completed'
+                        statusTypeVal = 'completed'
+                    } else if (todayStr < checkInStr) {
+                        statusText = 'Pending Check-in'
+                        statusTypeVal = 'pending_check_in'
+                    }
+                }
+
+                return {
+                    id: b.id,
+                    initials,
+                    name: b.guest_name,
+                    email: b.guest_email,
+                    phone: b.guest_phone,
+                    roomType: b.room ? b.room.type : 'Unknown Room',
+                    roomName: b.room ? b.room.name : 'Unknown Room',
+                    roomDescription: b.room ? b.room.description : 'No description available',
+                    startDate: formatDateMMMdd(b.check_in_date),
+                    endDate: formatDateMMMdd(b.check_out_date),
+                    checkInDateRaw: b.check_in_date,
+                    checkOutDateRaw: b.check_out_date,
+                    checkInDayOfWeek,
+                    checkOutDayOfWeek,
+                    year: getYearFromDate(b.check_in_date),
+                    nights: `${b.nights_count || 1} Night${(b.nights_count || 1) > 1 ? 's' : ''}`,
+                    nightsCount: b.nights_count || 1,
+                    guestsText: guestsTextVal,
+                    guestsCount: b.guests_count || 1,
+                    status: statusText,
+                    statusType: statusTypeVal,
+                    amount: parseFloat(amountVal).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+                    totalPrice: parseFloat(amountVal).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+                    paymentMethodText: b.payment_method === 'gcash' ? 'GCash' : (b.payment_method === 'credit_card' ? 'Credit Card' : 'Cash at Property'),
+                    specialRequests: b.special_requests || 'None',
+                    createdTime: formatTimestamp(b.created_at),
+                    reference: b.reference
+                }
+            })
+        }
+    } catch (e) {
+        console.error('Failed to fetch confirmed bookings:', e)
+    }
+}
+
+const fetchRejectedBookings = async () => {
+    try {
+        const response = await axiosInstance.get('/api/admin/bookings/rejected')
+        if (response.data && response.data.success) {
+            rejectedReservations.value = response.data.bookings.map(b => {
+                const initials = getInitials(b.guest_name)
+                const checkInDayOfWeek = getDayOfWeekName(b.check_in_date)
+                const checkOutDayOfWeek = getDayOfWeekName(b.check_out_date)
+                const guestsTextVal = `${b.guests_count || 1} Guest${(b.guests_count || 1) > 1 ? 's' : ''}`
+                const amountVal = b.total_price
+
+                return {
+                    id: b.id,
+                    initials,
+                    name: b.guest_name,
+                    email: b.guest_email,
+                    phone: b.guest_phone,
+                    roomType: b.room ? b.room.type : 'Unknown Room',
+                    roomName: b.room ? b.room.name : 'Unknown Room',
+                    roomDescription: b.room ? b.room.description : 'No description available',
+                    roomCategory: b.room ? b.room.type : 'Unknown Room',
+                    internalNotes: b.special_requests || 'None',
+                    startDate: formatDateMMMdd(b.check_in_date),
+                    endDate: formatDateMMMdd(b.check_out_date),
+                    checkInDateRaw: b.check_in_date,
+                    checkOutDateRaw: b.check_out_date,
+                    checkInDayOfWeek,
+                    checkOutDayOfWeek,
+                    year: getYearFromDate(b.check_in_date),
+                    nightsCount: b.nights_count || 1,
+                    guests: guestsTextVal,
+                    guestsCount: b.guests_count || 1,
+                    guestsSubtext: b.room ? b.room.name : 'Unknown Room',
+                    rejectionReason: b.rejection_reason || 'Unknown Reason',
+                    rejectionDetail: b.rejection_reason || 'Declined by admin during verification.',
+                    amount: parseFloat(amountVal).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+                    bgClass: getBgClass(b.id),
+                    checkInTime: b.check_in_time || 'From 2:00 PM',
+                    checkOutTime: b.check_out_time || 'Before 11:00 AM',
+                    refundStatus: b.payment_method === 'gcash' ? 'Refund Process Initiated' : 'No Refund Required',
+                    createdTime: formatTimestamp(b.created_at),
+                    reference: b.reference,
+                    timeline: [
+                        { title: 'Reservation Rejected', actionedBy: 'Actioned by: Admin Staff', timestamp: formatTimestamp(b.updated_at), iconType: 'rejected' },
+                        { title: 'Reservation Initiated', actionedBy: 'Origin: Direct Guest Web Portal', timestamp: formatTimestamp(b.created_at), iconType: 'initiated' }
+                    ]
+                }
+            })
+        }
+    } catch (e) {
+        console.error('Failed to fetch rejected bookings:', e)
+    }
+}
+
+const fetchPendingBookings = async () => {
+    try {
+        const response = await axiosInstance.get('/api/admin/bookings/pending')
+        if (response.data.success) {
+            // Populate payment submissions
+            paymentSubmissions.value = response.data.bookings.map(b => {
+                const initials = getInitials(b.guest_name)
+                const bgClass = getBgClass(b.id)
+                const isMissingVal = (b.payment_method === 'gcash' || (b.payment_method === 'cash_at_property' && b.cash_securing_method === 'gcash')) && !b.receipt_file_path
+                const amountVal = b.payment_method === 'cash_at_property' ? b.down_payment : b.total_price
+                const paymentTypeVal = b.payment_method === 'cash_at_property' ? 'Down Payment (30%)' : 'Full Payment'
+                
+                return {
+                    id: b.id,
+                    initials,
+                    bgClass,
+                    name: b.guest_name,
+                    suite: b.room ? b.room.name : 'Unknown Room',
+                    amount: parseFloat(amountVal).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+                    paymentType: paymentTypeVal,
+                    hasProof: !!b.receipt_file_path,
+                    proofUrl: b.receipt_file_path,
+                    timestamp: formatTimestamp(b.created_at),
+                    amountColorClass: isMissingVal ? 'text-rose-600 dark:text-rose-455' : 'text-slate-850 dark:text-slate-100',
+                    isMissing: isMissingVal,
+                    reference: b.reference
+                }
+            })
+
+            // Populate pending reservations
+            pendingReservations.value = response.data.bookings.map(b => {
+                const initials = getInitials(b.guest_name)
+                const isMissingVal = (b.payment_method === 'gcash' || (b.payment_method === 'cash_at_property' && b.cash_securing_method === 'gcash')) && !b.receipt_file_path
+                const amountVal = b.total_price
+                
+                let statusTypeVal = 'awaiting_verification'
+                if (b.receipt_file_path) {
+                    statusTypeVal = 'receipt_uploaded'
+                } else if (b.payment_method === 'credit_card' || (b.payment_method === 'cash_at_property' && b.cash_securing_method === 'card')) {
+                    statusTypeVal = 'verified'
+                }
+
+                return {
+                    id: b.id,
+                    initials,
+                    name: b.guest_name,
+                    email: b.guest_email,
+                    phone: b.guest_phone,
+                    roomType: b.room ? b.room.type : 'Unknown Room',
+                    roomName: b.room ? b.room.name : 'Unknown Room',
+                    startDate: formatDateMMMdd(b.check_in_date),
+                    endDate: formatDateMMMdd(b.check_out_date),
+                    checkInDateRaw: b.check_in_date,
+                    year: getYearFromDate(b.check_in_date),
+                    nights: b.nights_count || 1,
+                    guests: b.guests_count === 1 ? '1 Guest' : `${b.guests_count} Guests`,
+                    amount: parseFloat(amountVal).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+                    statusType: statusTypeVal,
+                    reference: b.reference,
+                    specialRequests: b.special_requests || 'None',
+                    createdTime: formatTimestamp(b.created_at)
+                }
+            })
+        }
+    } catch (e) {
+        console.error('Failed to fetch pending bookings:', e)
+    }
+}
+
+const verifyPayment = async (submission) => {
+    showCustomAlert({
+        title: 'Verify Payment & Approve',
+        message: `Are you sure you want to verify and approve the booking for ${submission.name} (Reference: ${submission.reference})?`,
+        type: 'confirm',
+        onConfirm: async () => {
+            try {
+                const response = await axiosInstance.post(`/api/admin/bookings/${submission.id}/approve`)
+                if (response.data.success) {
+                    showCustomAlert({
+                        title: 'Booking Approved',
+                        message: 'The reservation has been successfully verified and confirmed.',
+                        type: 'success'
+                    })
+                    await fetchPendingBookings()
+                    await fetchConfirmedBookings()
+                    if (selectedPendingReservation.value && selectedPendingReservation.value.id === submission.id) {
+                        selectedPendingReservation.value = null
+                    }
+                }
+            } catch (e) {
+                console.error('Failed to approve booking:', e)
+                showCustomAlert({
+                    title: 'Error',
+                    message: e.response?.data?.message || 'Failed to approve booking. Please try again.',
+                    type: 'error'
+                })
+            }
+        }
+    })
+}
+
+const rejectPayment = async (submission) => {
+    showCustomAlert({
+        title: 'Reject Reservation',
+        message: `Please enter the rejection reason for ${submission.name}'s booking (Reference: ${submission.reference}):`,
+        type: 'prompt',
+        inputPlaceholder: 'e.g. Blurry receipt upload, incorrect amount, etc.',
+        onConfirm: async (reason) => {
+            const trimmedReason = reason ? reason.trim() : ''
+            if (!trimmedReason) {
+                showCustomAlert({
+                    title: 'Reason Required',
+                    message: 'A rejection reason is required to decline the stay reservation.',
+                    type: 'error'
+                })
+                return
+            }
+            try {
+                const response = await axiosInstance.post(`/api/admin/bookings/${submission.id}/reject`, {
+                    rejection_reason: trimmedReason
+                })
+                if (response.data.success) {
+                    showCustomAlert({
+                        title: 'Booking Rejected',
+                        message: 'The reservation has been successfully rejected with the reason saved.',
+                        type: 'success'
+                    })
+                    await fetchPendingBookings()
+                    await fetchRejectedBookings()
+                    if (selectedPendingReservation.value && selectedPendingReservation.value.id === submission.id) {
+                        selectedPendingReservation.value = null
+                    }
+                }
+            } catch (e) {
+                console.error('Failed to reject booking:', e)
+                showCustomAlert({
+                    title: 'Error',
+                    message: e.response?.data?.message || 'Failed to reject booking. Please try again.',
+                    type: 'error'
+                })
+            }
+        }
+    })
+}
+
+const openReceipt = (url) => {
+    activeReceiptUrl.value = url
+    showReceiptModal.value = true
+}
+
 // Watch currentView to prevent navigating to dashboard if not logged in
 watch(currentView, (newView) => {
     if (newView === 'dashboard' && !currentUser.value) {
@@ -5222,6 +5956,18 @@ watch(activeTab, (newTab) => {
         activeTab.value = 'dashboard_overview'
     } else if (newTab === 'user_management') {
         fetchUsers() // Fetch users when tab becomes active
+    } else if (newTab === 'sales') {
+        fetchSalesReport() // Fetch sales report when tab becomes active
+    } else if (newTab === 'payments' || newTab === 'pending' || newTab === 'dashboard_overview') {
+        fetchPendingBookings()
+        if (newTab === 'dashboard_overview') {
+            fetchConfirmedBookings()
+            fetchRejectedBookings()
+        }
+    } else if (newTab === 'approved') {
+        fetchConfirmedBookings()
+    } else if (newTab === 'rejected') {
+        fetchRejectedBookings()
     }
 })
 
@@ -5230,10 +5976,15 @@ watch(currentUser, (newUser) => {
     if (!newUser) {
         activeTab.value = 'dashboard_overview'
         usersList.value = []
-    } else if (activeTab.value === 'user_management' && !isManager()) {
-        activeTab.value = 'dashboard_overview'
-    } else if (activeTab.value === 'user_management') {
-        fetchUsers()
+    } else {
+        fetchPendingBookings()
+        fetchConfirmedBookings()
+        fetchRejectedBookings()
+        if (activeTab.value === 'user_management' && !isManager()) {
+            activeTab.value = 'dashboard_overview'
+        } else if (activeTab.value === 'user_management') {
+            fetchUsers()
+        }
     }
 })
 
@@ -5241,11 +5992,15 @@ onMounted(async () => {
     try {
         const savedTheme = localStorage.getItem('aruga-theme') || 'light'
         setTheme(savedTheme)
+        await fetchRooms()
         const response = await axiosInstance.get('/api/user')
         if (response.data.logged_in) {
             currentUser.value = response.data.user
             currentView.value = 'dashboard'
             activeTab.value = 'dashboard_overview'
+            fetchPendingBookings()
+            fetchConfirmedBookings()
+            fetchRejectedBookings()
         } else {
             currentUser.value = null
             if (currentView.value === 'dashboard') {
