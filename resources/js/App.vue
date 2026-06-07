@@ -1891,6 +1891,19 @@
 
                         <a 
                             href="#" 
+                            @click.prevent="activeTab = 'room_management'"
+                            :class="['flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-xs leading-none transition', 
+                                     activeTab === 'room_management' ? 'bg-amber-500/10 text-[#0B1E3F] dark:bg-amber-500/20 dark:text-amber-300' : 'text-slate-500 hover:text-[#0B1E3F] hover:bg-slate-50 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50']"
+                        >
+                            <!-- Room Mgmt Icon SVG (bed) -->
+                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 10V19a2 2 0 002 2h14a2 2 0 002-2v-9M3 10V6a2 2 0 012-2h2a2 2 0 012 2v4M13 6a2 2 0 012-2h2a2 2 0 012 2v4M3 10h18" />
+                            </svg>
+                            <span>Room Management</span>
+                        </a>
+
+                        <a 
+                            href="#" 
                             @click.prevent="activeTab = 'pending'"
                             :class="['flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-xs leading-none transition', 
                                      activeTab === 'pending' ? 'bg-amber-500/10 text-[#0B1E3F] dark:bg-amber-500/20 dark:text-amber-300' : 'text-slate-500 hover:text-[#0B1E3F] hover:bg-slate-50 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50']"
@@ -4216,6 +4229,227 @@
 
                     </div>
 
+                    <!-- TAB: ROOM MANAGEMENT -->
+                    <div v-else-if="activeTab === 'room_management'" class="space-y-8 animate-fade-in">
+                        <!-- Room Management Header -->
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div>
+                                <h1 class="font-serif text-[#0b1c3d] dark:text-slate-100 text-3xl font-bold tracking-tight">Room Management</h1>
+                                <p class="text-slate-500 dark:text-slate-400 text-xs mt-1 leading-relaxed">
+                                    Create, update, and monitor the current occupancy and maintenance statuses of all staycation rooms.
+                                </p>
+                            </div>
+                            <!-- Add New Room Button -->
+                            <button 
+                                v-if="currentUser?.role === 'admin' || currentUser?.role === 'manager'"
+                                @click="showAddRoomModal = true"
+                                class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0B1E3F] hover:bg-[#152e59] dark:bg-amber-500 dark:hover:bg-amber-600 text-white dark:text-slate-950 font-bold text-xs shadow-md transition cursor-pointer"
+                            >
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                                </svg>
+                                Add New Room
+                            </button>
+                        </div>
+
+                        <!-- Stats Cards Grid -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <!-- Total Rooms -->
+                            <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm hover:shadow-md transition duration-200 flex items-center gap-4.5">
+                                <div class="h-12 w-12 bg-blue-50 dark:bg-blue-950/20 rounded-2xl flex items-center justify-center text-blue-600 dark:text-blue-400 shrink-0 border border-blue-100 dark:border-blue-900/10">
+                                    <svg class="h-5.5 w-5.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 10V19a2 2 0 002 2h14a2 2 0 002-2v-9M3 10V6a2 2 0 012-2h2a2 2 0 012 2v4M13 6a2 2 0 012-2h2a2 2 0 012 2v4M3 10h18" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-slate-455 dark:text-slate-500 text-[10px] font-semibold uppercase tracking-wider leading-none">Total Rooms</p>
+                                    <p class="text-2xl font-bold text-slate-850 dark:text-slate-100 mt-2 leading-none">
+                                        {{ roomStats.total }} <span class="font-serif font-normal text-lg text-slate-500 dark:text-slate-400">Rooms</span>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Occupied Rooms -->
+                            <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm hover:shadow-md transition duration-200 flex items-center gap-4.5">
+                                <div class="h-12 w-12 bg-rose-50 dark:bg-rose-950/20 rounded-2xl flex items-center justify-center text-rose-500 dark:text-rose-455 shrink-0 border border-rose-100 dark:border-rose-900/10">
+                                    <svg class="h-5.5 w-5.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-slate-455 dark:text-slate-500 text-[10px] font-semibold uppercase tracking-wider leading-none">Occupied</p>
+                                    <p class="text-2xl font-bold text-slate-850 dark:text-slate-100 mt-2 leading-none">
+                                        {{ roomStats.occupied }} <span class="font-serif font-normal text-lg text-slate-500 dark:text-slate-400">/ {{ roomStats.occupied_percentage }}%</span>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Available Rooms -->
+                            <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm hover:shadow-md transition duration-200 flex items-center gap-4.5">
+                                <div class="h-12 w-12 bg-emerald-50 dark:bg-emerald-950/20 rounded-2xl flex items-center justify-center text-emerald-600 dark:text-emerald-400 shrink-0 border border-emerald-100 dark:border-emerald-900/10">
+                                    <svg class="h-5.5 w-5.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-slate-455 dark:text-slate-500 text-[10px] font-semibold uppercase tracking-wider leading-none">Available</p>
+                                    <p class="text-2xl font-bold text-slate-850 dark:text-slate-100 mt-2 leading-none">
+                                        {{ roomStats.available }} <span class="font-serif font-normal text-lg text-slate-500 dark:text-slate-400">Ready</span>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Maintenance / Service -->
+                            <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm hover:shadow-md transition duration-200 flex items-center gap-4.5">
+                                <div class="h-12 w-12 bg-amber-50 dark:bg-amber-955/20 rounded-2xl flex items-center justify-center text-amber-700 dark:text-amber-500 shrink-0 border border-amber-100 dark:border-amber-900/10">
+                                    <svg class="h-5.5 w-5.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-slate-455 dark:text-slate-500 text-[10px] font-semibold uppercase tracking-wider leading-none">Under Service</p>
+                                    <p class="text-2xl font-bold text-slate-850 dark:text-slate-100 mt-2 leading-none">
+                                        {{ roomStats.maintenance + roomStats.cleaning }} <span class="font-serif font-normal text-lg text-slate-500 dark:text-slate-400">Rooms</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Search & Filter Controls -->
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-slate-900 border border-slate-50 dark:border-slate-800 rounded-3xl p-4 shadow-sm">
+                            <!-- Filter Chips -->
+                            <div class="flex flex-wrap items-center gap-2">
+                                <button 
+                                    @click="roomFilter = 'all'"
+                                    :class="['px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer',
+                                             roomFilter === 'all' ? 'bg-[#0B1E3F] text-white dark:bg-amber-500 dark:text-slate-955' : 'bg-slate-50 dark:bg-slate-800 text-slate-500 hover:text-[#0B1E3F] dark:hover:text-white']"
+                                >
+                                    All Rooms ({{ roomStats.total }})
+                                </button>
+                                <button 
+                                    @click="roomFilter = 'available'"
+                                    :class="['px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1.5',
+                                             roomFilter === 'available' ? 'bg-[#0B1E3F] text-white dark:bg-amber-500 dark:text-slate-955' : 'bg-slate-50 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white']"
+                                >
+                                    <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+                                    Available ({{ roomStats.available }})
+                                </button>
+                                <button 
+                                    @click="roomFilter = 'occupied'"
+                                    :class="['px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1.5',
+                                             roomFilter === 'occupied' ? 'bg-[#0B1E3F] text-white dark:bg-amber-500 dark:text-slate-955' : 'bg-slate-50 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white']"
+                                >
+                                    <span class="h-2 w-2 rounded-full bg-rose-500"></span>
+                                    Occupied ({{ roomStats.occupied }})
+                                </button>
+                                <button 
+                                    @click="roomFilter = 'cleaning'"
+                                    :class="['px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1.5',
+                                             roomFilter === 'cleaning' ? 'bg-[#0B1E3F] text-white dark:bg-amber-500 dark:text-slate-955' : 'bg-slate-50 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white']"
+                                >
+                                    <span class="h-2 w-2 rounded-full bg-blue-500"></span>
+                                    Cleaning ({{ roomStats.cleaning }})
+                                </button>
+                                <button 
+                                    @click="roomFilter = 'maintenance'"
+                                    :class="['px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1.5',
+                                             roomFilter === 'maintenance' ? 'bg-[#0B1E3F] text-white dark:bg-amber-500 dark:text-slate-955' : 'bg-slate-50 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white']"
+                                >
+                                    <span class="h-2 w-2 rounded-full bg-amber-700"></span>
+                                    Maintenance ({{ roomStats.maintenance }})
+                                </button>
+                            </div>
+
+                            <!-- Search Bar -->
+                            <div class="relative w-full md:w-72">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                    </svg>
+                                </span>
+                                <input 
+                                    type="text" 
+                                    v-model="roomSearchQuery"
+                                    placeholder="Search by code, type..." 
+                                    class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-100 dark:bg-slate-800 dark:border-slate-700 focus:outline-none focus:bg-white dark:focus:bg-slate-900 rounded-xl text-xs transition dark:text-slate-100 font-medium"
+                                />
+                            </div>
+                        </div>
+
+                        <!-- Room Card Grid -->
+                        <div v-if="filteredRoomsList.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                            <div 
+                                v-for="room in filteredRoomsList" 
+                                :key="room.id"
+                                class="group bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition duration-300 flex flex-col"
+                            >
+                                <div class="relative h-48 overflow-hidden bg-slate-100 dark:bg-slate-800">
+                                    <img 
+                                        :src="room.image_url || 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=800&q=80'" 
+                                        class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                        alt="Room Image"
+                                    />
+                                    <span 
+                                        :class="[
+                                            'absolute top-4 right-4 px-3 py-1 rounded-full text-[10px] font-extrabold tracking-wider uppercase shadow-sm border',
+                                            room.status === 'available' ? 'bg-emerald-500/90 text-white border-emerald-450' :
+                                            room.status === 'occupied' ? 'bg-rose-500/90 text-white border-rose-450' :
+                                            room.status === 'cleaning' ? 'bg-blue-500/90 text-white border-blue-450' :
+                                            'bg-amber-700/90 text-white border-amber-600'
+                                        ]"
+                                    >
+                                        {{ room.status }}
+                                    </span>
+                                </div>
+
+                                <div class="p-5 flex-grow flex flex-col justify-between space-y-4">
+                                    <div>
+                                        <h4 class="font-serif text-slate-900 dark:text-slate-100 text-base font-bold truncate">{{ room.name }}</h4>
+                                        <p class="text-slate-400 dark:text-slate-500 text-xs mt-0.5 font-medium">{{ room.type }}</p>
+                                        <p class="font-bold text-sm text-[#A27B5C] dark:text-amber-500 mt-2">
+                                            ₱{{ Number(room.price).toLocaleString() }}
+                                            <span class="text-[10px] text-slate-405 font-normal">/ night</span>
+                                        </p>
+                                    </div>
+
+                                    <div class="flex items-center gap-2.5 pt-3 border-t border-slate-50 dark:border-slate-800">
+                                        <button 
+                                            @click="selectedRoomDetails = room; showRoomDetailsModal = true"
+                                            class="flex-grow py-2 rounded-xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-300 font-bold text-[10px] tracking-wide transition cursor-pointer text-center"
+                                        >
+                                            View Details
+                                        </button>
+                                        <button 
+                                            @click="openEditRoomModal(room)"
+                                            class="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition cursor-pointer"
+                                            title="Edit Room"
+                                        >
+                                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Empty State -->
+                        <div v-else class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-12 text-center shadow-sm space-y-4">
+                            <div class="h-16 w-16 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center text-slate-400 mx-auto">
+                                <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-serif text-[#0b1c3d] dark:text-slate-100 text-lg font-bold">No Rooms Found</h3>
+                                <p class="text-slate-500 dark:text-slate-400 text-xs mt-1 max-w-sm mx-auto leading-relaxed">
+                                    We couldn't find any rooms matching your current filter and search query. Try adjusting your settings or add a new room.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- TAB: SETTINGS -->
                     <div v-else-if="activeTab === 'settings'" class="space-y-8 animate-fade-in">
                         <!-- Settings Header -->
@@ -4598,6 +4832,381 @@
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- MODAL: ADD ROOM -->
+    <!-- ========================================================================= -->
+    <div v-if="showAddRoomModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-slate-950/40" @click="showAddRoomModal = false"></div>
+        
+        <!-- Modal Body -->
+        <div class="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 shadow-2xl w-[500px] max-w-full animate-fade-in space-y-6">
+            <div class="flex items-center justify-between border-b border-slate-50 dark:border-slate-800 pb-4">
+                <div>
+                    <h3 class="font-serif text-[#0b1c3d] dark:text-slate-100 text-xl font-bold">Add New Room</h3>
+                    <p class="text-slate-400 text-[10px] uppercase font-semibold tracking-wider mt-1">Manager Action</p>
+                </div>
+                <button @click="showAddRoomModal = false" class="p-1 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 transition">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Error message -->
+            <div v-if="modalError" class="p-3 text-xs text-rose-600 bg-rose-50 dark:bg-rose-955/20 dark:text-rose-300 rounded-xl border border-rose-100 dark:border-rose-900/30 font-medium">
+                {{ modalError }}
+            </div>
+
+            <form @submit.prevent="submitAddRoom" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Room Code / Name</label>
+                        <input 
+                            type="text" 
+                            v-model="addRoomForm.name" 
+                            placeholder="e.g. Room 101"
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-[#0B1E3F] focus:ring-1 focus:ring-[#0B1E3F] bg-white dark:bg-slate-800 text-sm transition dark:text-slate-100"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Room Type</label>
+                        <select 
+                            v-model="addRoomForm.type"
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-[#0B1E3F] focus:ring-1 focus:ring-[#0B1E3F] bg-white dark:bg-slate-800 text-sm transition dark:text-slate-100"
+                        >
+                            <option value="Couple Room">Couple Room</option>
+                            <option value="Family Room">Family Room</option>
+                            <option value="Function Hall">Function Hall</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Price per Night (₱)</label>
+                        <input 
+                            type="number" 
+                            v-model="addRoomForm.price" 
+                            min="0"
+                            step="0.01"
+                            placeholder="e.g. 3500"
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-[#0B1E3F] focus:ring-1 focus:ring-[#0B1E3F] bg-white dark:bg-slate-800 text-sm transition dark:text-slate-100"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Initial Status</label>
+                        <select 
+                            v-model="addRoomForm.status"
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-[#0B1E3F] focus:ring-1 focus:ring-[#0B1E3F] bg-white dark:bg-slate-800 text-sm transition dark:text-slate-100"
+                        >
+                            <option value="available">Available</option>
+                            <option value="occupied">Occupied</option>
+                            <option value="cleaning">Cleaning</option>
+                            <option value="maintenance">Maintenance</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Image URL</label>
+                    <input 
+                        type="url" 
+                        v-model="addRoomForm.image_url" 
+                        placeholder="https://example.com/image.jpg"
+                        class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-[#0B1E3F] focus:ring-1 focus:ring-[#0B1E3F] bg-white dark:bg-slate-800 text-sm transition dark:text-slate-100"
+                    />
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Amenities (Comma separated)</label>
+                    <input 
+                        type="text" 
+                        v-model="addRoomForm.amenities" 
+                        placeholder="e.g. WiFi, King Bed, TV, Aircon"
+                        class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-[#0B1E3F] focus:ring-1 focus:ring-[#0B1E3F] bg-white dark:bg-slate-800 text-sm transition dark:text-slate-100"
+                    />
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Description</label>
+                    <textarea 
+                        v-model="addRoomForm.description" 
+                        placeholder="Describe the room layout, views, etc."
+                        rows="3"
+                        class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-[#0B1E3F] focus:ring-1 focus:ring-[#0B1E3F] bg-white dark:bg-slate-800 text-sm transition dark:text-slate-100 resize-none"
+                    ></textarea>
+                </div>
+
+                <div class="flex items-center gap-3 pt-4 border-t border-slate-50 dark:border-slate-800">
+                    <button 
+                        type="button" 
+                        @click="showAddRoomModal = false"
+                        class="flex-grow py-3 px-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 text-xs font-semibold tracking-wide transition cursor-pointer"
+                    >
+                        Cancel
+                    </button>
+                    <button 
+                        type="submit"
+                        :disabled="modalSubmitting"
+                        class="flex-grow py-3 px-4 rounded-xl bg-[#0B1E3F] hover:bg-[#152e59] dark:bg-amber-500 dark:hover:bg-amber-600 dark:text-slate-950 text-white text-xs font-semibold tracking-wide transition shadow-md disabled:opacity-60 cursor-pointer"
+                    >
+                        <span v-if="modalSubmitting">Creating...</span>
+                        <span v-else>Create Room</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- MODAL: EDIT ROOM -->
+    <!-- ========================================================================= -->
+    <div v-if="showEditRoomModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-slate-950/40" @click="showEditRoomModal = false"></div>
+        
+        <!-- Modal Body -->
+        <div class="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 shadow-2xl w-[500px] max-w-full animate-fade-in space-y-6">
+            <div class="flex items-center justify-between border-b border-slate-50 dark:border-slate-800 pb-4">
+                <div>
+                    <h3 class="font-serif text-[#0b1c3d] dark:text-slate-100 text-xl font-bold">Edit Room Details</h3>
+                    <p class="text-slate-400 text-[10px] uppercase font-semibold tracking-wider mt-1">Room Action</p>
+                </div>
+                <button @click="showEditRoomModal = false" class="p-1 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 transition">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Error message -->
+            <div v-if="modalError" class="p-3 text-xs text-rose-600 bg-rose-50 dark:bg-rose-955/20 dark:text-rose-300 rounded-xl border border-rose-100 dark:border-rose-900/30 font-medium">
+                {{ modalError }}
+            </div>
+
+            <form @submit.prevent="submitEditRoom" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Room Code / Name</label>
+                        <input 
+                            type="text" 
+                            v-model="editRoomForm.name" 
+                            placeholder="e.g. Room 101"
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-[#0B1E3F] focus:ring-1 focus:ring-[#0B1E3F] bg-white dark:bg-slate-800 text-sm transition dark:text-slate-100"
+                            required
+                            :disabled="currentUser?.role === 'staff'"
+                        />
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Room Type</label>
+                        <select 
+                            v-model="editRoomForm.type"
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-[#0B1E3F] focus:ring-1 focus:ring-[#0B1E3F] bg-white dark:bg-slate-800 text-sm transition dark:text-slate-100"
+                            :disabled="currentUser?.role === 'staff'"
+                        >
+                            <option value="Couple Room">Couple Room</option>
+                            <option value="Family Room">Family Room</option>
+                            <option value="Function Hall">Function Hall</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Price per Night (₱)</label>
+                        <input 
+                            type="number" 
+                            v-model="editRoomForm.price" 
+                            min="0"
+                            step="0.01"
+                            placeholder="e.g. 3500"
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-[#0B1E3F] focus:ring-1 focus:ring-[#0B1E3F] bg-white dark:bg-slate-800 text-sm transition dark:text-slate-100"
+                            required
+                            :disabled="currentUser?.role === 'staff'"
+                        />
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Room Status</label>
+                        <select 
+                            v-model="editRoomForm.status"
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-[#0B1E3F] focus:ring-1 focus:ring-[#0B1E3F] bg-white dark:bg-slate-800 text-sm transition dark:text-slate-100"
+                        >
+                            <option value="available">Available</option>
+                            <option value="occupied">Occupied</option>
+                            <option value="cleaning">Cleaning</option>
+                            <option value="maintenance">Maintenance</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Image URL</label>
+                    <input 
+                        type="url" 
+                        v-model="editRoomForm.image_url" 
+                        placeholder="https://example.com/image.jpg"
+                        class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-[#0B1E3F] focus:ring-1 focus:ring-[#0B1E3F] bg-white dark:bg-slate-800 text-sm transition dark:text-slate-100"
+                        :disabled="currentUser?.role === 'staff'"
+                    />
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Amenities (Comma separated)</label>
+                    <input 
+                        type="text" 
+                        v-model="editRoomForm.amenities" 
+                        placeholder="e.g. WiFi, King Bed, TV, Aircon"
+                        class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-[#0B1E3F] focus:ring-1 focus:ring-[#0B1E3F] bg-white dark:bg-slate-800 text-sm transition dark:text-slate-100"
+                        :disabled="currentUser?.role === 'staff'"
+                    />
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Description</label>
+                    <textarea 
+                        v-model="editRoomForm.description" 
+                        placeholder="Describe the room layout, views, etc."
+                        rows="3"
+                        class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-[#0B1E3F] focus:ring-1 focus:ring-[#0B1E3F] bg-white dark:bg-slate-800 text-sm transition dark:text-slate-100 resize-none"
+                        :disabled="currentUser?.role === 'staff'"
+                    ></textarea>
+                </div>
+
+                <div class="flex items-center gap-3 pt-4 border-t border-slate-50 dark:border-slate-800">
+                    <button 
+                        type="button" 
+                        @click="showEditRoomModal = false"
+                        class="flex-grow py-3 px-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 text-xs font-semibold tracking-wide transition cursor-pointer"
+                    >
+                        Cancel
+                    </button>
+                    <button 
+                        type="submit"
+                        :disabled="modalSubmitting"
+                        class="flex-grow py-3 px-4 rounded-xl bg-[#0B1E3F] hover:bg-[#152e59] dark:bg-amber-500 dark:hover:bg-amber-600 dark:text-slate-950 text-white text-xs font-semibold tracking-wide transition shadow-md disabled:opacity-60 cursor-pointer"
+                    >
+                        <span v-if="modalSubmitting">Saving...</span>
+                        <span v-else>Save Changes</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- MODAL: VIEW ROOM DETAILS -->
+    <!-- ========================================================================= -->
+    <div v-if="showRoomDetailsModal && selectedRoomDetails" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-slate-950/40" @click="showRoomDetailsModal = false"></div>
+        
+        <!-- Modal Body -->
+        <div class="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-2xl w-[550px] max-w-full animate-fade-in flex flex-col max-h-[90vh]">
+            <!-- Header Image -->
+            <div class="relative h-56 bg-slate-100 dark:bg-slate-850 shrink-0">
+                <img 
+                    :src="selectedRoomDetails.image_url || 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=800&q=80'" 
+                    class="h-full w-full object-cover"
+                    alt="Room Large View"
+                />
+                <button @click="showRoomDetailsModal = false" class="absolute top-4 right-4 p-2 bg-slate-950/40 hover:bg-slate-950/60 text-white rounded-full transition shadow-md backdrop-blur-sm">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Content Area -->
+            <div class="p-8 space-y-6 overflow-y-auto flex-grow">
+                <!-- Title & Status -->
+                <div class="flex items-start justify-between gap-4">
+                    <div>
+                        <h3 class="font-serif text-[#0b1c3d] dark:text-slate-100 text-2xl font-bold leading-tight">{{ selectedRoomDetails.name }}</h3>
+                        <p class="text-slate-400 dark:text-slate-500 text-sm mt-1 font-semibold tracking-wide">{{ selectedRoomDetails.type }}</p>
+                    </div>
+                    <span 
+                        :class="[
+                            'px-4 py-1.5 rounded-full text-xs font-extrabold tracking-wider uppercase border shadow-sm',
+                            selectedRoomDetails.status === 'available' ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' :
+                            selectedRoomDetails.status === 'occupied' ? 'bg-rose-500/10 text-rose-600 border-rose-500/20' :
+                            selectedRoomDetails.status === 'cleaning' ? 'bg-blue-500/10 text-blue-600 border-blue-500/20' :
+                            'bg-amber-700/10 text-amber-800 border-amber-700/20'
+                        ]"
+                    >
+                        {{ selectedRoomDetails.status }}
+                    </span>
+                </div>
+
+                <!-- Price -->
+                <div class="bg-[#FAF9F6] dark:bg-slate-950 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                    <span class="text-xs text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider">Rate Per Night</span>
+                    <span class="text-xl font-bold text-[#A27B5C] dark:text-amber-500 font-serif">₱{{ Number(selectedRoomDetails.price).toLocaleString() }}</span>
+                </div>
+
+                <!-- Description -->
+                <div class="space-y-2">
+                    <h4 class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Description</h4>
+                    <p class="text-xs text-slate-650 dark:text-slate-355 leading-relaxed font-light">
+                        {{ selectedRoomDetails.description || 'No description provided for this room.' }}
+                    </p>
+                </div>
+
+                <!-- Amenities -->
+                <div class="space-y-3">
+                    <h4 class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Amenities</h4>
+                    <div class="flex flex-wrap gap-2">
+                        <span 
+                            v-for="(amenity, idx) in selectedRoomDetails.amenities"
+                            :key="idx"
+                            class="px-3 py-1.5 bg-slate-50 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 rounded-xl text-xs font-medium border border-slate-100 dark:border-slate-700"
+                        >
+                            {{ amenity }}
+                        </span>
+                        <span 
+                            v-if="!selectedRoomDetails.amenities || (Array.isArray(selectedRoomDetails.amenities) && selectedRoomDetails.amenities.length === 0)"
+                            class="text-xs text-slate-400 italic"
+                        >
+                            No amenities listed.
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Actions -->
+            <div class="p-6 border-t border-slate-50 dark:border-slate-800 shrink-0 bg-slate-50/50 dark:bg-slate-950/50 flex items-center gap-3">
+                <button 
+                    v-if="currentUser?.role === 'admin' || currentUser?.role === 'manager'"
+                    @click="deleteRoom(selectedRoomDetails)"
+                    class="px-4 py-3 rounded-xl border border-rose-200 dark:border-rose-900/50 hover:bg-rose-50/50 dark:hover:bg-rose-955/30 text-rose-600 dark:text-rose-455 font-bold text-xs tracking-wide transition cursor-pointer flex items-center gap-1.5"
+                >
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                    Delete Room
+                </button>
+                <div class="flex-grow"></div>
+                <button 
+                    @click="showRoomDetailsModal = false"
+                    class="px-5 py-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-xs tracking-wide transition cursor-pointer"
+                >
+                    Close
+                </button>
+                <button 
+                    @click="showRoomDetailsModal = false; openEditRoomModal(selectedRoomDetails)"
+                    class="px-5 py-3 rounded-xl bg-[#0B1E3F] hover:bg-[#152e59] dark:bg-amber-500 dark:hover:bg-amber-600 dark:text-slate-955 text-white font-bold text-xs tracking-wide transition shadow-md cursor-pointer flex items-center gap-1.5"
+                >
+                    <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                    </svg>
+                    Edit Room
+                </button>
+            </div>
         </div>
     </div>
 
@@ -5508,6 +6117,179 @@ watch(salesTimeframe, () => {
     fetchSalesReport(1)
 })
 
+const roomsList = ref([])
+const roomStats = ref({ total: 0, occupied: 0, available: 0, maintenance: 0, cleaning: 0, occupied_percentage: 0 })
+const roomFilter = ref('all')
+const roomSearchQuery = ref('')
+const showAddRoomModal = ref(false)
+const showEditRoomModal = ref(false)
+const showRoomDetailsModal = ref(false)
+const selectedRoomDetails = ref(null)
+
+const filteredRoomsList = computed(() => {
+    return roomsList.value.filter(room => {
+        const matchesFilter = roomFilter.value === 'all' || room.status === roomFilter.value;
+        const matchesSearch = !roomSearchQuery.value || 
+            room.name.toLowerCase().includes(roomSearchQuery.value.toLowerCase()) ||
+            room.type.toLowerCase().includes(roomSearchQuery.value.toLowerCase()) ||
+            (room.description && room.description.toLowerCase().includes(roomSearchQuery.value.toLowerCase()));
+        return matchesFilter && matchesSearch;
+    });
+})
+
+const addRoomForm = reactive({
+    name: '',
+    type: 'Couple Room',
+    price: 0,
+    status: 'available',
+    description: '',
+    image_url: '',
+    amenities: ''
+})
+
+const editRoomForm = reactive({
+    id: null,
+    name: '',
+    type: 'Couple Room',
+    price: 0,
+    status: 'available',
+    description: '',
+    image_url: '',
+    amenities: ''
+})
+
+const fetchAdminRooms = async () => {
+    try {
+        const response = await axiosInstance.get('/api/admin/rooms')
+        if (response.data.success) {
+            roomsList.value = response.data.rooms
+            roomStats.value = response.data.stats
+        }
+    } catch (e) {
+        console.error('Failed to fetch rooms:', e)
+    }
+}
+
+const submitAddRoom = async () => {
+    modalSubmitting.value = true
+    modalError.value = ''
+    try {
+        const amenitiesArray = addRoomForm.amenities
+            ? addRoomForm.amenities.split(',').map(item => item.trim()).filter(Boolean)
+            : []
+
+        const response = await axiosInstance.post('/api/admin/rooms', {
+            name: addRoomForm.name,
+            type: addRoomForm.type,
+            price: Number(addRoomForm.price),
+            status: addRoomForm.status,
+            description: addRoomForm.description,
+            image_url: addRoomForm.image_url || 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=800&q=80',
+            amenities: amenitiesArray
+        })
+
+        if (response.data.success) {
+            showCustomAlert({
+                title: 'Room Created',
+                message: `Successfully created room: ${addRoomForm.name}`,
+                type: 'success'
+            })
+            showAddRoomModal.value = false
+            await fetchAdminRooms()
+            
+            // Reset form
+            addRoomForm.name = ''
+            addRoomForm.type = 'Couple Room'
+            addRoomForm.price = 0
+            addRoomForm.status = 'available'
+            addRoomForm.description = ''
+            addRoomForm.image_url = ''
+            addRoomForm.amenities = ''
+        }
+    } catch (e) {
+        modalError.value = e.response?.data?.message || 'Failed to create room. Please try again.'
+    } finally {
+        modalSubmitting.value = false
+    }
+}
+
+const openEditRoomModal = (room) => {
+    editRoomForm.id = room.id
+    editRoomForm.name = room.name
+    editRoomForm.type = room.type
+    editRoomForm.price = room.price
+    editRoomForm.status = room.status
+    editRoomForm.description = room.description || ''
+    editRoomForm.image_url = room.image_url || ''
+    editRoomForm.amenities = Array.isArray(room.amenities) ? room.amenities.join(', ') : ''
+    modalError.value = ''
+    showEditRoomModal.value = true
+}
+
+const submitEditRoom = async () => {
+    modalSubmitting.value = true
+    modalError.value = ''
+    try {
+        const amenitiesArray = editRoomForm.amenities
+            ? editRoomForm.amenities.split(',').map(item => item.trim()).filter(Boolean)
+            : []
+
+        const response = await axiosInstance.put(`/api/admin/rooms/${editRoomForm.id}`, {
+            name: editRoomForm.name,
+            type: editRoomForm.type,
+            price: Number(editRoomForm.price),
+            status: editRoomForm.status,
+            description: editRoomForm.description,
+            image_url: editRoomForm.image_url || 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=800&q=80',
+            amenities: amenitiesArray
+        })
+
+        if (response.data.success) {
+            showCustomAlert({
+                title: 'Room Updated',
+                message: `Successfully updated room: ${editRoomForm.name}`,
+                type: 'success'
+            })
+            showEditRoomModal.value = false
+            await fetchAdminRooms()
+        }
+    } catch (e) {
+        modalError.value = e.response?.data?.message || 'Failed to update room. Please try again.'
+    } finally {
+        modalSubmitting.value = false
+    }
+}
+
+const deleteRoom = async (room) => {
+    showCustomAlert({
+        title: 'Delete Room',
+        message: `Are you sure you want to delete room "${room.name}"? This action cannot be undone.`,
+        type: 'confirm',
+        onConfirm: async () => {
+            try {
+                const response = await axiosInstance.delete(`/api/admin/rooms/${room.id}`)
+                if (response.data.success) {
+                    showCustomAlert({
+                        title: 'Room Deleted',
+                        message: 'The room has been successfully deleted.',
+                        type: 'success'
+                    })
+                    if (showRoomDetailsModal.value && selectedRoomDetails.value?.id === room.id) {
+                        showRoomDetailsModal.value = false
+                    }
+                    await fetchAdminRooms()
+                }
+            } catch (e) {
+                showCustomAlert({
+                    title: 'Delete Failed',
+                    message: e.response?.data?.message || 'Cannot delete room. It may have associated staycation bookings.',
+                    type: 'error'
+                })
+            }
+        }
+    })
+}
+
 const usersList = ref([])
 const fetchUsersLoading = ref(false)
 const fetchUsersError = ref('')
@@ -5958,6 +6740,8 @@ watch(activeTab, (newTab) => {
         fetchUsers() // Fetch users when tab becomes active
     } else if (newTab === 'sales') {
         fetchSalesReport() // Fetch sales report when tab becomes active
+    } else if (newTab === 'room_management') {
+        fetchAdminRooms() // Fetch rooms when tab becomes active
     } else if (newTab === 'payments' || newTab === 'pending' || newTab === 'dashboard_overview') {
         fetchPendingBookings()
         if (newTab === 'dashboard_overview') {

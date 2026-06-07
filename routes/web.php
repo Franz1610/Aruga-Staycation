@@ -184,5 +184,119 @@ Route::post('/api/admin/bookings/{id}/approve', [BookingController::class, 'appr
 Route::post('/api/admin/bookings/{id}/reject', [BookingController::class, 'rejectBooking']);
 Route::get('/api/admin/sales', [BookingController::class, 'getSalesReport']);
 
+Route::get('/api/admin/rooms', function () {
+    if (!Auth::check()) {
+        return response()->json(['message' => 'Unauthorized'], 401);
+    }
+    $currentUser = Auth::user();
+    if ($currentUser->role !== 'admin' && $currentUser->role !== 'manager' && $currentUser->role !== 'staff') {
+        return response()->json(['message' => 'Forbidden'], 403);
+    }
+
+    $rooms = App\Models\Room::orderBy('name', 'asc')->get();
+    
+    $total = $rooms->count();
+    $occupied = $rooms->where('status', 'occupied')->count();
+    $available = $rooms->where('status', 'available')->count();
+    $maintenance = $rooms->where('status', 'maintenance')->count();
+    $cleaning = $rooms->where('status', 'cleaning')->count();
+
+    return response()->json([
+        'success' => true,
+        'rooms' => $rooms,
+        'stats' => [
+            'total' => $total,
+            'occupied' => $occupied,
+            'available' => $available,
+            'maintenance' => $maintenance,
+            'cleaning' => $cleaning,
+            'occupied_percentage' => $total > 0 ? round(($occupied / $total) * 100) : 0
+        ]
+    ]);
+});
+
+Route::post('/api/admin/rooms', function (Request $request) {
+    if (!Auth::check()) {
+        return response()->json(['message' => 'Unauthorized'], 401);
+    }
+    $currentUser = Auth::user();
+    if ($currentUser->role !== 'admin' && $currentUser->role !== 'manager') {
+        return response()->json(['message' => 'Forbidden'], 403);
+    }
+
+    $data = $request->validate([
+        'name' => ['required', 'string', 'max:255', 'unique:rooms'],
+        'type' => ['required', 'string', 'in:Couple Room,Family Room,Function Hall'],
+        'price' => ['required', 'numeric', 'min:0'],
+        'status' => ['required', 'string', 'in:available,occupied,cleaning,maintenance'],
+        'description' => ['nullable', 'string'],
+        'image_url' => ['nullable', 'string'],
+        'amenities' => ['nullable', 'array'],
+    ]);
+
+    $room = App\Models\Room::create($data);
+
+    return response()->json([
+        'success' => true,
+        'room' => $room
+    ]);
+});
+
+Route::put('/api/admin/rooms/{id}', function (Request $request, $id) {
+    if (!Auth::check()) {
+        return response()->json(['message' => 'Unauthorized'], 401);
+    }
+    $currentUser = Auth::user();
+    if ($currentUser->role !== 'admin' && $currentUser->role !== 'manager' && $currentUser->role !== 'staff') {
+        return response()->json(['message' => 'Forbidden'], 403);
+    }
+
+    $room = App\Models\Room::findOrFail($id);
+
+    $data = $request->validate([
+        'name' => ['required', 'string', 'max:255', 'unique:rooms,name,' . $room->id],
+        'type' => ['required', 'string', 'in:Couple Room,Family Room,Function Hall'],
+        'price' => ['required', 'numeric', 'min:0'],
+        'status' => ['required', 'string', 'in:available,occupied,cleaning,maintenance'],
+        'description' => ['nullable', 'string'],
+        'image_url' => ['nullable', 'string'],
+        'amenities' => ['nullable', 'array'],
+    ]);
+
+    $room->update($data);
+
+    return response()->json([
+        'success' => true,
+        'room' => $room
+    ]);
+});
+
+Route::delete('/api/admin/rooms/{id}', function ($id) {
+    if (!Auth::check()) {
+        return response()->json(['message' => 'Unauthorized'], 401);
+    }
+    $currentUser = Auth::user();
+    if ($currentUser->role !== 'admin' && $currentUser->role !== 'manager') {
+        return response()->json(['message' => 'Forbidden'], 403);
+    }
+
+    $room = App\Models\Room::findOrFail($id);
+    
+    // Check if room has active bookings
+    $hasActiveBookings = $room->bookings()->where('status', '!=', 'REJECTED')->exists();
+    if ($hasActiveBookings) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Cannot delete room because it has associated staycation bookings.'
+        ], 422);
+    }
+
+    $room->delete();
+
+    return response()->json([
+        'success' => true
+    ]);
+});
+
 
 
