@@ -2413,7 +2413,7 @@
 
                             <!-- Table Footer -->
                             <button 
-                                v-if="filteredGuestRecords.length > 5"
+                                v-if="filteredGuestRecords.length > 3"
                                 @click="expandGuestRecords = !expandGuestRecords" 
                                 class="w-full py-3 text-slate-500 hover:text-slate-800 text-xs font-semibold tracking-wide border-t border-slate-50 transition cursor-pointer"
                             >
@@ -6389,7 +6389,7 @@ const visibleGuestRecords = computed(() => {
     if (expandGuestRecords.value) {
         return filteredGuestRecords.value
     }
-    return filteredGuestRecords.value.slice(0, 5)
+    return filteredGuestRecords.value.slice(0, 3)
 })
 
 const getFilterLabel = (value) => {
