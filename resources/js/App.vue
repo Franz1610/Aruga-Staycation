@@ -2314,12 +2314,29 @@
                             <div class="flex items-center justify-between">
                                 <h3 class="font-serif text-[#0b1c3d] text-lg font-bold">Guest Records</h3>
                                 <div class="flex items-center gap-2">
-                                    <button class="flex items-center gap-1.5 px-3 py-2 border border-slate-100 rounded-xl text-slate-500 hover:text-slate-800 text-xs font-semibold transition cursor-pointer">
-                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                                        </svg>
-                                        Filter
-                                    </button>
+                                    <!-- Dynamic Filter Dropdown -->
+                                    <div ref="filterContainer" class="relative">
+                                        <button @click="showFilterDropdown = !showFilterDropdown" class="flex items-center gap-1.5 px-3 py-2 border border-slate-100 rounded-xl text-slate-500 hover:text-slate-800 text-xs font-semibold transition cursor-pointer">
+                                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                                            </svg>
+                                            <span>Filter: {{ getFilterLabel(selectedStatusFilter) }}</span>
+                                        </button>
+                                        
+                                        <div v-if="showFilterDropdown" class="absolute right-0 mt-2 w-48 bg-white border border-slate-100 rounded-xl shadow-lg py-1 z-50">
+                                            <button 
+                                                v-for="opt in filterOptions" 
+                                                :key="opt.value"
+                                                @click="setStatusFilter(opt.value)"
+                                                :class="['w-full text-left px-4 py-2 text-xs transition hover:bg-slate-50 flex items-center justify-between', selectedStatusFilter === opt.value ? 'font-semibold text-[#0B1E3F]' : 'text-slate-600']"
+                                            >
+                                                <span>{{ opt.label }}</span>
+                                                <svg v-if="selectedStatusFilter === opt.value" class="h-3.5 w-3.5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
                                     <button @click="exportGuestRecordsCSV" class="flex items-center gap-1.5 px-3 py-2 border border-slate-100 rounded-xl text-slate-500 hover:text-slate-800 text-xs font-semibold transition cursor-pointer">
                                         <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -2345,7 +2362,7 @@
                                         
                                         <!-- Dynamic Guest Records Row -->
                                         <tr 
-                                            v-for="record in guestRecords" 
+                                            v-for="record in filteredGuestRecords" 
                                             :key="record.id" 
                                             @click="viewBookingDetails(record)" 
                                             class="group hover:bg-slate-50/50 transition cursor-pointer"
@@ -2385,9 +2402,9 @@
                                         </tr>
 
                                         <!-- Fallback Empty Row -->
-                                        <tr v-if="guestRecords.length === 0">
+                                        <tr v-if="filteredGuestRecords.length === 0">
                                             <td colspan="5" class="py-8 text-center text-slate-400 font-light italic">
-                                                No guest records found in the database.
+                                                {{ guestRecords.length === 0 ? 'No guest records found in the database.' : 'No guest records match the selected filter.' }}
                                             </td>
                                         </tr>
                                     </tbody>
@@ -5585,7 +5602,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, watch, computed } from 'vue'
+import { ref, reactive, onMounted, onUnmounted, watch, computed } from 'vue'
 import axiosInstance from 'axios'
 
 const currentView = ref('selection')
@@ -6342,6 +6359,50 @@ const guestRecords = computed(() => {
     return list.sort((a, b) => b.id - a.id)
 })
 
+const showFilterDropdown = ref(false)
+const selectedStatusFilter = ref('all')
+const filterContainer = ref(null)
+
+const filterOptions = [
+    { label: 'All Statuses', value: 'all' },
+    { label: 'Pending', value: 'pending' },
+    { label: 'Approved', value: 'approved' },
+    { label: 'In Stay', value: 'in_stay' },
+    { label: 'Completed', value: 'completed' },
+    { label: 'Rejected', value: 'rejected' }
+]
+
+const filteredGuestRecords = computed(() => {
+    if (selectedStatusFilter.value === 'all') {
+        return guestRecords.value
+    }
+    return guestRecords.value.filter(record => record.statusType === selectedStatusFilter.value)
+})
+
+const getFilterLabel = (value) => {
+    const found = filterOptions.find(o => o.value === value)
+    return found ? found.label : 'All Statuses'
+}
+
+const setStatusFilter = (value) => {
+    selectedStatusFilter.value = value
+    showFilterDropdown.value = false
+}
+
+const handleClickOutside = (event) => {
+    if (filterContainer.value && !filterContainer.value.contains(event.target)) {
+        showFilterDropdown.value = false
+    }
+}
+
+onMounted(() => {
+    document.addEventListener('click', handleClickOutside)
+})
+
+onUnmounted(() => {
+    document.removeEventListener('click', handleClickOutside)
+})
+
 const viewBookingDetails = (record) => {
     if (record.statusType === 'pending') {
         const found = pendingReservations.value.find(r => r.id === record.id)
@@ -6365,7 +6426,8 @@ const viewBookingDetails = (record) => {
 }
 
 const exportGuestRecordsCSV = () => {
-    if (guestRecords.value.length === 0) {
+    const recordsToExport = filteredGuestRecords.value
+    if (recordsToExport.length === 0) {
         alert('No guest records available to export.')
         return
     }
@@ -6373,7 +6435,7 @@ const exportGuestRecordsCSV = () => {
     let csvContent = "data:text/csv;charset=utf-8," 
         + "Reference,Guest Name,Email,Phone,Room Type,Room Name,Check-in Date,Nights,Guests,Amount,Status\n"
         
-    guestRecords.value.forEach(r => {
+    recordsToExport.forEach(r => {
         const row = [
             r.reference,
             `"${r.name.replace(/"/g, '""')}"`,
