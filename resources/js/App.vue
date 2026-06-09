@@ -6371,9 +6371,16 @@ const getTrendDaysList = () => {
     // Convert now to Manila time (UTC+8)
     const manilaTime = new Date(now.getTime() + (now.getTimezoneOffset() * 60000) + (8 * 3600000))
     
-    for (let i = 6; i >= 0; i--) {
-        const d = new Date(manilaTime.getTime())
-        d.setDate(manilaTime.getDate() - i)
+    // Find Monday of the current week
+    const dayOfWeek = manilaTime.getDay() // 0 = Sun, 1 = Mon, ..., 6 = Sat
+    const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek
+    const monday = new Date(manilaTime.getTime())
+    monday.setDate(manilaTime.getDate() + diffToMonday)
+    
+    // Generate 7 days starting from Monday
+    for (let i = 0; i < 7; i++) {
+        const d = new Date(monday.getTime())
+        d.setDate(monday.getDate() + i)
         
         const yyyy = d.getFullYear()
         const mm = String(d.getMonth() + 1).padStart(2, '0')
@@ -6383,7 +6390,12 @@ const getTrendDaysList = () => {
         const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
         const label = dayNames[d.getDay()]
         
-        dates.push({ rawDate, label, isCurrentDay: i === 0 })
+        // Determine if this is the current day (today)
+        const isCurrentDay = d.getFullYear() === manilaTime.getFullYear() &&
+                             d.getMonth() === manilaTime.getMonth() &&
+                             d.getDate() === manilaTime.getDate()
+        
+        dates.push({ rawDate, label, isCurrentDay })
     }
     return dates
 }
