@@ -2175,79 +2175,66 @@
                         <!-- Charts & Recent Activity Grid (2 Columns) -->
                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                             
-                            <!-- Booking Trends Chart (SVG-based) -->
+                            <!-- Booking Trends Chart (Dynamic based on occupancy dates) -->
                             <div class="bg-white border border-slate-50 rounded-2xl p-6 shadow-sm lg:col-span-2 space-y-6">
                                 <div class="flex items-center justify-between">
                                     <div>
                                         <h3 class="font-serif text-[#0b1c3d] text-base font-bold">Booking Trends</h3>
-                                        <p class="text-slate-400 text-xs mt-0.5">Occupancy rate over the last 7 days</p>
+                                        <p class="text-slate-400 text-xs mt-0.5">Occupancy rate over the last {{ trendsTimeframe === 'weekly' ? '7' : '30' }} days</p>
                                     </div>
                                     <div class="bg-slate-100 p-0.5 rounded-lg flex items-center gap-1">
-                                        <button class="bg-white text-slate-800 text-[10px] font-semibold px-2.5 py-1 rounded-md shadow-sm">Weekly</button>
-                                        <button class="text-slate-500 text-[10px] font-semibold px-2.5 py-1">Monthly</button>
+                                        <button 
+                                            @click="trendsTimeframe = 'weekly'"
+                                            :class="['text-[10px] font-semibold px-2.5 py-1 rounded-md transition cursor-pointer', trendsTimeframe === 'weekly' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-800']"
+                                        >
+                                            Weekly
+                                        </button>
+                                        <button 
+                                            @click="trendsTimeframe = 'monthly'"
+                                            :class="['text-[10px] font-semibold px-2.5 py-1 rounded-md transition cursor-pointer', trendsTimeframe === 'monthly' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-800']"
+                                        >
+                                            Monthly
+                                        </button>
                                     </div>
                                 </div>
 
                                 <!-- SVG Bar Chart -->
                                 <div class="relative pt-6">
-                                    <div class="h-44 w-full flex items-end justify-between px-2 gap-2 md:gap-4 border-b border-slate-100 pb-2 relative">
+                                    <div class="h-44 w-full flex items-end justify-between px-2 gap-1 md:gap-2 border-b border-slate-100 pb-2 relative">
                                         <!-- Background grid lines -->
                                         <div class="absolute inset-x-0 top-0 border-t border-slate-100/60 w-full pointer-events-none"></div>
                                         <div class="absolute inset-x-0 top-1/3 border-t border-slate-100/60 w-full pointer-events-none"></div>
                                         <div class="absolute inset-x-0 top-2/3 border-t border-slate-100/60 w-full pointer-events-none"></div>
 
-                                        <!-- Mon -->
-                                        <div class="flex-grow flex flex-col items-center group relative cursor-pointer h-full justify-end">
-                                            <div class="w-full bg-[#1B321F]/10 group-hover:bg-[#1B321F]/20 rounded-t-md h-[40%] transition-all duration-300 relative">
-                                                <div class="absolute -top-7 left-1/2 -translate-x-1/2 bg-[#0B1E3F] text-white text-[9px] font-bold py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition shadow-md pointer-events-none">40%</div>
-                                            </div>
-                                        </div>
-                                        <!-- Tue -->
-                                        <div class="flex-grow flex flex-col items-center group relative cursor-pointer h-full justify-end">
-                                            <div class="w-full bg-[#1B321F]/10 group-hover:bg-[#1B321F]/20 rounded-t-md h-[55%] transition-all duration-300 relative">
-                                                <div class="absolute -top-7 left-1/2 -translate-x-1/2 bg-[#0B1E3F] text-white text-[9px] font-bold py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition shadow-md pointer-events-none">55%</div>
-                                            </div>
-                                        </div>
-                                        <!-- Wed -->
-                                        <div class="flex-grow flex flex-col items-center group relative cursor-pointer h-full justify-end">
-                                            <div class="w-full bg-[#1B321F]/10 group-hover:bg-[#1B321F]/20 rounded-t-md h-[30%] transition-all duration-300 relative">
-                                                <div class="absolute -top-7 left-1/2 -translate-x-1/2 bg-[#0B1E3F] text-white text-[9px] font-bold py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition shadow-md pointer-events-none">30%</div>
-                                            </div>
-                                        </div>
-                                        <!-- Thu -->
-                                        <div class="flex-grow flex flex-col items-center group relative cursor-pointer h-full justify-end">
-                                            <div class="w-full bg-[#1B321F]/10 group-hover:bg-[#1B321F]/20 rounded-t-md h-[70%] transition-all duration-300 relative">
-                                                <div class="absolute -top-7 left-1/2 -translate-x-1/2 bg-[#0B1E3F] text-white text-[9px] font-bold py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition shadow-md pointer-events-none">70%</div>
-                                            </div>
-                                        </div>
-                                        <!-- Fri -->
-                                        <div class="flex-grow flex flex-col items-center group relative cursor-pointer h-full justify-end">
-                                            <div class="w-full bg-[#1B321F]/10 group-hover:bg-[#1B321F]/20 rounded-t-md h-[85%] transition-all duration-300 relative">
-                                                <div class="absolute -top-7 left-1/2 -translate-x-1/2 bg-[#0B1E3F] text-white text-[9px] font-bold py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition shadow-md pointer-events-none">85%</div>
-                                            </div>
-                                        </div>
-                                        <!-- Sat -->
-                                        <div class="flex-grow flex flex-col items-center group relative cursor-pointer h-full justify-end">
-                                            <div class="w-full bg-[#0B1E3F] group-hover:bg-[#152e59] rounded-t-md h-[95%] transition-all duration-300 relative shadow-sm">
-                                                <div class="absolute -top-7 left-1/2 -translate-x-1/2 bg-[#0B1E3F] text-white text-[9px] font-bold py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition shadow-md pointer-events-none">95%</div>
-                                            </div>
-                                        </div>
-                                        <!-- Sun -->
-                                        <div class="flex-grow flex flex-col items-center group relative cursor-pointer h-full justify-end">
-                                            <div class="w-full bg-[#1B321F]/10 group-hover:bg-[#1B321F]/20 rounded-t-md h-[90%] transition-all duration-300 relative">
-                                                <div class="absolute -top-7 left-1/2 -translate-x-1/2 bg-[#0B1E3F] text-white text-[9px] font-bold py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition shadow-md pointer-events-none">90%</div>
+                                        <div 
+                                            v-for="(bar, index) in trendBars" 
+                                            :key="index" 
+                                            class="flex-grow flex flex-col items-center group relative cursor-pointer h-full justify-end animate-fade-in"
+                                        >
+                                            <div 
+                                                :style="{ height: Math.max(bar.percentage, 2) + '%' }" 
+                                                :class="['w-full rounded-t-md transition-all duration-300 relative min-h-[4px]', 
+                                                          bar.isCurrentDay 
+                                                            ? 'bg-[#0B1E3F] hover:bg-[#152e59]' 
+                                                            : 'bg-[#1B321F]/20 group-hover:bg-[#1B321F]/40'
+                                                 ]"
+                                            >
+                                                <!-- Hover tooltip -->
+                                                <div class="absolute -top-7 left-1/2 -translate-x-1/2 bg-[#0B1E3F] text-white text-[9px] font-bold py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition shadow-md pointer-events-none z-50 whitespace-nowrap">
+                                                    {{ bar.percentage }}% ({{ bar.count }}/{{ bar.totalRooms }} Rooms occupied)
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- Weekday labels -->
+                                    <!-- Labels -->
                                     <div class="flex justify-between text-[10px] text-slate-400 font-semibold px-2 pt-2">
-                                        <span class="flex-grow text-center">Mon</span>
-                                        <span class="flex-grow text-center">Tue</span>
-                                        <span class="flex-grow text-center">Wed</span>
-                                        <span class="flex-grow text-center">Thu</span>
-                                        <span class="flex-grow text-center">Fri</span>
-                                        <span class="flex-grow text-center">Sat</span>
-                                        <span class="flex-grow text-center">Sun</span>
+                                        <span 
+                                            v-for="(bar, index) in trendBars" 
+                                            :key="index" 
+                                            class="flex-grow text-center truncate px-0.5"
+                                        >
+                                            {{ bar.label }}
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -6390,6 +6377,62 @@ const visibleGuestRecords = computed(() => {
         return filteredGuestRecords.value
     }
     return filteredGuestRecords.value.slice(0, 3)
+})
+
+const trendsTimeframe = ref('weekly')
+
+const getTrendDaysList = (numDays) => {
+    const dates = []
+    const now = new Date()
+    // Convert now to Manila time (UTC+8)
+    const manilaTime = new Date(now.getTime() + (now.getTimezoneOffset() * 60000) + (8 * 3600000))
+    
+    for (let i = numDays - 1; i >= 0; i--) {
+        const d = new Date(manilaTime.getTime())
+        d.setDate(manilaTime.getDate() - i)
+        
+        const yyyy = d.getFullYear()
+        const mm = String(d.getMonth() + 1).padStart(2, '0')
+        const dd = String(d.getDate()).padStart(2, '0')
+        const rawDate = `${yyyy}-${mm}-${dd}`
+        
+        const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+        const label = numDays === 7 ? dayNames[d.getDay()] : `${mm}/${dd}`
+        
+        dates.push({ rawDate, label, isCurrentDay: i === 0 })
+    }
+    return dates
+}
+
+const trendBars = computed(() => {
+    const numDays = trendsTimeframe.value === 'weekly' ? 7 : 30
+    const days = getTrendDaysList(numDays)
+    const totalRooms = roomsList.value.length || dbRooms.value.length || 3
+    
+    return days.map((day, index) => {
+        const occupiedCount = approvedReservations.value.filter(r => {
+            return day.rawDate >= r.checkInDateRaw && day.rawDate < r.checkOutDateRaw
+        }).length
+        
+        const percentage = totalRooms > 0 ? Math.min(Math.round((occupiedCount / totalRooms) * 100), 100) : 0
+        
+        let displayLabel = day.label
+        if (trendsTimeframe.value === 'monthly') {
+            // Label only every 5th day to avoid crowding
+            if (index % 5 !== 0 && index !== numDays - 1) {
+                displayLabel = ''
+            }
+        }
+        
+        return {
+            rawDate: day.rawDate,
+            label: displayLabel,
+            percentage,
+            count: occupiedCount,
+            totalRooms,
+            isCurrentDay: day.isCurrentDay
+        }
+    })
 })
 
 const getFilterLabel = (value) => {
