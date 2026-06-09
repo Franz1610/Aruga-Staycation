@@ -2320,7 +2320,7 @@
                                         </svg>
                                         Filter
                                     </button>
-                                    <button class="flex items-center gap-1.5 px-3 py-2 border border-slate-100 rounded-xl text-slate-500 hover:text-slate-800 text-xs font-semibold transition cursor-pointer">
+                                    <button @click="exportGuestRecordsCSV" class="flex items-center gap-1.5 px-3 py-2 border border-slate-100 rounded-xl text-slate-500 hover:text-slate-800 text-xs font-semibold transition cursor-pointer">
                                         <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                                         </svg>
@@ -2343,25 +2343,40 @@
                                     </thead>
                                     <tbody class="divide-y divide-slate-50">
                                         
-                                        <!-- Row 1 -->
-                                        <tr class="group hover:bg-slate-50/50 transition">
+                                        <!-- Dynamic Guest Records Row -->
+                                        <tr 
+                                            v-for="record in guestRecords" 
+                                            :key="record.id" 
+                                            @click="viewBookingDetails(record)" 
+                                            class="group hover:bg-slate-50/50 transition cursor-pointer"
+                                        >
                                             <td class="py-4 flex items-center gap-3">
-                                                <!-- Initials Icon for Maria Santos -->
-                                                <div class="h-9 w-9 rounded-full bg-amber-100 text-[#A27B5C] font-semibold flex items-center justify-center text-xs tracking-wider">
-                                                    MS
+                                                <div :class="['h-9 w-9 rounded-full font-semibold flex items-center justify-center text-xs tracking-wider text-[#A27B5C] bg-amber-50/50', getBgClass(record.id)]">
+                                                    {{ getInitials(record.name) }}
                                                 </div>
                                                 <div>
-                                                    <p class="font-semibold text-slate-800 group-hover:text-[#0b1c3d] transition">Maria Santos</p>
-                                                    <span class="text-slate-400 text-[10px] mt-0.5 block">msantos.work@email.com</span>
+                                                    <p class="font-semibold text-slate-800 group-hover:text-[#0b1c3d] transition">{{ record.name }}</p>
+                                                    <span class="text-slate-400 text-[10px] mt-0.5 block">{{ record.email }}</span>
                                                 </div>
                                             </td>
                                             <td class="py-4">
-                                                <span class="px-2.5 py-1 text-[10px] font-bold text-[#2D5A27] bg-emerald-50 rounded-full">Approved</span>
+                                                <span :class="[
+                                                    'px-2.5 py-1 text-[10px] font-bold rounded-full',
+                                                    record.statusType === 'pending' ? 'text-amber-600 bg-amber-50' :
+                                                    record.statusType === 'rejected' ? 'text-rose-600 bg-rose-50' :
+                                                    record.statusType === 'in_stay' ? 'text-blue-600 bg-blue-50' :
+                                                    record.statusType === 'completed' ? 'text-slate-500 bg-slate-50' :
+                                                    'text-[#2D5A27] bg-emerald-50'
+                                                ]">{{ record.status }}</span>
                                             </td>
-                                            <td class="py-4 text-slate-500 font-medium">Oct 12, 2023</td>
-                                            <td class="py-4 font-semibold text-slate-800">₱15,500</td>
+                                            <td class="py-4 text-slate-500 font-medium">
+                                                {{ formatDate(record.checkInDateRaw) }}
+                                            </td>
+                                            <td class="py-4 font-semibold text-slate-800">
+                                                ₱{{ record.amount }}
+                                            </td>
                                             <td class="py-4 text-right pr-4">
-                                                <button class="p-1 text-slate-400 hover:text-slate-700 transition cursor-pointer">
+                                                <button @click.stop="viewBookingDetails(record)" class="p-1 text-slate-400 hover:text-slate-700 transition cursor-pointer">
                                                     <svg class="h-4.5 w-4.5" fill="currentColor" viewBox="0 0 20 20">
                                                         <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
                                                     </svg>
@@ -2369,55 +2384,10 @@
                                             </td>
                                         </tr>
 
-                                        <!-- Row 2 -->
-                                        <tr class="group hover:bg-slate-50/50 transition">
-                                            <td class="py-4 flex items-center gap-3">
-                                                <!-- Initials Icon for James Lim -->
-                                                <div class="h-9 w-9 rounded-full bg-blue-100 text-blue-700 font-semibold flex items-center justify-center text-xs tracking-wider">
-                                                    JL
-                                                </div>
-                                                <div>
-                                                    <p class="font-semibold text-slate-800 group-hover:text-[#0b1c3d] transition">James Lim</p>
-                                                    <span class="text-slate-400 text-[10px] mt-0.5 block">james.lim@tech.io</span>
-                                                </div>
-                                            </td>
-                                            <td class="py-4">
-                                                <span class="px-2.5 py-1 text-[10px] font-bold text-amber-600 bg-amber-50 rounded-full">Pending</span>
-                                            </td>
-                                            <td class="py-4 text-slate-500 font-medium">Oct 15, 2023</td>
-                                            <td class="py-4 font-semibold text-slate-800">₱28,200</td>
-                                            <td class="py-4 text-right pr-4">
-                                                <button class="p-1 text-slate-400 hover:text-slate-700 transition cursor-pointer">
-                                                    <svg class="h-4.5 w-4.5" fill="currentColor" viewBox="0 0 20 20">
-                                                        <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
-                                                    </svg>
-                                                </button>
-                                            </td>
-                                        </tr>
-
-                                        <!-- Row 3 -->
-                                        <tr class="group hover:bg-slate-50/50 transition">
-                                            <td class="py-4 flex items-center gap-3">
-                                                <!-- Initials Icon for Anna Lee -->
-                                                <div class="h-9 w-9 rounded-full bg-rose-100 text-rose-700 font-semibold flex items-center justify-center text-xs tracking-wider">
-                                                    AL
-                                                </div>
-                                                <div>
-                                                    <p class="font-semibold text-slate-800 group-hover:text-[#0b1c3d] transition">Anna Lee</p>
-                                                    <span class="text-slate-400 text-[10px] mt-0.5 block">anna.lee@gmail.com</span>
-                                                </div>
-                                            </td>
-                                            <td class="py-4">
-                                                <span class="px-2.5 py-1 text-[10px] font-bold text-rose-600 bg-rose-50 rounded-full">Rejected</span>
-                                            </td>
-                                            <td class="py-4 text-slate-500 font-medium">Oct 09, 2023</td>
-                                            <td class="py-4 font-semibold text-slate-800">₱12,000</td>
-                                            <td class="py-4 text-right pr-4">
-                                                <button class="p-1 text-slate-400 hover:text-slate-700 transition cursor-pointer">
-                                                    <svg class="h-4.5 w-4.5" fill="currentColor" viewBox="0 0 20 20">
-                                                        <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
-                                                    </svg>
-                                                </button>
+                                        <!-- Fallback Empty Row -->
+                                        <tr v-if="guestRecords.length === 0">
+                                            <td colspan="5" class="py-8 text-center text-slate-400 font-light italic">
+                                                No guest records found in the database.
                                             </td>
                                         </tr>
                                     </tbody>
@@ -2425,7 +2395,7 @@
                             </div>
 
                             <!-- Table Footer -->
-                            <button class="w-full py-3 text-slate-500 hover:text-slate-800 text-xs font-semibold tracking-wide border-t border-slate-50 transition cursor-pointer">
+                            <button @click="activeTab = 'approved'" class="w-full py-3 text-slate-500 hover:text-slate-800 text-xs font-semibold tracking-wide border-t border-slate-50 transition cursor-pointer">
                                 View All Reservations
                             </button>
                         </div>
@@ -6302,6 +6272,132 @@ const approvedReservations = ref([])
 
 
 const rejectedReservations = ref([])
+
+const guestRecords = computed(() => {
+    const list = []
+    
+    pendingReservations.value.forEach(r => {
+        list.push({
+            id: r.id,
+            reference: r.reference,
+            name: r.name,
+            email: r.email,
+            phone: r.phone,
+            roomName: r.roomName,
+            roomType: r.roomType,
+            checkIn: r.startDate,
+            checkInDateRaw: r.checkInDateRaw,
+            amount: r.amount,
+            status: 'Pending',
+            statusType: 'pending',
+            guests: r.guests,
+            nights: r.nights,
+            specialRequests: r.specialRequests,
+            createdTime: r.createdTime
+        })
+    })
+    
+    approvedReservations.value.forEach(r => {
+        list.push({
+            id: r.id,
+            reference: r.reference,
+            name: r.name,
+            email: r.email,
+            phone: r.phone,
+            roomName: r.roomName,
+            roomType: r.roomType,
+            checkIn: r.startDate,
+            checkInDateRaw: r.checkInDateRaw,
+            amount: r.amount,
+            status: r.status, 
+            statusType: r.statusType,
+            guests: r.guestsText,
+            nights: r.nightsCount,
+            specialRequests: r.specialRequests,
+            createdTime: r.createdTime
+        })
+    })
+    
+    rejectedReservations.value.forEach(r => {
+        list.push({
+            id: r.id,
+            reference: r.reference,
+            name: r.name,
+            email: r.email,
+            phone: r.phone,
+            roomName: r.roomName,
+            roomType: r.roomType,
+            checkIn: r.startDate,
+            checkInDateRaw: r.checkInDateRaw,
+            amount: r.amount,
+            status: 'Rejected',
+            statusType: 'rejected',
+            guests: r.guests,
+            nights: r.nightsCount,
+            specialRequests: r.specialRequests,
+            createdTime: r.createdTime
+        })
+    })
+    
+    return list.sort((a, b) => b.id - a.id)
+})
+
+const viewBookingDetails = (record) => {
+    if (record.statusType === 'pending') {
+        const found = pendingReservations.value.find(r => r.id === record.id)
+        if (found) {
+            selectedPendingReservation.value = found
+            activeTab.value = 'pending'
+        }
+    } else if (record.statusType === 'rejected') {
+        const found = rejectedReservations.value.find(r => r.id === record.id)
+        if (found) {
+            selectedRejectedReservation.value = found
+            activeTab.value = 'rejected'
+        }
+    } else {
+        const found = approvedReservations.value.find(r => r.id === record.id)
+        if (found) {
+            selectedApprovedReservation.value = found
+            activeTab.value = 'approved'
+        }
+    }
+}
+
+const exportGuestRecordsCSV = () => {
+    if (guestRecords.value.length === 0) {
+        alert('No guest records available to export.')
+        return
+    }
+    
+    let csvContent = "data:text/csv;charset=utf-8," 
+        + "Reference,Guest Name,Email,Phone,Room Type,Room Name,Check-in Date,Nights,Guests,Amount,Status\n"
+        
+    guestRecords.value.forEach(r => {
+        const row = [
+            r.reference,
+            `"${r.name.replace(/"/g, '""')}"`,
+            r.email,
+            r.phone,
+            r.roomType,
+            r.roomName,
+            r.checkInDateRaw,
+            r.nights,
+            `"${r.guests}"`,
+            r.amount.replace(/,/g, ''),
+            r.status
+        ].join(",")
+        csvContent += row + "\n"
+    })
+    
+    const encodedUri = encodeURI(csvContent)
+    const link = document.createElement("a")
+    link.setAttribute("href", encodedUri)
+    link.setAttribute("download", "aruga_guest_records.csv")
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+}
 
 const rejectedInvalidPaymentsCount = computed(() => {
     return rejectedReservations.value.filter(r => {
