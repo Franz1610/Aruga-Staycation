@@ -2362,7 +2362,7 @@
                                         
                                         <!-- Dynamic Guest Records Row -->
                                         <tr 
-                                            v-for="record in filteredGuestRecords" 
+                                            v-for="record in visibleGuestRecords" 
                                             :key="record.id" 
                                             @click="viewBookingDetails(record)" 
                                             class="group hover:bg-slate-50/50 transition cursor-pointer"
@@ -2412,8 +2412,12 @@
                             </div>
 
                             <!-- Table Footer -->
-                            <button @click="activeTab = 'approved'" class="w-full py-3 text-slate-500 hover:text-slate-800 text-xs font-semibold tracking-wide border-t border-slate-50 transition cursor-pointer">
-                                View All Reservations
+                            <button 
+                                v-if="filteredGuestRecords.length > 5"
+                                @click="expandGuestRecords = !expandGuestRecords" 
+                                class="w-full py-3 text-slate-500 hover:text-slate-800 text-xs font-semibold tracking-wide border-t border-slate-50 transition cursor-pointer"
+                            >
+                                {{ expandGuestRecords ? 'Collapse Table' : 'View All Reservations' }}
                             </button>
                         </div>
                     </div>
@@ -6377,6 +6381,15 @@ const filteredGuestRecords = computed(() => {
         return guestRecords.value
     }
     return guestRecords.value.filter(record => record.statusType === selectedStatusFilter.value)
+})
+
+const expandGuestRecords = ref(false)
+
+const visibleGuestRecords = computed(() => {
+    if (expandGuestRecords.value) {
+        return filteredGuestRecords.value
+    }
+    return filteredGuestRecords.value.slice(0, 5)
 })
 
 const getFilterLabel = (value) => {
