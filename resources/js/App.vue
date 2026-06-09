@@ -2034,21 +2034,63 @@
                             </svg>
                         </span>
                         <input 
+                            v-model="adminSearchQuery"
                             type="text" 
                             placeholder="Search reservations or guests..." 
-                            class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-100 focus:outline-none focus:border-slate-200 focus:bg-white rounded-xl text-xs transition"
+                            class="w-full pl-10 pr-8 py-2 bg-slate-50 border border-slate-100 focus:outline-none focus:border-slate-200 focus:bg-white rounded-xl text-xs transition"
                         />
+                        <button 
+                            v-if="adminSearchQuery"
+                            @click="adminSearchQuery = ''"
+                            class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer"
+                        >
+                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
                     </div>
 
                     <!-- User Actions -->
                     <div class="flex items-center gap-4">
                         <!-- Notification icon -->
-                        <button class="relative p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition">
-                            <svg class="h-5.5 w-5.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                            </svg>
-                            <span class="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-rose-500 border-2 border-white"></span>
-                        </button>
+                        <div class="relative">
+                            <button 
+                                @click="showNotificationDropdown = !showNotificationDropdown" 
+                                class="relative p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition cursor-pointer"
+                            >
+                                <svg class="h-5.5 w-5.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                                </svg>
+                                <span v-if="recentActivities.length > 0" class="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-rose-500 border-2 border-white"></span>
+                            </button>
+                            
+                            <!-- Notification Dropdown Overlay -->
+                            <div v-if="showNotificationDropdown" class="absolute right-0 mt-2 w-80 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl shadow-xl z-50 p-4 animate-fade-in-down">
+                                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-850 pb-2 mb-3">
+                                    <h4 class="font-serif text-[#0b1c3d] dark:text-slate-100 font-bold text-xs">Recent Activities</h4>
+                                    <span class="text-[9px] font-bold text-[#A27B5C] bg-[#FAF0E6] dark:bg-amber-950/20 dark:text-amber-300 px-2 py-0.5 rounded-full">{{ recentActivities.length }} Alert{{ recentActivities.length === 1 ? '' : 's' }}</span>
+                                </div>
+                                
+                                <div class="max-h-72 overflow-y-auto space-y-3 pr-1">
+                                    <div 
+                                        v-for="(act, idx) in recentActivities" 
+                                        :key="idx" 
+                                        @click="handleActivityClick(act)"
+                                        class="flex items-start gap-2.5 pb-2 border-b border-slate-50 dark:border-slate-850/50 last:border-0 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/40 p-1.5 -mx-1.5 rounded-lg transition"
+                                    >
+                                        <span :class="['h-2 w-2 rounded-full mt-1.5 shrink-0', act.colorClass]"></span>
+                                        <div class="flex-grow min-w-0">
+                                            <p class="text-[11px] font-semibold text-slate-800 dark:text-slate-202 leading-normal truncate">{{ act.title }}</p>
+                                            <p class="text-[10px] text-slate-550 dark:text-slate-400 mt-0.5 leading-snug">{{ act.detail }}</p>
+                                            <span class="text-[9px] text-slate-405 dark:text-slate-500 block mt-1 font-semibold">{{ act.timestamp }}</span>
+                                        </div>
+                                    </div>
+                                    <div v-if="recentActivities.length === 0" class="text-center py-6 text-slate-400 font-light italic text-xs">
+                                        No recent activities recorded.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                         <!-- User Profile Info -->
                         <div class="flex items-center gap-3">
@@ -2073,8 +2115,205 @@
                 <!-- Page Content -->
                 <main class="flex-grow p-6 md:p-10 space-y-8 max-w-[1600px] w-full mx-auto">
                     
-                    <!-- TAB: DASHBOARD OVERVIEW -->
-                    <div v-if="activeTab === 'dashboard_overview'" class="space-y-8 animate-fade-in">
+                    <!-- TAB: SEARCH RESULTS -->
+                    <div v-if="adminSearchQuery" class="space-y-8 animate-fade-in">
+                        <!-- Breadcrumb & Title -->
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div>
+                                <div class="flex items-center gap-1.5 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+                                    <span>Admin</span>
+                                    <svg class="h-2.5 w-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                                    </svg>
+                                    <span class="text-[#A27B5C]">Search Results</span>
+                                </div>
+                                <h1 class="font-serif text-[#0b1c3d] dark:text-slate-100 text-3xl font-bold tracking-tight mt-1">
+                                    {{ filteredSearchResults.length }} result{{ filteredSearchResults.length !== 1 ? 's' : '' }} for "{{ adminSearchQuery }}"
+                                </h1>
+                            </div>
+                            
+                            <!-- Search Actions -->
+                            <div class="flex items-center gap-3 self-end sm:self-auto shrink-0 relative animate-fade-in">
+                                <button @click="adminSearchQuery = ''" class="flex items-center gap-2 px-4 py-2.5 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-xs font-semibold tracking-wide shadow-sm transition cursor-pointer">
+                                    <span>Clear Search</span>
+                                </button>
+                                
+                                <!-- Filter Dropdown Trigger -->
+                                <div class="relative">
+                                    <button @click="showSearchFilterDropdown = !showSearchFilterDropdown" class="flex items-center gap-2 px-4 py-2.5 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-xs font-semibold tracking-wide shadow-sm transition cursor-pointer">
+                                        <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                                        </svg>
+                                        <span>Filter: {{ searchStatusFilter === 'all' ? 'All' : searchStatusFilter.charAt(0).toUpperCase() + searchStatusFilter.slice(1) }}</span>
+                                    </button>
+                                    
+                                    <!-- Filter Dropdown Menu -->
+                                    <div v-if="showSearchFilterDropdown" class="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl shadow-xl z-30 py-2 animate-fade-in-down">
+                                        <button 
+                                            @click="searchStatusFilter = 'all'; showSearchFilterDropdown = false"
+                                            :class="[searchStatusFilter === 'all' ? 'text-[#0B1E3F] font-bold bg-slate-50 dark:bg-slate-800' : 'text-slate-650 dark:text-slate-350', 'w-full text-left px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-xs transition cursor-pointer']"
+                                        >
+                                            All Statuses
+                                        </button>
+                                        <button 
+                                            @click="searchStatusFilter = 'pending'; showSearchFilterDropdown = false"
+                                            :class="[searchStatusFilter === 'pending' ? 'text-[#0B1E3F] font-bold bg-slate-50 dark:bg-slate-800' : 'text-slate-650 dark:text-slate-350', 'w-full text-left px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-xs transition cursor-pointer']"
+                                        >
+                                            Pending
+                                        </button>
+                                        <button 
+                                            @click="searchStatusFilter = 'approved'; showSearchFilterDropdown = false"
+                                            :class="[searchStatusFilter === 'approved' ? 'text-[#0B1E3F] font-bold bg-slate-50 dark:bg-slate-800' : 'text-slate-650 dark:text-slate-350', 'w-full text-left px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-xs transition cursor-pointer']"
+                                        >
+                                            Approved / In-Stay
+                                        </button>
+                                        <button 
+                                            @click="searchStatusFilter = 'rejected'; showSearchFilterDropdown = false"
+                                            :class="[searchStatusFilter === 'rejected' ? 'text-[#0B1E3F] font-bold bg-slate-50 dark:bg-slate-800' : 'text-slate-650 dark:text-slate-350', 'w-full text-left px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-xs transition cursor-pointer']"
+                                        >
+                                            Rejected
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <button @click="exportSearchResultsCSV" class="flex items-center gap-2 px-4 py-2.5 bg-[#0B1E3F] text-white hover:bg-[#0B1E3F]/90 rounded-xl text-xs font-semibold tracking-wide shadow-sm transition cursor-pointer animate-fade-in">
+                                    <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                    </svg>
+                                    <span>Export Report</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Table Card -->
+                        <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm space-y-4">
+                            <div class="overflow-x-auto">
+                                <table class="w-full min-w-[800px] border-collapse text-left text-xs">
+                                    <thead>
+                                        <tr class="border-b border-slate-100 dark:border-slate-800 text-slate-400 dark:text-slate-500 font-semibold uppercase tracking-wider">
+                                            <th class="py-4 font-semibold w-[15%]">Reservation ID</th>
+                                            <th class="py-4 font-semibold w-[25%]">Guest Name</th>
+                                            <th class="py-4 font-semibold w-[20%]">Stay Dates</th>
+                                            <th class="py-4 font-semibold w-[15%]">Room Type</th>
+                                            <th class="py-4 font-semibold w-[12%]">Amount</th>
+                                            <th class="py-4 font-semibold w-[13%]">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-50 dark:divide-slate-800">
+                                        <tr 
+                                            v-for="record in paginatedSearchResults" 
+                                            :key="record.id" 
+                                            @click="viewBookingDetailsFromSearch(record)"
+                                            class="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition cursor-pointer"
+                                        >
+                                            <!-- Reservation ID -->
+                                            <td class="py-4.5 font-bold text-[#0b1c3d] dark:text-amber-400">
+                                                {{ record.reference }}
+                                            </td>
+                                            
+                                            <!-- Guest Name & Email -->
+                                            <td class="py-4.5">
+                                                <div class="flex items-center gap-3">
+                                                    <div class="h-8 w-8 rounded-full bg-[#0B1E3F] text-amber-300 flex items-center justify-center font-bold text-xs uppercase shrink-0">
+                                                        {{ record.name ? record.name.charAt(0) : 'G' }}
+                                                    </div>
+                                                    <div>
+                                                        <h4 class="font-bold text-slate-800 dark:text-slate-200">{{ record.name }}</h4>
+                                                        <p class="text-slate-450 dark:text-slate-500 text-[10px] mt-0.5">{{ record.email }}</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            
+                                            <!-- Stay Dates -->
+                                            <td class="py-4.5 text-slate-650 dark:text-slate-300 font-medium">
+                                                {{ record.checkIn }}{{ record.endDate ? ' - ' + record.endDate : '' }}{{ record.year ? ', ' + record.year : '' }}
+                                            </td>
+                                            
+                                            <!-- Room Type Badge -->
+                                            <td class="py-4.5">
+                                                <span :class="[
+                                                    getRoomBadgeClass(record.roomType),
+                                                    'px-2.5 py-1 rounded-full text-[10px] font-bold'
+                                                ]">
+                                                    {{ record.roomType }}
+                                                </span>
+                                            </td>
+                                            
+                                            <!-- Amount -->
+                                            <td class="py-4.5 font-bold text-slate-700 dark:text-slate-200">
+                                                ₱{{ record.amount }}
+                                            </td>
+                                            
+                                            <!-- Status dot badge -->
+                                            <td class="py-4.5">
+                                                <span :class="[
+                                                    getStatusBadgeClass(record.statusType),
+                                                    'px-2.5 py-1 rounded-full text-[10px] font-bold inline-flex items-center gap-1.5'
+                                                ]">
+                                                    <span :class="[
+                                                        getStatusDotClass(record.statusType),
+                                                        'h-1.5 w-1.5 rounded-full'
+                                                    ]"></span>
+                                                    {{ record.status }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr v-if="filteredSearchResults.length === 0">
+                                            <td colspan="6" class="py-10 text-center text-slate-400 dark:text-slate-500">
+                                                No results found matching your search.
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Search Pagination -->
+                            <div v-if="filteredSearchResults.length > 0" class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-50 dark:border-slate-800 text-[11px] text-slate-450 dark:text-slate-500">
+                                <div>
+                                    Showing {{ Math.min(filteredSearchResults.length, (searchCurrentPage - 1) * searchPerPage + 1) }} to {{ Math.min(filteredSearchResults.length, searchCurrentPage * searchPerPage) }} of {{ filteredSearchResults.length }} results
+                                </div>
+                                <div class="flex items-center gap-1.5">
+                                    <button 
+                                        @click="searchCurrentPage = Math.max(1, searchCurrentPage - 1)" 
+                                        :disabled="searchCurrentPage === 1"
+                                        class="h-7 w-7 rounded-lg border border-slate-200 dark:border-slate-800 flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-40 disabled:hover:bg-transparent cursor-pointer"
+                                    >
+                                        <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                                        </svg>
+                                    </button>
+                                    
+                                    <button 
+                                        v-for="p in totalSearchPages" 
+                                        :key="p"
+                                        @click="searchCurrentPage = p"
+                                        :class="[
+                                            searchCurrentPage === p 
+                                                ? 'bg-[#0B1E3F] text-white font-bold' 
+                                                : 'hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-650 dark:text-slate-350',
+                                            'h-7 w-7 rounded-lg text-center font-medium transition cursor-pointer flex items-center justify-center'
+                                        ]"
+                                    >
+                                        {{ p }}
+                                    </button>
+                                    
+                                    <button 
+                                        @click="searchCurrentPage = Math.min(totalSearchPages, searchCurrentPage + 1)" 
+                                        :disabled="searchCurrentPage === totalSearchPages"
+                                        class="h-7 w-7 rounded-lg border border-slate-200 dark:border-slate-800 flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-40 disabled:hover:bg-transparent cursor-pointer"
+                                    >
+                                        <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <template v-else>
+                        <!-- TAB: DASHBOARD OVERVIEW -->
+                        <div v-if="activeTab === 'dashboard_overview'" class="space-y-8 animate-fade-in">
                         <!-- Dashboard Title -->
                         <div>
                             <h1 class="font-serif text-[#0b1c3d] text-3xl font-bold tracking-tight">Dashboard Overview</h1>
@@ -2237,14 +2476,19 @@
                                     <div class="space-y-4">
                                         
                                         <!-- Dynamic Activity Items -->
-                                        <div v-for="(act, idx) in visibleActivities" :key="idx" class="flex items-start gap-3 animate-fade-in">
+                                        <div 
+                                            v-for="(act, idx) in visibleActivities" 
+                                            :key="idx" 
+                                            @click="handleActivityClick(act)"
+                                            class="flex items-start gap-3 animate-fade-in hover:bg-slate-50/70 dark:hover:bg-slate-800/40 p-2 -m-2 rounded-xl cursor-pointer transition"
+                                        >
                                             <span :class="['h-2 w-2 rounded-full mt-2 shrink-0', act.colorClass]"></span>
                                             <div>
-                                                <p class="text-xs text-slate-700 leading-normal">
-                                                    <span class="font-semibold text-slate-900">{{ act.title }}</span>
-                                                    <span class="block text-slate-500 text-[10px] mt-0.5">{{ act.detail }}</span>
+                                                <p class="text-xs text-slate-700 dark:text-slate-300 leading-normal">
+                                                    <span class="font-semibold text-slate-900 dark:text-slate-100">{{ act.title }}</span>
+                                                    <span class="block text-slate-500 dark:text-slate-400 text-[10px] mt-0.5">{{ act.detail }}</span>
                                                 </p>
-                                                <span class="text-[10px] text-slate-400 block mt-0.5">{{ act.timestamp }}</span>
+                                                <span class="text-[10px] text-slate-400 dark:text-slate-500 block mt-0.5">{{ act.timestamp }}</span>
                                             </div>
                                         </div>
 
@@ -2391,15 +2635,47 @@
                             </div>
                             
                             <!-- Action Buttons -->
-                            <div class="flex items-center gap-3 self-end sm:self-auto shrink-0">
-                                <button class="flex items-center gap-2 px-4 py-2.5 border border-slate-100 dark:border-slate-800 rounded-xl text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-xs font-semibold tracking-wide shadow-sm transition cursor-pointer">
-                                    <!-- Filter Icon -->
-                                    <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                                    </svg>
-                                    Filter
-                                </button>
-                                <button class="flex items-center gap-2 px-4 py-2.5 border border-slate-100 dark:border-slate-800 rounded-xl text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-xs font-semibold tracking-wide shadow-sm transition cursor-pointer">
+                            <div class="flex items-center gap-3 self-end sm:self-auto shrink-0 relative">
+                                <!-- Filter Dropdown Trigger -->
+                                <div class="relative">
+                                    <button @click="showPendingFilterDropdown = !showPendingFilterDropdown" class="flex items-center gap-2 px-4 py-2.5 border border-slate-100 dark:border-slate-800 rounded-xl text-slate-600 dark:text-slate-350 hover:text-slate-900 dark:hover:text-white bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-xs font-semibold tracking-wide shadow-sm transition cursor-pointer">
+                                        <!-- Filter Icon -->
+                                        <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                                        </svg>
+                                        <span>Room: {{ pendingRoomFilter === 'all' ? 'All' : pendingRoomFilter }}</span>
+                                    </button>
+                                    
+                                    <!-- Filter Dropdown Menu -->
+                                    <div v-if="showPendingFilterDropdown" class="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl shadow-xl z-30 py-2 animate-fade-in-down">
+                                        <button 
+                                            @click="pendingRoomFilter = 'all'; showPendingFilterDropdown = false"
+                                            :class="[pendingRoomFilter === 'all' ? 'text-[#0B1E3F] font-bold bg-slate-50 dark:bg-slate-800' : 'text-slate-650 dark:text-slate-350', 'w-full text-left px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-xs transition cursor-pointer']"
+                                        >
+                                            All Rooms
+                                        </button>
+                                        <button 
+                                            @click="pendingRoomFilter = 'Couple Room'; showPendingFilterDropdown = false"
+                                            :class="[pendingRoomFilter === 'Couple Room' ? 'text-[#0B1E3F] font-bold bg-slate-50 dark:bg-slate-800' : 'text-slate-650 dark:text-slate-350', 'w-full text-left px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-xs transition cursor-pointer']"
+                                        >
+                                            Couple Room
+                                        </button>
+                                        <button 
+                                            @click="pendingRoomFilter = 'Family Room'; showPendingFilterDropdown = false"
+                                            :class="[pendingRoomFilter === 'Family Room' ? 'text-[#0B1E3F] font-bold bg-slate-50 dark:bg-slate-800' : 'text-slate-650 dark:text-slate-350', 'w-full text-left px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-xs transition cursor-pointer']"
+                                        >
+                                            Family Room
+                                        </button>
+                                        <button 
+                                            @click="pendingRoomFilter = 'Function Hall'; showPendingFilterDropdown = false"
+                                            :class="[pendingRoomFilter === 'Function Hall' ? 'text-[#0B1E3F] font-bold bg-slate-50 dark:bg-slate-800' : 'text-slate-650 dark:text-slate-350', 'w-full text-left px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-xs transition cursor-pointer']"
+                                        >
+                                            Function Hall
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <button @click="exportPendingCSV" class="flex items-center gap-2 px-4 py-2.5 border border-slate-100 dark:border-slate-800 rounded-xl text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-xs font-semibold tracking-wide shadow-sm transition cursor-pointer">
                                     <!-- Export CSV / Download Icon -->
                                     <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -2425,7 +2701,7 @@
                                     </thead>
                                     <tbody class="divide-y divide-slate-50 dark:divide-slate-800">
                                         <tr 
-                                            v-for="reservation in pendingReservations" 
+                                            v-for="reservation in filteredPendingReservations" 
                                             :key="reservation.id" 
                                             class="group hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition"
                                         >
@@ -2498,7 +2774,7 @@
 
                             <!-- Table Pagination Footer -->
                             <div class="flex justify-between items-center border-t border-slate-50 dark:border-slate-800 pt-4 text-[10px] text-slate-400 dark:text-slate-500 font-medium">
-                                <span>Showing {{ pendingReservations.length }} of {{ pendingReservations.length }} reservations</span>
+                                <span>Showing {{ filteredPendingReservations.length }} of {{ pendingReservations.length }} reservations</span>
                                 <div class="flex items-center gap-1.5">
                                     <button class="p-1 px-2 border border-slate-100 dark:border-slate-800 rounded-md hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50" disabled>&lt;</button>
                                     <span class="px-2.5 py-1 font-bold text-white bg-[#0B1E3F] dark:bg-amber-500/20 dark:text-amber-300 rounded shadow-sm">1</span>
@@ -2774,14 +3050,46 @@
                             </div>
                             
                             <!-- Action Buttons -->
-                            <div class="flex items-center gap-3 self-end sm:self-auto shrink-0">
-                                <button class="flex items-center gap-2 px-4 py-2.5 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-xs font-semibold tracking-wide shadow-sm transition cursor-pointer">
-                                    <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-                                    </svg>
-                                    <span>Filter By Date</span>
-                                </button>
-                                <button class="flex items-center gap-2 px-4 py-2.5 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-xs font-semibold tracking-wide shadow-sm transition cursor-pointer">
+                            <div class="flex items-center gap-3 self-end sm:self-auto shrink-0 relative animate-fade-in">
+                                <!-- Filter Dropdown Trigger -->
+                                <div class="relative">
+                                    <button @click="showApprovedFilterDropdown = !showApprovedFilterDropdown" class="flex items-center gap-2 px-4 py-2.5 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-xs font-semibold tracking-wide shadow-sm transition cursor-pointer">
+                                        <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                                        </svg>
+                                        <span>Status: {{ approvedStatusFilter === 'all' ? 'All' : (approvedStatusFilter === 'in_stay' ? 'In-Stay' : (approvedStatusFilter === 'pending_check_in' ? 'Upcoming' : 'Completed')) }}</span>
+                                    </button>
+                                    
+                                    <!-- Filter Dropdown Menu -->
+                                    <div v-if="showApprovedFilterDropdown" class="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl shadow-xl z-30 py-2 animate-fade-in-down">
+                                        <button 
+                                            @click="approvedStatusFilter = 'all'; showApprovedFilterDropdown = false"
+                                            :class="[approvedStatusFilter === 'all' ? 'text-[#0B1E3F] font-bold bg-slate-50 dark:bg-slate-800' : 'text-slate-650 dark:text-slate-350', 'w-full text-left px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-xs transition cursor-pointer']"
+                                        >
+                                            All Confirmed
+                                        </button>
+                                        <button 
+                                            @click="approvedStatusFilter = 'in_stay'; showApprovedFilterDropdown = false"
+                                            :class="[approvedStatusFilter === 'in_stay' ? 'text-[#0B1E3F] font-bold bg-slate-50 dark:bg-slate-800' : 'text-slate-650 dark:text-slate-350', 'w-full text-left px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-xs transition cursor-pointer']"
+                                        >
+                                            Active Check-ins
+                                        </button>
+                                        <button 
+                                            @click="approvedStatusFilter = 'pending_check_in'; showApprovedFilterDropdown = false"
+                                            :class="[approvedStatusFilter === 'pending_check_in' ? 'text-[#0B1E3F] font-bold bg-slate-50 dark:bg-slate-800' : 'text-slate-650 dark:text-slate-350', 'w-full text-left px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-xs transition cursor-pointer']"
+                                        >
+                                            Upcoming Arrivals
+                                        </button>
+                                        <button 
+                                            @click="approvedStatusFilter = 'completed'; showApprovedFilterDropdown = false"
+                                            :class="[approvedStatusFilter === 'completed' ? 'text-[#0B1E3F] font-bold bg-slate-50 dark:bg-slate-800' : 'text-slate-650 dark:text-slate-350', 'w-full text-left px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-xs transition cursor-pointer']"
+                                        >
+                                            Completed Stays
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <button @click="exportApprovedCSV" class="flex items-center gap-2 px-4 py-2.5 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-xs font-semibold tracking-wide shadow-sm transition cursor-pointer">
                                     <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                                     </svg>
@@ -2802,7 +3110,7 @@
                                 </div>
                                 <div>
                                     <p class="text-slate-450 dark:text-slate-500 text-[10px] font-semibold uppercase tracking-wider leading-none">Total Confirmed</p>
-                                    <p class="text-2xl font-serif font-bold text-slate-850 dark:text-slate-100 mt-1.5 leading-none">148</p>
+                                    <p class="text-2xl font-serif font-bold text-slate-850 dark:text-slate-100 mt-1.5 leading-none">{{ approvedReservations.length }}</p>
                                 </div>
                             </div>
 
@@ -2815,7 +3123,7 @@
                                 </div>
                                 <div>
                                     <p class="text-slate-450 dark:text-slate-500 text-[10px] font-semibold uppercase tracking-wider leading-none">Active Check-ins</p>
-                                    <p class="text-2xl font-serif font-bold text-slate-850 dark:text-slate-100 mt-1.5 leading-none">32</p>
+                                    <p class="text-2xl font-serif font-bold text-slate-850 dark:text-slate-100 mt-1.5 leading-none">{{ activeCheckInsCount }}</p>
                                 </div>
                             </div>
 
@@ -2828,7 +3136,7 @@
                                 </div>
                                 <div>
                                     <p class="text-slate-450 dark:text-slate-500 text-[10px] font-semibold uppercase tracking-wider leading-none">Upcoming Arrivals</p>
-                                    <p class="text-2xl font-serif font-bold text-slate-850 dark:text-slate-100 mt-1.5 leading-none">12</p>
+                                    <p class="text-2xl font-serif font-bold text-slate-850 dark:text-slate-100 mt-1.5 leading-none">{{ upcomingArrivalsCount }}</p>
                                 </div>
                             </div>
 
@@ -2841,7 +3149,7 @@
                                 </div>
                                 <div>
                                     <p class="text-slate-450 dark:text-slate-500 text-[10px] font-semibold uppercase tracking-wider leading-none">Revenue Secured</p>
-                                    <p class="text-2xl font-serif font-bold text-slate-850 dark:text-slate-100 mt-1.5 leading-none">₱245k</p>
+                                    <p class="text-2xl font-serif font-bold text-slate-850 dark:text-slate-100 mt-1.5 leading-none">₱{{ totalConfirmedSales }}</p>
                                 </div>
                             </div>
                         </div>
@@ -2861,7 +3169,7 @@
                                     </thead>
                                     <tbody class="divide-y divide-slate-50 dark:divide-slate-800">
                                         <tr 
-                                            v-for="reservation in approvedReservations" 
+                                            v-for="reservation in filteredApprovedReservations" 
                                             :key="reservation.id" 
                                             class="group hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition"
                                         >
@@ -2939,6 +3247,11 @@
                                                         </svg>
                                                     </button>
                                                 </div>
+                                            </td>
+                                        </tr>
+                                        <tr v-if="filteredApprovedReservations.length === 0">
+                                            <td colspan="5" class="py-10 text-center text-slate-400 dark:text-slate-505 font-light italic">
+                                                No approved stays match your current filter.
                                             </td>
                                         </tr>
                                     </tbody>
@@ -3206,18 +3519,50 @@
                                 </div>
                                 
                                 <!-- Action Buttons -->
-                                <div class="flex items-center gap-3 self-end sm:self-auto shrink-0">
-                                    <button class="flex items-center gap-2 px-4 py-2.5 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-700 dark:text-slate-350 hover:text-slate-900 dark:hover:text-white bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-xs font-semibold tracking-wide shadow-sm transition cursor-pointer">
-                                        <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-                                        </svg>
-                                        <span>Filter</span>
-                                    </button>
-                                    <button class="flex items-center gap-2 px-4 py-2.5 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-700 dark:text-slate-350 hover:text-slate-900 dark:hover:text-white bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-xs font-semibold tracking-wide shadow-sm transition cursor-pointer">
+                                <div class="flex items-center gap-3 self-end sm:self-auto shrink-0 relative animate-fade-in">
+                                    <!-- Filter Dropdown Trigger -->
+                                    <div class="relative">
+                                        <button @click="showRejectedFilterDropdown = !showRejectedFilterDropdown" class="flex items-center gap-2 px-4 py-2.5 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-700 dark:text-slate-350 hover:text-slate-900 dark:hover:text-white bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-xs font-semibold tracking-wide shadow-sm transition cursor-pointer">
+                                            <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                                            </svg>
+                                            <span>Room: {{ rejectedRoomFilter === 'all' ? 'All' : rejectedRoomFilter }}</span>
+                                        </button>
+                                        
+                                        <!-- Filter Dropdown Menu -->
+                                        <div v-if="showRejectedFilterDropdown" class="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl shadow-xl z-30 py-2 animate-fade-in-down">
+                                            <button 
+                                                @click="rejectedRoomFilter = 'all'; showRejectedFilterDropdown = false"
+                                                :class="[rejectedRoomFilter === 'all' ? 'text-[#0B1E3F] font-bold bg-slate-50 dark:bg-slate-800' : 'text-slate-650 dark:text-slate-350', 'w-full text-left px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-xs transition cursor-pointer']"
+                                            >
+                                                All Rooms
+                                            </button>
+                                            <button 
+                                                @click="rejectedRoomFilter = 'Couple Room'; showRejectedFilterDropdown = false"
+                                                :class="[rejectedRoomFilter === 'Couple Room' ? 'text-[#0B1E3F] font-bold bg-slate-50 dark:bg-slate-800' : 'text-slate-650 dark:text-slate-350', 'w-full text-left px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-xs transition cursor-pointer']"
+                                            >
+                                                Couple Room
+                                            </button>
+                                            <button 
+                                                @click="rejectedRoomFilter = 'Family Room'; showRejectedFilterDropdown = false"
+                                                :class="[rejectedRoomFilter === 'Family Room' ? 'text-[#0B1E3F] font-bold bg-slate-50 dark:bg-slate-800' : 'text-slate-650 dark:text-slate-355', 'w-full text-left px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-xs transition cursor-pointer']"
+                                            >
+                                                Family Room
+                                            </button>
+                                            <button 
+                                                @click="rejectedRoomFilter = 'Function Hall'; showRejectedFilterDropdown = false"
+                                                :class="[rejectedRoomFilter === 'Function Hall' ? 'text-[#0B1E3F] font-bold bg-slate-50 dark:bg-slate-800' : 'text-slate-650 dark:text-slate-355', 'w-full text-left px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-xs transition cursor-pointer']"
+                                            >
+                                                Function Hall
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <button @click="exportRejectedCSV" class="flex items-center gap-2 px-4 py-2.5 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-700 dark:text-slate-350 hover:text-slate-900 dark:hover:text-white bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-xs font-semibold tracking-wide shadow-sm transition cursor-pointer">
                                         <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                                         </svg>
-                                        <span>Export</span>
+                                        <span>Export CSV</span>
                                     </button>
                                 </div>
                             </div>
@@ -3275,7 +3620,7 @@
                                     </thead>
                                     <tbody class="divide-y divide-slate-50 dark:divide-slate-800">
                                         <tr 
-                                            v-for="reservation in rejectedReservations" 
+                                            v-for="reservation in filteredRejectedReservations" 
                                             :key="reservation.id" 
                                             class="group hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition"
                                         >
@@ -3335,13 +3680,18 @@
                                                 </div>
                                             </td>
                                         </tr>
+                                        <tr v-if="filteredRejectedReservations.length === 0">
+                                            <td colspan="6" class="py-10 text-center text-slate-400 dark:text-slate-505 font-light italic">
+                                                No rejected bookings match your current filter.
+                                            </td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
 
                             <!-- Table Pagination Footer -->
                             <div class="flex justify-between items-center border-t border-slate-50 dark:border-slate-800 pt-4 text-[10px] text-slate-400 dark:text-slate-500 font-medium">
-                                <span>Showing {{ rejectedReservations.length }} entry{{ rejectedReservations.length === 1 ? '' : 'es' }}</span>
+                                <span>Showing {{ filteredRejectedReservations.length }} of {{ rejectedReservations.length }} entries</span>
                                 <div class="flex items-center gap-1.5">
                                     <button class="p-1 px-2 border border-slate-200 dark:border-slate-800 rounded-md hover:bg-slate-50 dark:hover:bg-slate-800/50 disabled:opacity-50 text-slate-600 dark:text-slate-400" disabled>&lt;</button>
                                     <span class="px-2.5 py-1 font-bold text-white bg-[#0B1E3F] dark:bg-amber-500/20 dark:text-amber-300 rounded shadow-sm">1</span>
@@ -3603,7 +3953,7 @@
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                             <h3 class="font-serif text-[#0b1c3d] dark:text-slate-100 text-lg font-bold">Active Submissions</h3>
                             
-                            <div class="flex items-center gap-3 w-full sm:w-auto">
+                            <div class="flex items-center gap-3 w-full sm:w-auto relative">
                                 <!-- Search guests -->
                                 <div class="relative flex-grow sm:w-72">
                                     <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
@@ -3613,18 +3963,58 @@
                                     </span>
                                     <input 
                                         type="text" 
-                                        placeholder="Search guests..." 
+                                        v-model="paymentSearchQuery"
+                                        placeholder="Search guests by name or email..." 
                                         class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-100 dark:bg-slate-800 dark:border-slate-700 focus:outline-none focus:bg-white dark:focus:bg-slate-900 rounded-xl text-xs transition dark:text-slate-100"
                                     />
+                                    <button 
+                                        v-if="paymentSearchQuery" 
+                                        @click="paymentSearchQuery = ''" 
+                                        class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 transition"
+                                    >
+                                        <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
                                 </div>
                                 
-                                <!-- Filter Button -->
-                                <button class="flex items-center gap-1.5 px-3.5 py-2 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-600 dark:text-slate-355 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold transition cursor-pointer">
-                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-                                    </svg>
-                                    Filter
-                                </button>
+                                <!-- Filter Button Trigger -->
+                                <div class="relative">
+                                    <button @click="showPaymentFilterDropdown = !showPaymentFilterDropdown" class="flex items-center gap-1.5 px-3.5 py-2 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-600 dark:text-slate-350 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold transition cursor-pointer">
+                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                                        </svg>
+                                        <span>Type: {{ paymentTypeFilter === 'all' ? 'All' : (paymentTypeFilter === 'gcash' ? 'GCash' : (paymentTypeFilter === 'credit_card' ? 'Card' : 'Cash')) }}</span>
+                                    </button>
+                                    
+                                    <!-- Filter Dropdown Menu -->
+                                    <div v-if="showPaymentFilterDropdown" class="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl shadow-xl z-30 py-2 animate-fade-in-down">
+                                        <button 
+                                            @click="paymentTypeFilter = 'all'; showPaymentFilterDropdown = false"
+                                            :class="[paymentTypeFilter === 'all' ? 'text-[#0B1E3F] font-bold bg-slate-50 dark:bg-slate-800' : 'text-slate-650 dark:text-slate-350', 'w-full text-left px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-xs transition cursor-pointer']"
+                                        >
+                                            All Methods
+                                        </button>
+                                        <button 
+                                            @click="paymentTypeFilter = 'gcash'; showPaymentFilterDropdown = false"
+                                            :class="[paymentTypeFilter === 'gcash' ? 'text-[#0B1E3F] font-bold bg-slate-50 dark:bg-slate-800' : 'text-slate-650 dark:text-slate-350', 'w-full text-left px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-xs transition cursor-pointer']"
+                                        >
+                                            GCash
+                                        </button>
+                                        <button 
+                                            @click="paymentTypeFilter = 'credit_card'; showPaymentFilterDropdown = false"
+                                            :class="[paymentTypeFilter === 'credit_card' ? 'text-[#0B1E3F] font-bold bg-slate-50 dark:bg-slate-800' : 'text-slate-650 dark:text-slate-350', 'w-full text-left px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-xs transition cursor-pointer']"
+                                        >
+                                            Credit Card
+                                        </button>
+                                        <button 
+                                            @click="paymentTypeFilter = 'cash_at_property'; showPaymentFilterDropdown = false"
+                                            :class="[paymentTypeFilter === 'cash_at_property' ? 'text-[#0B1E3F] font-bold bg-slate-50 dark:bg-slate-800' : 'text-slate-650 dark:text-slate-350', 'w-full text-left px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-xs transition cursor-pointer']"
+                                        >
+                                            Cash at Property
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -3643,7 +4033,7 @@
                                 </thead>
                                 <tbody class="divide-y divide-slate-50 dark:divide-slate-800">
                                     <tr 
-                                        v-for="submission in paymentSubmissions" 
+                                        v-for="submission in filteredPaymentSubmissions" 
                                         :key="submission.id" 
                                         class="group hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition"
                                     >
@@ -3727,13 +4117,18 @@
                                             </div>
                                         </td>
                                     </tr>
+                                    <tr v-if="filteredPaymentSubmissions.length === 0">
+                                        <td colspan="6" class="py-10 text-center text-slate-400 dark:text-slate-505 font-light italic">
+                                            No payment submissions match your search or filter.
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
 
                         <!-- Table Pagination Footer -->
                         <div class="flex justify-between items-center border-t border-slate-50 dark:border-slate-800 pt-4 text-[10px] text-slate-400 dark:text-slate-500 font-medium">
-                            <span>Showing {{ paymentSubmissions.length }} of {{ paymentSubmissions.length }} pending payments</span>
+                            <span>Showing {{ filteredPaymentSubmissions.length }} of {{ paymentSubmissions.length }} pending payments</span>
                             <div class="flex items-center gap-1.5">
                                 <button class="p-1 px-2 border border-slate-200 dark:border-slate-800 rounded-md hover:bg-slate-50 dark:hover:bg-slate-800/50 disabled:opacity-50 text-slate-600 dark:text-slate-400" disabled>&lt;</button>
                                 <span class="px-2.5 py-1 font-bold text-white bg-[#0B1E3F] dark:bg-amber-500/20 dark:text-amber-300 rounded shadow-sm">1</span>
@@ -4047,8 +4442,6 @@
 
                         <!-- Recent Transactions Card Table -->
                         <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm space-y-5">
-                            
-                            <!-- Card Header -->
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                 <div>
                                     <h3 class="font-serif text-[#0b1c3d] dark:text-slate-100 text-lg font-bold">Recent Transactions</h3>
@@ -4057,13 +4450,95 @@
                                     </p>
                                 </div>
                                 
-                                <div class="flex items-center gap-3 shrink-0 self-end sm:self-auto">
-                                    <button class="flex items-center gap-1.5 px-3.5 py-2.5 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-650 dark:text-slate-355 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold transition cursor-pointer">
-                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-                                        </svg>
-                                        Filter
-                                    </button>
+                                <div class="flex items-center gap-3 shrink-0 self-end sm:self-auto relative animate-fade-in">
+                                    <!-- Filter Button Trigger -->
+                                    <div class="relative">
+                                        <button 
+                                            @click="showSalesFilterDropdown = !showSalesFilterDropdown" 
+                                            class="flex items-center gap-1.5 px-3.5 py-2.5 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-650 dark:text-slate-350 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold transition cursor-pointer"
+                                        >
+                                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                                            </svg>
+                                            <span>Filter ({{ (salesRoomFilter === 'all' ? 'All Rooms' : salesRoomFilter) + ' + ' + (salesPaymentFilter === 'all' ? 'All Payments' : (salesPaymentFilter === 'gcash' ? 'GCash' : (salesPaymentFilter === 'credit_card' ? 'Card' : 'Cash'))) }})</span>
+                                        </button>
+                                        
+                                        <!-- Mix and Match Dropdown Menu -->
+                                        <div v-if="showSalesFilterDropdown" class="absolute right-0 mt-2 w-64 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl shadow-xl z-30 p-4 space-y-4 animate-fade-in-down">
+                                            <!-- Room Type Section -->
+                                            <div>
+                                                <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2">Room Type</p>
+                                                <div class="grid grid-cols-1 gap-1">
+                                                    <button 
+                                                        @click="salesRoomFilter = 'all'"
+                                                        :class="[salesRoomFilter === 'all' ? 'text-[#0B1E3F] font-bold bg-slate-50 dark:bg-slate-800/80' : 'text-slate-650 dark:text-slate-350', 'w-full text-left px-2.5 py-1.5 hover:bg-slate-50 dark:hover:bg-slate-800/40 text-xs rounded-lg transition cursor-pointer']"
+                                                    >
+                                                        All Room Types
+                                                    </button>
+                                                    <button 
+                                                        @click="salesRoomFilter = 'Couple Room'"
+                                                        :class="[salesRoomFilter === 'Couple Room' ? 'text-[#0B1E3F] font-bold bg-slate-50 dark:bg-slate-800/80' : 'text-slate-655 dark:text-slate-350', 'w-full text-left px-2.5 py-1.5 hover:bg-slate-50 dark:hover:bg-slate-800/40 text-xs rounded-lg transition cursor-pointer']"
+                                                    >
+                                                        Couple Room
+                                                    </button>
+                                                    <button 
+                                                        @click="salesRoomFilter = 'Family Room'"
+                                                        :class="[salesRoomFilter === 'Family Room' ? 'text-[#0B1E3F] font-bold bg-slate-50 dark:bg-slate-800/80' : 'text-slate-655 dark:text-slate-350', 'w-full text-left px-2.5 py-1.5 hover:bg-slate-50 dark:hover:bg-slate-800/40 text-xs rounded-lg transition cursor-pointer']"
+                                                    >
+                                                        Family Room
+                                                    </button>
+                                                    <button 
+                                                        @click="salesRoomFilter = 'Function Hall'"
+                                                        :class="[salesRoomFilter === 'Function Hall' ? 'text-[#0B1E3F] font-bold bg-slate-50 dark:bg-slate-800/80' : 'text-slate-655 dark:text-slate-350', 'w-full text-left px-2.5 py-1.5 hover:bg-slate-50 dark:hover:bg-slate-800/40 text-xs rounded-lg transition cursor-pointer']"
+                                                    >
+                                                        Function Hall
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="border-t border-slate-100 dark:border-slate-800"></div>
+    
+                                            <!-- Payment Method Section -->
+                                            <div>
+                                                <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2">Payment Method</p>
+                                                <div class="grid grid-cols-1 gap-1">
+                                                    <button 
+                                                        @click="salesPaymentFilter = 'all'"
+                                                        :class="[salesPaymentFilter === 'all' ? 'text-[#0B1E3F] font-bold bg-slate-50 dark:bg-slate-800/80' : 'text-slate-650 dark:text-slate-350', 'w-full text-left px-2.5 py-1.5 hover:bg-slate-50 dark:hover:bg-slate-800/40 text-xs rounded-lg transition cursor-pointer']"
+                                                    >
+                                                        All Methods
+                                                    </button>
+                                                    <button 
+                                                        @click="salesPaymentFilter = 'gcash'"
+                                                        :class="[salesPaymentFilter === 'gcash' ? 'text-[#0B1E3F] font-bold bg-slate-50 dark:bg-slate-800/80' : 'text-slate-655 dark:text-slate-355', 'w-full text-left px-2.5 py-1.5 hover:bg-slate-50 dark:hover:bg-slate-800/40 text-xs rounded-lg transition cursor-pointer']"
+                                                    >
+                                                        GCash
+                                                    </button>
+                                                    <button 
+                                                        @click="salesPaymentFilter = 'credit_card'"
+                                                        :class="[salesPaymentFilter === 'credit_card' ? 'text-[#0B1E3F] font-bold bg-slate-50 dark:bg-slate-800/80' : 'text-slate-655 dark:text-slate-355', 'w-full text-left px-2.5 py-1.5 hover:bg-slate-50 dark:hover:bg-slate-800/40 text-xs rounded-lg transition cursor-pointer']"
+                                                    >
+                                                        Credit Card
+                                                    </button>
+                                                    <button 
+                                                        @click="salesPaymentFilter = 'cash_at_property'"
+                                                        :class="[salesPaymentFilter === 'cash_at_property' ? 'text-[#0B1E3F] font-bold bg-slate-50 dark:bg-slate-800/80' : 'text-slate-655 dark:text-slate-355', 'w-full text-left px-2.5 py-1.5 hover:bg-slate-50 dark:hover:bg-slate-800/40 text-xs rounded-lg transition cursor-pointer']"
+                                                    >
+                                                        Cash at Property
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="border-t border-slate-100 dark:border-slate-800 pt-2 flex justify-end">
+                                                <button 
+                                                    @click="showSalesFilterDropdown = false" 
+                                                    class="px-3 py-1.5 bg-[#0B1E3F] hover:bg-[#152e59] dark:bg-amber-500/20 dark:hover:bg-amber-500/30 text-white dark:text-amber-300 font-bold text-[10px] rounded transition cursor-pointer"
+                                                >
+                                                    Apply Filters
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
                                     
                                     <button class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0B1E3F] hover:bg-[#152e59] dark:bg-amber-500/20 dark:hover:bg-amber-500/30 text-white dark:text-amber-300 hover:text-white text-xs font-semibold tracking-wide shadow-md transition cursor-pointer">
                                         <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -4138,6 +4613,11 @@
                                                 >
                                                     Failed
                                                 </span>
+                                            </td>
+                                        </tr>
+                                        <tr v-if="recentTransactions.length === 0">
+                                            <td colspan="6" class="py-10 text-center text-slate-400 dark:text-slate-505 font-light italic">
+                                                No transactions match your current filters.
                                             </td>
                                         </tr>
                                     </tbody>
@@ -4813,6 +5293,7 @@
                         <p class="text-slate-400 text-xs mt-1">This section is currently under development or restricted based on your role privileges.</p>
                     </div>
 
+                    </template>
                 </main>
             </div>
         </div>
@@ -6174,6 +6655,63 @@ const submitBookingSimulated = async () => {
 }
 
 const activeTab = ref('dashboard_overview')
+const adminSearchQuery = ref('')
+const searchCurrentPage = ref(1)
+const searchPerPage = 5
+
+const pendingRoomFilter = ref('all')
+const showPendingFilterDropdown = ref(false)
+
+const filteredPendingReservations = computed(() => {
+    if (pendingRoomFilter.value === 'all') {
+        return pendingReservations.value
+    }
+    return pendingReservations.value.filter(r => r.roomType === pendingRoomFilter.value)
+})
+
+const approvedStatusFilter = ref('all')
+const showApprovedFilterDropdown = ref(false)
+
+const filteredApprovedReservations = computed(() => {
+    if (approvedStatusFilter.value === 'all') {
+        return approvedReservations.value
+    }
+    return approvedReservations.value.filter(r => r.statusType === approvedStatusFilter.value)
+})
+
+const rejectedRoomFilter = ref('all')
+const showRejectedFilterDropdown = ref(false)
+
+const filteredRejectedReservations = computed(() => {
+    if (rejectedRoomFilter.value === 'all') {
+        return rejectedReservations.value
+    }
+})
+
+const paymentSearchQuery = ref('')
+const paymentTypeFilter = ref('all')
+const showPaymentFilterDropdown = ref(false)
+
+const filteredPaymentSubmissions = computed(() => {
+    let list = paymentSubmissions.value
+    
+    if (paymentTypeFilter.value !== 'all') {
+        list = list.filter(s => s.paymentMethod === paymentTypeFilter.value)
+    }
+    
+    if (paymentSearchQuery.value.trim()) {
+        const q = paymentSearchQuery.value.toLowerCase().trim()
+        list = list.filter(s => {
+            return (
+                (s.name && s.name.toLowerCase().includes(q)) ||
+                (s.email && s.email.toLowerCase().includes(q))
+            )
+        })
+    }
+    
+    return list
+})
+
 const theme = ref('light')
 const selectedPendingReservation = ref(null)
 const selectedApprovedReservation = ref(null)
@@ -6262,6 +6800,8 @@ const guestRecords = computed(() => {
             roomName: r.roomName,
             roomType: r.roomType,
             checkIn: r.startDate,
+            endDate: r.endDate,
+            year: r.year,
             checkInDateRaw: r.checkInDateRaw,
             amount: r.amount,
             status: 'Pending',
@@ -6283,6 +6823,8 @@ const guestRecords = computed(() => {
             roomName: r.roomName,
             roomType: r.roomType,
             checkIn: r.startDate,
+            endDate: r.endDate,
+            year: r.year,
             checkInDateRaw: r.checkInDateRaw,
             amount: r.amount,
             status: r.status, 
@@ -6304,6 +6846,8 @@ const guestRecords = computed(() => {
             roomName: r.roomName,
             roomType: r.roomType,
             checkIn: r.startDate,
+            endDate: r.endDate,
+            year: r.year,
             checkInDateRaw: r.checkInDateRaw,
             amount: r.amount,
             status: 'Rejected',
@@ -6317,6 +6861,238 @@ const guestRecords = computed(() => {
     
     return list.sort((a, b) => b.id - a.id)
 })
+
+const searchResults = computed(() => {
+    if (!adminSearchQuery.value) return []
+    const q = adminSearchQuery.value.toLowerCase().trim()
+    return guestRecords.value.filter(r => {
+        return (
+            (r.reference && r.reference.toLowerCase().includes(q)) ||
+            (r.name && r.name.toLowerCase().includes(q)) ||
+            (r.email && r.email.toLowerCase().includes(q)) ||
+            (r.roomType && r.roomType.toLowerCase().includes(q)) ||
+            (r.roomName && r.roomName.toLowerCase().includes(q))
+        )
+    })
+})
+
+const searchStatusFilter = ref('all')
+const showSearchFilterDropdown = ref(false)
+
+const filteredSearchResults = computed(() => {
+    if (searchStatusFilter.value === 'all') {
+        return searchResults.value
+    }
+    return searchResults.value.filter(r => {
+        const s = (r.statusType || '').toLowerCase()
+        if (searchStatusFilter.value === 'pending') {
+            return s === 'pending' || s === 'awaiting_verification' || s === 'receipt_uploaded'
+        } else if (searchStatusFilter.value === 'approved') {
+            return s === 'approved' || s === 'confirmed' || s === 'in_stay' || s === 'completed'
+        } else if (searchStatusFilter.value === 'rejected') {
+            return s === 'rejected'
+        }
+        return true
+    })
+})
+
+watch(adminSearchQuery, () => {
+    searchCurrentPage.value = 1
+    searchStatusFilter.value = 'all'
+    showSearchFilterDropdown.value = false
+})
+
+const paginatedSearchResults = computed(() => {
+    const start = (searchCurrentPage.value - 1) * searchPerPage
+    return filteredSearchResults.value.slice(start, start + searchPerPage)
+})
+
+const totalSearchPages = computed(() => {
+    return Math.ceil(filteredSearchResults.value.length / searchPerPage) || 1
+})
+
+const getRoomBadgeClass = (roomType) => {
+    const t = roomType || ''
+    if (t === 'Couple Room') {
+        return 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-300'
+    } else if (t === 'Family Room') {
+        return 'bg-amber-50 text-[#A27B5C] dark:bg-amber-950/20 dark:text-amber-300'
+    } else {
+        return 'bg-blue-50 text-blue-700 dark:bg-blue-950/20 dark:text-blue-300'
+    }
+}
+
+const getStatusBadgeClass = (statusType) => {
+    const s = (statusType || '').toLowerCase()
+    if (s === 'pending' || s === 'awaiting_verification' || s === 'receipt_uploaded') {
+        return 'bg-amber-50 text-amber-700 dark:bg-amber-950/20 dark:text-amber-300'
+    } else if (s === 'approved' || s === 'confirmed' || s === 'in_stay' || s === 'completed') {
+        return 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-300'
+    } else {
+        return 'bg-rose-50 text-rose-700 dark:bg-rose-955/20 dark:text-rose-300'
+    }
+}
+
+const getStatusDotClass = (statusType) => {
+    const s = (statusType || '').toLowerCase()
+    if (s === 'pending' || s === 'awaiting_verification' || s === 'receipt_uploaded') {
+        return 'bg-amber-500'
+    } else if (s === 'approved' || s === 'confirmed' || s === 'in_stay' || s === 'completed') {
+        return 'bg-emerald-500'
+    } else {
+        return 'bg-rose-500'
+    }
+}
+
+const viewBookingDetailsFromSearch = (record) => {
+    adminSearchQuery.value = ''
+    viewBookingDetails(record)
+}
+
+const exportSearchResultsCSV = () => {
+    const recordsToExport = filteredSearchResults.value
+    if (recordsToExport.length === 0) {
+        alert('No search results available to export.')
+        return
+    }
+    
+    let csvContent = "data:text/csv;charset=utf-8," 
+        + "Reference,Guest Name,Email,Phone,Room Type,Room Name,Check-in Date,Nights,Guests,Amount,Status\n"
+        
+    recordsToExport.forEach(r => {
+        const row = [
+            r.reference,
+            `"${r.name.replace(/"/g, '""')}"`,
+            r.email,
+            r.phone,
+            r.roomType,
+            r.roomName,
+            r.checkInDateRaw,
+            r.nights,
+            `"${r.guests}"`,
+            r.amount.replace(/,/g, ''),
+            r.status
+        ].join(",")
+        csvContent += row + "\n"
+    })
+    
+    const encodedUri = encodeURI(csvContent)
+    const link = document.createElement("a")
+    link.setAttribute("href", encodedUri)
+    link.setAttribute("download", `Search_Results_${adminSearchQuery.value.replace(/\s+/g, '_')}.csv`)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+}
+
+const exportPendingCSV = () => {
+    const recordsToExport = filteredPendingReservations.value
+    if (recordsToExport.length === 0) {
+        alert('No pending reservations available to export.')
+        return
+    }
+    
+    let csvContent = "data:text/csv;charset=utf-8," 
+        + "Reference,Guest Name,Email,Phone,Room Type,Room Name,Check-in Date,Nights,Guests,Amount,Status\n"
+        
+    recordsToExport.forEach(r => {
+        const row = [
+            r.reference,
+            `"${r.name.replace(/"/g, '""')}"`,
+            r.email,
+            r.phone,
+            r.roomType,
+            r.roomName,
+            r.checkInDateRaw,
+            r.nights,
+            `"${r.guests}"`,
+            r.amount.replace(/,/g, ''),
+            r.statusType
+        ].join(",")
+        csvContent += row + "\n"
+    })
+    
+    const encodedUri = encodeURI(csvContent)
+    const link = document.createElement("a")
+    link.setAttribute("href", encodedUri)
+    link.setAttribute("download", "pending_reservations.csv")
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+}
+
+const exportApprovedCSV = () => {
+    const recordsToExport = filteredApprovedReservations.value
+    if (recordsToExport.length === 0) {
+        alert('No approved reservations available to export.')
+        return
+    }
+    
+    let csvContent = "data:text/csv;charset=utf-8," 
+        + "Reference,Guest Name,Email,Phone,Room Type,Room Name,Check-in Date,Nights,Guests,Amount,Status,Status Type\n"
+        
+    recordsToExport.forEach(r => {
+        const row = [
+            r.reference,
+            `"${r.name.replace(/"/g, '""')}"`,
+            r.email,
+            r.phone,
+            r.roomType,
+            r.roomName,
+            r.checkInDateRaw,
+            r.nightsCount,
+            `"${r.guestsText}"`,
+            r.amount.replace(/,/g, ''),
+            r.status,
+            r.statusType
+        ].join(",")
+        csvContent += row + "\n"
+    })
+    
+    const encodedUri = encodeURI(csvContent)
+    const link = document.createElement("a")
+    link.setAttribute("href", encodedUri)
+    link.setAttribute("download", "approved_reservations.csv")
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+}
+
+const exportRejectedCSV = () => {
+    const recordsToExport = filteredRejectedReservations.value
+    if (recordsToExport.length === 0) {
+        alert('No rejected reservations available to export.')
+        return
+    }
+    
+    let csvContent = "data:text/csv;charset=utf-8," 
+        + "Reference,Guest Name,Email,Phone,Room Type,Room Name,Check-in Date,Nights,Guests,Amount,Rejection Reason\n"
+        
+    recordsToExport.forEach(r => {
+        const row = [
+            r.reference,
+            `"${r.name.replace(/"/g, '""')}"`,
+            r.email,
+            r.phone,
+            r.roomType,
+            r.roomName,
+            r.checkInDateRaw,
+            r.nightsCount,
+            `"${r.guests}"`,
+            r.amount.replace(/,/g, ''),
+            `"${r.rejectionReason.replace(/"/g, '""')}"`
+        ].join(",")
+        csvContent += row + "\n"
+    })
+    
+    const encodedUri = encodeURI(csvContent)
+    const link = document.createElement("a")
+    link.setAttribute("href", encodedUri)
+    link.setAttribute("download", "rejected_reservations.csv")
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+}
 
 const showFilterDropdown = ref(false)
 const selectedStatusFilter = ref('all')
@@ -6353,16 +7129,15 @@ const getTrendDaysList = () => {
     // Convert now to Manila time (UTC+8)
     const manilaTime = new Date(now.getTime() + (now.getTimezoneOffset() * 60000) + (8 * 3600000))
     
-    // Find Monday of the current week
+    // Find Sunday of the current week
     const dayOfWeek = manilaTime.getDay() // 0 = Sun, 1 = Mon, ..., 6 = Sat
-    const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek
-    const monday = new Date(manilaTime.getTime())
-    monday.setDate(manilaTime.getDate() + diffToMonday)
+    const sunday = new Date(manilaTime.getTime())
+    sunday.setDate(manilaTime.getDate() - dayOfWeek)
     
-    // Generate 7 days starting from Monday
+    // Generate 7 days starting from Sunday
     for (let i = 0; i < 7; i++) {
-        const d = new Date(monday.getTime())
-        d.setDate(monday.getDate() + i)
+        const d = new Date(sunday.getTime())
+        d.setDate(sunday.getDate() + i)
         
         const yyyy = d.getFullYear()
         const mm = String(d.getMonth() + 1).padStart(2, '0')
@@ -6412,7 +7187,9 @@ const recentActivities = computed(() => {
     // 1. Pending Bookings (New Requests)
     pendingReservations.value.forEach(r => {
         list.push({
+            id: r.id,
             type: 'requested',
+            booking: r,
             title: `New reservation request from ${r.name}`,
             detail: `${r.roomType || 'Room'} • ${r.nights || 1} Nights`,
             timestamp: r.createdTime || 'Recently',
@@ -6424,7 +7201,9 @@ const recentActivities = computed(() => {
     // 2. Approved Bookings
     approvedReservations.value.forEach(r => {
         list.push({
+            id: r.id,
             type: 'approved',
+            booking: r,
             title: `${r.name}'s booking was Approved`,
             detail: `${r.roomName || r.roomType} Confirmed`,
             timestamp: r.createdTime || 'Recently',
@@ -6436,7 +7215,9 @@ const recentActivities = computed(() => {
     // 3. Rejected Bookings
     rejectedReservations.value.forEach(r => {
         list.push({
+            id: r.id,
             type: 'rejected',
+            booking: r,
             title: `Reservation for ${r.name} was Rejected`,
             detail: `Reason: ${r.rejectionReason || 'Verification failed'}`,
             timestamp: r.createdTime || 'Recently',
@@ -6449,7 +7230,9 @@ const recentActivities = computed(() => {
     roomsList.value.forEach(room => {
         if (room.status === 'cleaning') {
             list.push({
+                id: room.id,
                 type: 'room_cleaning',
+                room: room,
                 title: `Cleaning scheduled for ${room.name}`,
                 detail: `${room.type} is being prepared`,
                 timestamp: 'Scheduled',
@@ -6458,7 +7241,9 @@ const recentActivities = computed(() => {
             })
         } else if (room.status === 'maintenance') {
             list.push({
+                id: room.id,
                 type: 'room_maintenance',
+                room: room,
                 title: `Room ${room.name} is under maintenance`,
                 detail: `Out of service • ${room.type}`,
                 timestamp: 'Active',
@@ -6467,7 +7252,9 @@ const recentActivities = computed(() => {
             })
         } else if (room.status === 'occupied') {
             list.push({
+                id: room.id,
                 type: 'room_occupied',
+                room: room,
                 title: `Room ${room.name} is now Occupied`,
                 detail: `Guest checked in • ${room.type}`,
                 timestamp: 'Active',
@@ -6500,6 +7287,14 @@ const totalConfirmedSales = computed(() => {
         return (sum / 1000).toFixed(1).replace(/\.0$/, '') + 'K'
     }
     return sum.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })
+})
+
+const activeCheckInsCount = computed(() => {
+    return approvedReservations.value.filter(r => r.statusType === 'in_stay').length
+})
+
+const upcomingArrivalsCount = computed(() => {
+    return approvedReservations.value.filter(r => r.statusType === 'pending_check_in').length
 })
 
 const getFilterLabel = (value) => {
@@ -6655,8 +7450,32 @@ const handleCustomCancel = () => {
     customAlert.show = false
 }
 
+const handleActivityClick = (act) => {
+    showNotificationDropdown.value = false
+    
+    if (act.type === 'requested') {
+        activeTab.value = 'pending'
+        selectedPendingReservation.value = act.booking
+    } else if (act.type === 'approved') {
+        activeTab.value = 'approved'
+        selectedApprovedReservation.value = act.booking
+    } else if (act.type === 'rejected') {
+        activeTab.value = 'rejected'
+        selectedRejectedReservation.value = act.booking
+    } else if (act.type.startsWith('room_')) {
+        activeTab.value = 'room_management'
+        if (act.room) {
+            openEditRoomModal(act.room)
+        }
+    }
+}
+
 const recentTransactions = ref([])
 const salesTimeframe = ref('monthly')
+const salesRoomFilter = ref('all')
+const salesPaymentFilter = ref('all')
+const showSalesFilterDropdown = ref(false)
+const showNotificationDropdown = ref(false)
 const salesLoading = ref(false)
 const salesStats = ref({
     revenue: { value: 0, change: 0 },
@@ -6675,7 +7494,9 @@ const fetchSalesReport = async (page = 1) => {
         const response = await axiosInstance.get('/api/admin/sales', {
             params: {
                 timeframe: salesTimeframe.value,
-                page: page
+                page: page,
+                room_type: salesRoomFilter.value,
+                payment_method: salesPaymentFilter.value
             }
         })
         if (response.data.success) {
@@ -6692,6 +7513,10 @@ const fetchSalesReport = async (page = 1) => {
 }
 
 watch(salesTimeframe, () => {
+    fetchSalesReport(1)
+})
+
+watch([salesRoomFilter, salesPaymentFilter], () => {
     fetchSalesReport(1)
 })
 
@@ -7322,9 +8147,11 @@ const fetchPendingBookings = async () => {
                     initials,
                     bgClass,
                     name: b.guest_name,
+                    email: b.guest_email,
                     suite: b.room ? b.room.name : 'Unknown Room',
                     amount: parseFloat(amountVal).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
                     paymentType: paymentTypeVal,
+                    paymentMethod: b.payment_method,
                     hasProof: !!b.receipt_file_path,
                     proofUrl: b.receipt_file_path,
                     timestamp: formatTimestamp(b.created_at),

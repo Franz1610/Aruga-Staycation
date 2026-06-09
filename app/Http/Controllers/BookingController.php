@@ -360,6 +360,8 @@ class BookingController extends Controller
         }
 
         $timeframe = $request->query('timeframe', 'monthly');
+        $roomType = $request->query('room_type', 'all');
+        $paymentMethod = $request->query('payment_method', 'all');
         $now = Carbon::now();
         
         switch ($timeframe) {
@@ -394,8 +396,8 @@ class BookingController extends Controller
                 break;
         }
 
-        $currStats = $this->getPeriodStats($start, $end, $daysInPeriod);
-        $prevStats = $this->getPeriodStats($prevStart, $prevEnd, $daysInPeriod);
+        $currStats = $this->getPeriodStats($start, $end, $daysInPeriod, $roomType, $paymentMethod);
+        $prevStats = $this->getPeriodStats($prevStart, $prevEnd, $daysInPeriod, $roomType, $paymentMethod);
 
         $stats = [
             'revenue' => [
@@ -419,8 +421,19 @@ class BookingController extends Controller
         // Fetch paginated transactions in the period (ordered by check-in date or created date)
         $query = Booking::with('room')
             ->where('created_at', '>=', $start)
-            ->where('created_at', '<=', $end)
-            ->orderBy('created_at', 'desc');
+            ->where('created_at', '<=', $end);
+
+        if ($roomType !== 'all') {
+            $query->whereHas('room', function ($q) use ($roomType) {
+                $q->where('type', $roomType);
+            });
+        }
+
+        if ($paymentMethod !== 'all') {
+            $query->where('payment_method', $paymentMethod);
+        }
+
+        $query->orderBy('created_at', 'desc');
 
         $paginator = $query->paginate(10);
 
@@ -471,25 +484,52 @@ class BookingController extends Controller
         ]);
     }
 
-    private function getPeriodStats(Carbon $start, Carbon $end, $daysInPeriod)
+    private function getPeriodStats(Carbon $start, Carbon $end, $daysInPeriod, $roomType = 'all', $paymentMethod = 'all')
     {
         // Revenue: CONFIRMED bookings created in period
-        $revenue = (float) Booking::where('status', 'CONFIRMED')
+        $revenueQuery = Booking::where('status', 'CONFIRMED')
             ->where('created_at', '>=', $start)
-            ->where('created_at', '<=', $end)
-            ->sum('total_price');
+            ->where('created_at', '<=', $end);
+            
+        if ($roomType !== 'all') {
+            $revenueQuery->whereHas('room', function ($q) use ($roomType) {
+                $q->where('type', $roomType);
+            });
+        }
+        if ($paymentMethod !== 'all') {
+            $revenueQuery->where('payment_method', $paymentMethod);
+        }
+        $revenue = (float) $revenueQuery->sum('total_price');
 
         // Bookings: Total non-rejected bookings created in period
-        $bookings = Booking::where('status', '!=', 'REJECTED')
+        $bookingsQuery = Booking::where('status', '!=', 'REJECTED')
             ->where('created_at', '>=', $start)
-            ->where('created_at', '<=', $end)
-            ->count();
+            ->where('created_at', '<=', $end);
+            
+        if ($roomType !== 'all') {
+            $bookingsQuery->whereHas('room', function ($q) use ($roomType) {
+                $q->where('type', $roomType);
+            });
+        }
+        if ($paymentMethod !== 'all') {
+            $bookingsQuery->where('payment_method', $paymentMethod);
+        }
+        $bookings = $bookingsQuery->count();
 
         // Approved: CONFIRMED bookings created in period
-        $approved = Booking::where('status', 'CONFIRMED')
+        $approvedQuery = Booking::where('status', 'CONFIRMED')
             ->where('created_at', '>=', $start)
-            ->where('created_at', '<=', $end)
-            ->count();
+            ->where('created_at', '<=', $end);
+            
+        if ($roomType !== 'all') {
+            $approvedQuery->whereHas('room', function ($q) use ($roomType) {
+                $q->where('type', $roomType);
+            });
+        }
+        if ($paymentMethod !== 'all') {
+            $approvedQuery->where('payment_method', $paymentMethod);
+        }
+        $approved = $approvedQuery->count();
 
         // Occupancy: confirmed booking room nights occupied in period / total room nights
         $totalRooms = Room::count() ?: 11;
@@ -499,10 +539,20 @@ class BookingController extends Controller
         $endForOccupancy = $end->copy()->addDay();
         
         // Find confirmed bookings checking in or active during the period
-        $bookingsForOccupancy = Booking::where('status', 'CONFIRMED')
+        $bookingsForOccupancyQuery = Booking::where('status', 'CONFIRMED')
             ->where('check_in_date', '<', $endForOccupancy->toDateString())
-            ->where('check_out_date', '>', $start->toDateString())
-            ->get();
+            ->where('check_out_date', '>', $start->toDateString());
+            
+        if ($roomType !== 'all') {
+            $bookingsForOccupancyQuery->whereHas('room', function ($q) use ($roomType) {
+                $q->where('type', $roomType);
+            });
+        }
+        if ($paymentMethod !== 'all') {
+            $bookingsForOccupancyQuery->where('payment_method', $paymentMethod);
+        }
+        
+        $bookingsForOccupancy = $bookingsForOccupancyQuery->get();
 
         foreach ($bookingsForOccupancy as $b) {
             $bStart = Carbon::parse($b->check_in_date);
