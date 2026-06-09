@@ -2180,27 +2180,13 @@
                                 <div class="flex items-center justify-between">
                                     <div>
                                         <h3 class="font-serif text-[#0b1c3d] text-base font-bold">Booking Trends</h3>
-                                        <p class="text-slate-400 text-xs mt-0.5">Occupancy rate over the last {{ trendsTimeframe === 'weekly' ? '7' : '30' }} days</p>
-                                    </div>
-                                    <div class="bg-slate-100 p-0.5 rounded-lg flex items-center gap-1">
-                                        <button 
-                                            @click="trendsTimeframe = 'weekly'"
-                                            :class="['text-[10px] font-semibold px-2.5 py-1 rounded-md transition cursor-pointer', trendsTimeframe === 'weekly' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-800']"
-                                        >
-                                            Weekly
-                                        </button>
-                                        <button 
-                                            @click="trendsTimeframe = 'monthly'"
-                                            :class="['text-[10px] font-semibold px-2.5 py-1 rounded-md transition cursor-pointer', trendsTimeframe === 'monthly' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-800']"
-                                        >
-                                            Monthly
-                                        </button>
+                                        <p class="text-slate-400 text-xs mt-0.5">Occupancy rate over the last 7 days</p>
                                     </div>
                                 </div>
 
                                 <!-- SVG Bar Chart -->
                                 <div class="relative pt-6">
-                                    <div class="h-44 w-full flex items-end justify-between px-2 gap-1 md:gap-2 border-b border-slate-100 pb-2 relative">
+                                    <div class="h-44 w-full flex items-end justify-between px-2 gap-2 md:gap-4 border-b border-slate-100 pb-2 relative">
                                         <!-- Background grid lines -->
                                         <div class="absolute inset-x-0 top-0 border-t border-slate-100/60 w-full pointer-events-none"></div>
                                         <div class="absolute inset-x-0 top-1/3 border-t border-slate-100/60 w-full pointer-events-none"></div>
@@ -6379,15 +6365,13 @@ const visibleGuestRecords = computed(() => {
     return filteredGuestRecords.value.slice(0, 3)
 })
 
-const trendsTimeframe = ref('weekly')
-
-const getTrendDaysList = (numDays) => {
+const getTrendDaysList = () => {
     const dates = []
     const now = new Date()
     // Convert now to Manila time (UTC+8)
     const manilaTime = new Date(now.getTime() + (now.getTimezoneOffset() * 60000) + (8 * 3600000))
     
-    for (let i = numDays - 1; i >= 0; i--) {
+    for (let i = 6; i >= 0; i--) {
         const d = new Date(manilaTime.getTime())
         d.setDate(manilaTime.getDate() - i)
         
@@ -6397,7 +6381,7 @@ const getTrendDaysList = (numDays) => {
         const rawDate = `${yyyy}-${mm}-${dd}`
         
         const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-        const label = numDays === 7 ? dayNames[d.getDay()] : `${mm}/${dd}`
+        const label = dayNames[d.getDay()]
         
         dates.push({ rawDate, label, isCurrentDay: i === 0 })
     }
@@ -6405,28 +6389,19 @@ const getTrendDaysList = (numDays) => {
 }
 
 const trendBars = computed(() => {
-    const numDays = trendsTimeframe.value === 'weekly' ? 7 : 30
-    const days = getTrendDaysList(numDays)
+    const days = getTrendDaysList()
     const totalRooms = roomsList.value.length || dbRooms.value.length || 3
     
-    return days.map((day, index) => {
+    return days.map((day) => {
         const occupiedCount = approvedReservations.value.filter(r => {
             return day.rawDate >= r.checkInDateRaw && day.rawDate < r.checkOutDateRaw
         }).length
         
         const percentage = totalRooms > 0 ? Math.min(Math.round((occupiedCount / totalRooms) * 100), 100) : 0
         
-        let displayLabel = day.label
-        if (trendsTimeframe.value === 'monthly') {
-            // Label only every 5th day to avoid crowding
-            if (index % 5 !== 0 && index !== numDays - 1) {
-                displayLabel = ''
-            }
-        }
-        
         return {
             rawDate: day.rawDate,
-            label: displayLabel,
+            label: day.label,
             percentage,
             count: occupiedCount,
             totalRooms,
