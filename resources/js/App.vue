@@ -2087,7 +2087,7 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
                             
                             <!-- Total Reservations -->
-                            <div class="bg-white border border-slate-50 rounded-2xl p-5 shadow-sm hover:shadow-md transition duration-200 flex flex-col justify-between min-h-[120px]">
+                            <div @click="activeTab = 'approved'" class="bg-white border border-slate-50 rounded-2xl p-5 shadow-sm hover:shadow-md transition duration-200 flex flex-col justify-between min-h-[120px] cursor-pointer">
                                 <div class="flex items-center justify-between">
                                     <span class="text-[10px] text-green-600 bg-green-50 px-2 py-0.5 rounded-full font-bold">+4% vs last week</span>
                                     <div class="text-slate-400">
@@ -2099,12 +2099,12 @@
                                 </div>
                                 <div class="mt-4">
                                     <p class="text-slate-400 text-[10px] font-semibold uppercase tracking-wider">Total Reservations</p>
-                                    <p class="text-2xl font-bold text-slate-800 mt-1">42</p>
+                                    <p class="text-2xl font-bold text-slate-800 mt-1">{{ pendingReservations.length + approvedReservations.length + rejectedReservations.length }}</p>
                                 </div>
                             </div>
 
                             <!-- Pending -->
-                            <div class="bg-white border border-slate-50 rounded-2xl p-5 shadow-sm hover:shadow-md transition duration-200 flex flex-col justify-between min-h-[120px]">
+                            <div @click="activeTab = 'pending'" class="bg-white border border-slate-50 rounded-2xl p-5 shadow-sm hover:shadow-md transition duration-200 flex flex-col justify-between min-h-[120px] cursor-pointer">
                                 <div class="flex items-center justify-between">
                                     <span class="text-[10px] text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full font-bold">Action Required</span>
                                     <div class="text-slate-400">
@@ -2121,7 +2121,7 @@
                             </div>
 
                             <!-- Approved -->
-                            <div class="bg-white border border-slate-50 rounded-2xl p-5 shadow-sm hover:shadow-md transition duration-200 flex flex-col justify-between min-h-[120px]">
+                            <div @click="activeTab = 'approved'" class="bg-white border border-slate-50 rounded-2xl p-5 shadow-sm hover:shadow-md transition duration-200 flex flex-col justify-between min-h-[120px] cursor-pointer">
                                 <div class="flex items-center justify-between">
                                     <span class="text-[10px] text-[#2D5A27] bg-emerald-50 rounded-full font-bold">Approved</span>
                                     <div class="text-slate-400">
@@ -2138,7 +2138,7 @@
                             </div>
 
                             <!-- Rejected -->
-                            <div class="bg-white border border-slate-50 rounded-2xl p-5 shadow-sm hover:shadow-md transition duration-200 flex flex-col justify-between min-h-[120px]">
+                            <div @click="activeTab = 'rejected'" class="bg-white border border-slate-50 rounded-2xl p-5 shadow-sm hover:shadow-md transition duration-200 flex flex-col justify-between min-h-[120px] cursor-pointer">
                                 <div class="flex items-center justify-between">
                                     <span class="text-[10px] text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full font-bold">Rejected</span>
                                     <div class="text-slate-400">
@@ -2155,7 +2155,12 @@
                             </div>
 
                             <!-- Total Sales (Dark/Premium card) -->
-                            <div class="bg-[#0B1E3F] rounded-2xl p-5 shadow-lg flex flex-col justify-between min-h-[120px] text-white">
+                            <div 
+                                @click="isManager() ? activeTab = 'sales' : null" 
+                                :class="['rounded-2xl p-5 shadow-lg flex flex-col justify-between min-h-[120px] text-white transition duration-200', 
+                                         isManager() ? 'bg-[#0B1E3F] hover:bg-[#152e59] hover:shadow-xl cursor-pointer' : 'bg-[#0B1E3F] opacity-95'
+                                ]"
+                            >
                                 <div class="flex items-center justify-between">
                                     <span class="text-[10px] text-amber-300 font-bold bg-white/10 px-2 py-0.5 rounded-full">Total Revenue</span>
                                     <div class="text-slate-300">
@@ -2167,7 +2172,7 @@
                                 </div>
                                 <div class="mt-4">
                                     <p class="text-white/60 text-[10px] font-semibold uppercase tracking-wider">Total Sales</p>
-                                    <p class="text-2xl font-serif font-bold text-white mt-1">₱1.2M</p>
+                                    <p class="text-2xl font-serif font-bold text-white mt-1">₱{{ totalConfirmedSales }}</p>
                                 </div>
                             </div>
                         </div>
@@ -6481,6 +6486,20 @@ const visibleActivities = computed(() => {
         return recentActivities.value
     }
     return recentActivities.value.slice(0, 4)
+})
+
+const totalConfirmedSales = computed(() => {
+    const sum = approvedReservations.value.reduce((acc, r) => {
+        const val = parseFloat(r.amount.replace(/,/g, '')) || 0
+        return acc + val
+    }, 0)
+    
+    if (sum >= 1000000) {
+        return (sum / 1000000).toFixed(1).replace(/\.0$/, '') + 'M'
+    } else if (sum >= 1000) {
+        return (sum / 1000).toFixed(1).replace(/\.0$/, '') + 'K'
+    }
+    return sum.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })
 })
 
 const getFilterLabel = (value) => {
