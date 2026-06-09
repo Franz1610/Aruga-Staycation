@@ -2231,53 +2231,30 @@
                                     <h3 class="font-serif text-[#0b1c3d] text-base font-bold mb-4">Recent Activity</h3>
                                     <div class="space-y-4">
                                         
-                                        <!-- Activity Item 1 -->
-                                        <div class="flex items-start gap-3">
-                                            <span class="h-2 w-2 rounded-full bg-emerald-500 mt-2 shrink-0"></span>
+                                        <!-- Dynamic Activity Items -->
+                                        <div v-for="(act, idx) in visibleActivities" :key="idx" class="flex items-start gap-3 animate-fade-in">
+                                            <span :class="['h-2 w-2 rounded-full mt-2 shrink-0', act.colorClass]"></span>
                                             <div>
                                                 <p class="text-xs text-slate-700 leading-normal">
-                                                    <strong class="font-semibold text-slate-900">Maria Santos</strong>'s booking for Ocean Villa 2 was <span class="text-emerald-700 font-semibold px-1 py-0.2 bg-emerald-50 rounded text-[9px]">Approved</span>
+                                                    <span class="font-semibold text-slate-900">{{ act.title }}</span>
+                                                    <span class="block text-slate-500 text-[10px] mt-0.5">{{ act.detail }}</span>
                                                 </p>
-                                                <span class="text-[10px] text-slate-400 block mt-0.5">2 hours ago</span>
+                                                <span class="text-[10px] text-slate-400 block mt-0.5">{{ act.timestamp }}</span>
                                             </div>
                                         </div>
 
-                                        <!-- Activity Item 2 -->
-                                        <div class="flex items-start gap-3">
-                                            <span class="h-2 w-2 rounded-full bg-amber-500 mt-2 shrink-0"></span>
-                                            <div>
-                                                <p class="text-xs text-slate-700 leading-normal">
-                                                    New reservation request from <strong class="font-semibold text-slate-900">James Lim</strong> for 3 nights
-                                                </p>
-                                                <span class="text-[10px] text-slate-400 block mt-0.5">5 hours ago</span>
-                                            </div>
-                                        </div>
-
-                                        <!-- Activity Item 3 -->
-                                        <div class="flex items-start gap-3">
-                                            <span class="h-2 w-2 rounded-full bg-rose-500 mt-2 shrink-0"></span>
-                                            <div>
-                                                <p class="text-xs text-slate-700 leading-normal">
-                                                    Payment failed for booking <strong class="font-semibold text-slate-900">#ARUGA-2940</strong>
-                                                </p>
-                                                <span class="text-[10px] text-slate-400 block mt-0.5">Yesterday</span>
-                                            </div>
-                                        </div>
-
-                                        <!-- Activity Item 4 -->
-                                        <div class="flex items-start gap-3">
-                                            <span class="h-2 w-2 rounded-full bg-slate-400 mt-2 shrink-0"></span>
-                                            <div>
-                                                <p class="text-xs text-slate-700 leading-normal">
-                                                    Cleaning scheduled for <strong class="font-semibold text-slate-900">Suite 405</strong> at 11:00 AM
-                                                </p>
-                                                <span class="text-[10px] text-slate-400 block mt-0.5">Yesterday</span>
-                                            </div>
+                                        <!-- Fallback Empty Activity -->
+                                        <div v-if="recentActivities.length === 0" class="text-center py-6 text-slate-400 font-light italic text-xs">
+                                            No recent activities recorded.
                                         </div>
                                     </div>
                                 </div>
-                                <button class="w-full mt-6 py-2.5 rounded-xl border border-slate-100 hover:bg-slate-50 text-slate-500 text-xs font-semibold tracking-wide transition cursor-pointer">
-                                    View All Activity
+                                <button 
+                                    v-if="recentActivities.length > 4"
+                                    @click="expandRecentActivity = !expandRecentActivity"
+                                    class="w-full mt-6 py-2.5 rounded-xl border border-slate-100 hover:bg-slate-50 text-slate-500 text-xs font-semibold tracking-wide transition cursor-pointer"
+                                >
+                                    {{ expandRecentActivity ? 'Collapse Activity' : 'View All Activity' }}
                                 </button>
                             </div>
                         </div>
@@ -6422,6 +6399,90 @@ const trendBars = computed(() => {
     })
 })
 
+const expandRecentActivity = ref(false)
+
+const recentActivities = computed(() => {
+    const list = []
+    
+    // 1. Pending Bookings (New Requests)
+    pendingReservations.value.forEach(r => {
+        list.push({
+            type: 'requested',
+            title: `New reservation request from ${r.name}`,
+            detail: `${r.roomType || 'Room'} • ${r.nights || 1} Nights`,
+            timestamp: r.createdTime || 'Recently',
+            timeRaw: r.createdAtRaw ? new Date(r.createdAtRaw).getTime() : 0,
+            colorClass: 'bg-amber-500'
+        })
+    })
+    
+    // 2. Approved Bookings
+    approvedReservations.value.forEach(r => {
+        list.push({
+            type: 'approved',
+            title: `${r.name}'s booking was Approved`,
+            detail: `${r.roomName || r.roomType} Confirmed`,
+            timestamp: r.createdTime || 'Recently',
+            timeRaw: r.createdAtRaw ? new Date(r.createdAtRaw).getTime() : 0,
+            colorClass: 'bg-emerald-500'
+        })
+    })
+    
+    // 3. Rejected Bookings
+    rejectedReservations.value.forEach(r => {
+        list.push({
+            type: 'rejected',
+            title: `Reservation for ${r.name} was Rejected`,
+            detail: `Reason: ${r.rejectionReason || 'Verification failed'}`,
+            timestamp: r.createdTime || 'Recently',
+            timeRaw: r.createdAtRaw ? new Date(r.createdAtRaw).getTime() : 0,
+            colorClass: 'bg-rose-500'
+        })
+    })
+    
+    // 4. Room Status Notifications
+    roomsList.value.forEach(room => {
+        if (room.status === 'cleaning') {
+            list.push({
+                type: 'room_cleaning',
+                title: `Cleaning scheduled for ${room.name}`,
+                detail: `${room.type} is being prepared`,
+                timestamp: 'Scheduled',
+                timeRaw: room.updated_at ? new Date(room.updated_at).getTime() : 1,
+                colorClass: 'bg-blue-400'
+            })
+        } else if (room.status === 'maintenance') {
+            list.push({
+                type: 'room_maintenance',
+                title: `Room ${room.name} is under maintenance`,
+                detail: `Out of service • ${room.type}`,
+                timestamp: 'Active',
+                timeRaw: room.updated_at ? new Date(room.updated_at).getTime() : 2,
+                colorClass: 'bg-slate-400'
+            })
+        } else if (room.status === 'occupied') {
+            list.push({
+                type: 'room_occupied',
+                title: `Room ${room.name} is now Occupied`,
+                detail: `Guest checked in • ${room.type}`,
+                timestamp: 'Active',
+                timeRaw: room.updated_at ? new Date(room.updated_at).getTime() : 3,
+                colorClass: 'bg-indigo-500'
+            })
+        }
+    })
+    
+    // Sort by time raw descending (newest first)
+    return list.sort((a, b) => b.timeRaw - a.timeRaw)
+})
+
+const visibleActivities = computed(() => {
+    if (expandRecentActivity.value) {
+        return recentActivities.value
+    }
+    return recentActivities.value.slice(0, 4)
+})
+
 const getFilterLabel = (value) => {
     const found = filterOptions.find(o => o.value === value)
     return found ? found.label : 'All Statuses'
@@ -7160,6 +7221,7 @@ const fetchConfirmedBookings = async () => {
                     paymentMethodText: b.payment_method === 'gcash' ? 'GCash' : (b.payment_method === 'credit_card' ? 'Credit Card' : 'Cash at Property'),
                     specialRequests: b.special_requests || 'None',
                     createdTime: formatTimestamp(b.created_at),
+                    createdAtRaw: b.created_at,
                     reference: b.reference
                 }
             })
@@ -7210,6 +7272,7 @@ const fetchRejectedBookings = async () => {
                     checkOutTime: b.check_out_time || 'Before 11:00 AM',
                     refundStatus: b.payment_method === 'gcash' ? 'Refund Process Initiated' : 'No Refund Required',
                     createdTime: formatTimestamp(b.created_at),
+                    createdAtRaw: b.created_at,
                     reference: b.reference,
                     timeline: [
                         { title: 'Reservation Rejected', actionedBy: 'Actioned by: Admin Staff', timestamp: formatTimestamp(b.updated_at), iconType: 'rejected' },
@@ -7283,7 +7346,8 @@ const fetchPendingBookings = async () => {
                     statusType: statusTypeVal,
                     reference: b.reference,
                     specialRequests: b.special_requests || 'None',
-                    createdTime: formatTimestamp(b.created_at)
+                    createdTime: formatTimestamp(b.created_at),
+                    createdAtRaw: b.created_at
                 }
             })
         }
