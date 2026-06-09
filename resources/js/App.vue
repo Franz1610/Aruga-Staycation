@@ -4957,7 +4957,7 @@
                                     <div>
                                         <p class="text-slate-455 dark:text-slate-500 text-[10px] font-semibold uppercase tracking-wider leading-none">Occupied</p>
                                         <p class="text-2xl font-bold text-slate-850 dark:text-slate-100 mt-2 leading-none">
-                                            {{ roomStats.occupied }} <span class="font-serif font-normal text-lg text-slate-500 dark:text-slate-400">/ {{ roomStats.occupied_percentage }}%</span>
+                                            {{ roomStats.occupied }} <span class="font-serif font-normal text-lg text-slate-500 dark:text-slate-400">Rooms</span>
                                         </p>
                                     </div>
                                 </div>
